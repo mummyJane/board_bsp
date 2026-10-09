@@ -36,13 +36,14 @@ board_bsp/
 
 ## Toolchain
 
-- **Firmware:** ESP-IDF v5.5 (ESP32-P4 target) — see [docs/setup.md](docs/setup.md)
-- **Hardware:** KiCad 9
+- **Firmware:** ESP-IDF v6.1 (ESP32-P4 target) — see [docs/setup.md](docs/setup.md)
+- **Hardware:** KiCad 10
 
 ## Quick start (test app)
 
-```sh
-cd boards/esp32-p4-wifi6-touch-lcd-7b/test
+```powershell
+. .\tools\idf_env.ps1     # load ESP-IDF v6.1
+cd boards\esp32-p4-wifi6-touch-lcd-7b\test
 idf.py set-target esp32p4
 idf.py build flash monitor
 ```

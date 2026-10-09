@@ -14,9 +14,17 @@ is derived from it.
 
 ## Conventions
 
-- Firmware: ESP-IDF v5.5, target `esp32p4`. One BSP component per board in
+- Firmware: ESP-IDF v6.1, target `esp32p4`. One BSP component per board in
   `boards/<board>/bsp`, test app in `boards/<board>/test` (Unity menu).
 - Pin assignments only in `bsp/include/bsp/board_pins.h`; `-1` = unconfirmed.
   Never guess pins — confirm from the vendor/our schematic.
-- Hardware: KiCad 9, project in `boards/<board>/hardware/kicad/`, local libs via `${KIPRJMOD}`.
+- Hardware: KiCad 10, project in `boards/<board>/hardware/kicad/`, local libs via `${KIPRJMOD}`.
 - Shared code goes in `common/components/`.
+
+## Building
+
+- Load ESP-IDF in PowerShell with `. .\tools\idf_env.ps1` (release v6.1 at
+  `D:\wirkflow\esp_test\tools\esp-idf-6.1`, venv `idf6.1_py3.13_env`). Don't use
+  `~/esp/master` (dev snapshot).
+- KiCad CLI: `C:\Program Files\KiCad\10.0\bin\kicad-cli.exe` (ERC/DRC/exports).
+- Build the test app before committing firmware changes.
