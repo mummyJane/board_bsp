@@ -8,6 +8,22 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-09
+
+### Changed
+- ADSB_Test m1421 integration reworked from the PantsForBirds/adsbee repo docs and firmware:
+  - **SYNC is a host-driven input**: high at reset = CC1314 ROM UART bootloader, high at run
+    time = sleep + LR2021 hand-off. Driven as P4 OR Dev, with a pull-down. Not a message output.
+    The activity outputs SD26 (1090) / SD27 (UAT) go to LEDs and LA CH7 / CH11.
+  - Dev-port path is now the ADSBee 1421 Programmer firmware on the RP2040 (power-up auto-reflash
+    disabled), so the ADSBee web console AT terminal and firmware uploader work unchanged.
+    JTAG stays on the 10-pin header for a Segger J-Link. JTAG over Dev USB isn't provided.
+  - New requirement M14-05: the P4 can update the m1421 firmware in the field via the ROM bootloader.
+  - Layout rules from the module docs (filled/capped vias, keep-outs, paste on all pads).
+- ADSB_Test KiCad library replaced with the official **PantsForBirds/kicad-libs (MIT)** m1421 and
+  SCN-2-11 parts (3D models included). SYNC pin type corrected to input. Licence file added.
+- LA header CH11 changed from P4->GPS TX to m1421 SD27 (UAT activity).
+
 ## [0.4.1] - 2026-10-09
 
 ### Changed
@@ -80,7 +96,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/mummyJane/board_bsp/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mummyJane/board_bsp/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/mummyJane/board_bsp/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mummyJane/board_bsp/compare/v0.2.0...v0.3.0

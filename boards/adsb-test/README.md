@@ -13,7 +13,7 @@ reference board while ADSB_Test is designed.
 - **ADSBee m1421** dual-band ADS-B receiver (1090 MHz Mode S + 978 MHz UAT), RF front end copied from the ADSBee 1421 carrier
 - 10/100 Ethernet (IP101GRI RMII PHY, RJ45)
 - **User USB-C:** USB-PD sink (main power + charging) and a USB-UART to the P4 user UART
-- **Dev USB-C:** one cable for all debug: P4 + C5 USB-Serial/JTAG, P4 + C5 UARTs (FT2232H), m1421 SWD + UART (RP2040 debugprobe)
+- **Dev USB-C:** one cable for all debug: P4 + C5 USB-Serial/JTAG, P4 + C5 UARTs (FT2232H), m1421 console + firmware upload (RP2040 with ADSBee 1421 Programmer firmware). m1421 JTAG on a J-Link header
 - **USB-A host** (P4 USB 2.0 HS) to an external hub: 1 SDR (AIS etc.), 2 supported, 4 nice-to-have
 - GNSS module with PPS
 - 2S1P 18650 Li-ion (≥ 1 h with everything running), buck-boost charger with power path

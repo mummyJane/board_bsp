@@ -4,21 +4,16 @@ Referenced from the project via `${KIPRJMOD}/lib/...` (see `../sym-lib-table`, `
 
 | Item | Library | Source |
 |------|---------|--------|
-| `PantsForBirds_ADSBee_m1421` symbol | ADSB_Test.kicad_sym | ADSBee 1421 carrier design (Rev A) |
-| `MiniCircuits_SCN-2-11` symbol | ADSB_Test.kicad_sym | ADSBee 1421 carrier design (Rev A) |
-| `PantsForBirds_ADSBee_m1421_Module` footprint | ADSB_Test.pretty | ADSBee 1421 carrier design: extracted from the PCB, flipped to the front side, orientation 0 |
-| `MiniCircuits_SCN` footprint | ADSB_Test.pretty | ADSBee 1421 carrier design |
+| `PantsForBirds_ADSBee_m1421` symbol | ADSB_Test.kicad_sym | PantsForBirds/kicad-libs `lib_sch/Custom_Module.kicad_sym`. **Changed:** SYNC (pin 28) electrical type output → **input**, matching the firmware docs. Footprint and datasheet fields re-pointed |
+| `MiniCircuits_SCN-2-11` symbol | ADSB_Test.kicad_sym | PantsForBirds/kicad-libs `lib_sch/Custom_RF_SplitterCombiner.kicad_sym` |
+| `PantsForBirds_ADSBee_m1421_Module` footprint | ADSB_Test.pretty | PantsForBirds/kicad-libs `lib_fp/Custom_Module.pretty`, unchanged (3D models embedded). Pads checked identical to the ADSBee 1421 carrier PCB |
+| `MiniCircuits_SCN` footprint | ADSB_Test.pretty | PantsForBirds/kicad-libs `lib_fp/Custom_RF_SplitterCombiner.pretty`, unchanged |
 
-## Attribution and licence
+## Licence
 
-The ADSBee items above come from the ADSBee 1421 carrier board by
-**Pants for Birds LLC** (John McNelly), published at
-<https://pantsforbirds.com/the-worlds-smallest-dual-band-ads-b-receiver-module/>
-(`adsbee_1421-A.zip`). The ADSBee hardware is published as open source under
-**GPL-3.0**, so these files remain under GPL-3.0, not the repository's MIT
-licence.
+These parts come from <https://github.com/PantsForBirds/kicad-libs>, © 2024
+John McNelly, **MIT licence**. The licence is copied in
+[`LICENSE-PantsForBirds-kicad-libs.txt`](LICENSE-PantsForBirds-kicad-libs.txt).
 
-Notes:
-- The 3D STEP models embedded in the original board were not carried over.
-- Check the footprint against the m1421 datasheet/drawing before ordering PCBs.
-  It is the carrier's footprint, so it is the best available reference.
+The ADSBee m1421 firmware and module schematic are GPL-3.0. None of that is
+copied into this repository.

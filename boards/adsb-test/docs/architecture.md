@@ -20,7 +20,7 @@ flowchart LR
   subgraph DEV["Dev USB-C (Dev-powered)"]
     HUB[USB2.0 hub<br/>USB2514B]
     FT[Dual UART<br/>FT2232H]
-    DP[RP2040<br/>debugprobe]
+    DP[RP2040<br/>ADSBee Programmer fw]
   end
   PD -->|5-20 V| CHG[Charger + power path<br/>BQ25792]
   BAT[(2S Li-ion<br/>2x 18650)] <--> CHG
@@ -47,7 +47,7 @@ flowchart LR
   HUB --> DP
   FT -->|ch A UART0| P4
   FT -->|ch B UART0| C5
-  DP -->|SWD + UART| M14
+  DP -->|UART + SYNC + RESET| M14
   M14 --> RF[SCN-2-11 combiner<br/>-> SMA 1090/978]
 ```
 
@@ -95,33 +95,85 @@ Facts below are from the Waveshare schematic
 
 ## ADSBee m1421 integration
 
-Source: the ADSBee 1421 carrier board reference design (Pants for Birds,
-open source). The symbol and footprint are in [`hardware/kicad/lib`](../hardware/kicad/lib/).
+Sources:
+- The m1421 module docs (`docs/adsbee-1421/m1421.md`) and firmware README in
+  [PantsForBirds/adsbee](https://github.com/PantsForBirds/adsbee).
+- The [ADSBee 1421 carrier reference design](https://pantsforbirds.com/the-worlds-smallest-dual-band-ads-b-receiver-module/).
+- The official symbol and footprint from
+  [PantsForBirds/kicad-libs](https://github.com/PantsForBirds/kicad-libs) (MIT), in [`hardware/kicad/lib`](../hardware/kicad/lib/).
+
+Key facts:
+- **Chips:** CC1314R10 + LR2021.
+- **Supply:** VCC 1.8–3.3 V (3.3 V here), about 19 mA (< 60 mW). Logic levels are 0–VCC.
+- **Console:** UART at 1,000,000 baud by default (9600–3,000,000). The module
+  sends `UU` at boot and after every rate change, so a host can autobaud.
+- **Output protocols:** Raw, CSBee, MAVLink 1/2, GDL90, Mode S Beast,
+  Aircraft JSON. Configured with AT commands and saved to flash.
+- **No MLAT:** the module has no per-packet timestamps or RSSI in its
+  high-throughput mode.
+
+### SYNC (pad 28): a host-driven input, never an output
+
+| When | SYNC high | SYNC low |
+|------|-----------|----------|
+| As the CC1314 leaves reset (ROM reads it once) | ROM serial **bootloader** on the console UART (the "backdoor", active high) | Application boots |
+| While the application runs | **Sleep request**: the CC1314 enters STANDBY (keeps its aircraft table) and releases the LR2021 bus within ~25 µs | Wake. The CC1314 takes the LR2021 back |
+
+- SYNC has a weak pull-down: an external one on module Rev D and later, an
+  internal one before that. A floating SYNC keeps the module awake.
+- **Any reset with SYNC high enters the bootloader**, including a watchdog
+  reset. Before long host-driven sleeps, send `AT+WATCHDOG=0`.
+- The official KiCad symbol types SYNC as an "output". **Our copy corrects it
+  to "input".**
+
+There's no "start of message" output. The closest things are the activity LED
+outputs **SD26 (pad 15, 1090 MHz)** and **SD27 (pad 16, 978 MHz UAT)**. Both go
+to LEDs and to the LA header (CH7, CH11), and they're good enough as rough
+message-activity markers.
+
+### Pad connections
 
 | m1421 pad(s) | Signal | ADSB_Test connection |
 |--------------|--------|----------------------|
-| 1, 4, 19, 22 | VCC (3.3 V) | `3V3_M1421`: switched branch, PM3 ch2. Carrier uses an AP2112K-3.3 LDO. Module < 60 mW |
-| 6, 18, 23, 25, 27, 34, 36, MP | GND | GND, full via stitching under the module |
-| 20 / 21 | SUBG_UART_RX / TX | P4 UART3 (data: GDL90 / MAVLink / CSBee). See the UART sharing note below |
-| 28 | SYNC | P4 GPIO + LA header. Direction to confirm: the symbol says output, the article says host-driven sleep |
-| 17 | ~SUBG_RESET | Open-drain from P4 (via expander) **and** the debug probe. 10-pin debug header pin 10 |
-| 8, 9, 10, 11 | JTAG_TMSC / TCKC / TDO / TDI | RP2040 debugprobe (SWD: TMSC = SWDIO, TCKC = SWCLK) **and** a 10-pin 1.27 mm Cortex debug header (as on the carrier) |
-| 15, 16 | SUBG_DIO26 / 27 | Status LEDs (carrier: red + green). Also to the LA header |
-| 12–14 | SUBG_DIO23–25 | Test pads |
-| 24, 26 | SUBG_RF, LR_RF_LF | MiniCircuits SCN-2-11 combiner (100 Ω across ports) → ESD7351 → SMA. **Copy the carrier RF layout exactly** (impedance-controlled CPW) |
-| 35 | LR_RF_HF (2.4 GHz) | Not connected, as on the carrier |
-| 2, 3, 5, 7, 29–33 | LR_DIOx, ~LR_RESET, COPRO_SPI, ~LR_CS, LR_BUSY | Not connected on the carrier. Bring to test pads only |
+| 1, 4, 19, 22 | VCC | `3V3_M1421`: switched branch, PM3 ch2 |
+| 6, 18, 23, 25, 27, 34, 36, MP | GND | GND. **Filled and capped** thermal vias in both MP pads and under the GND pads next to the RF pins |
+| 20 / 21 | SURX / SUTX (console) | P4 UART3 at 1 Mbaud (≥ 921600 recommended). TX also goes to the Dev probe. RX comes from a 2:1 mux (74LVC1G157): P4 by default, Dev probe when selected |
+| 28 | SYNC | `SYNC = P4_SYNC OR DEV_SYNC` (74LVC1G32, target-powered). DEV_SYNC is pulled low, so an unpowered Dev domain can't assert it. 100 kΩ pull-down on SYNC. LA CH6 |
+| 17 | ~SRST | Open-drain wired-AND: TCA6408A bit 7, Dev probe (74LVC1G07, Ioff), 10-pin JTAG header pin 10 |
+| 8–11 | JMSC / JCKC / JTDO / JTDI | 10-pin 1.27 mm Cortex debug header, as on the carrier: **Segger J-Link, target CC1314R10, JTAG 4 MHz** (the documented flow) |
+| 15 / 16 | SD26 / SD27 | 1090 / UAT activity LEDs (red / green, as carrier) + LA CH7 / CH11 |
+| 12–14 | SD23–25 | Test pads |
+| 24 / 26 | SRF (978) / LRFL (1090) | SCN-2-11+ combiner (100 Ω across ports) → ESD7351 → SMA. Copy the carrier's RF layout. Keep the footprint's top-copper keep-outs |
+| 2, 3, 5, 7, 29–33 | LR2021 DIO / reset / SPI / BUSY | Test pads only (normal use: not connected). Leaves room for an optional LR2021 hand-off later |
+| 35 | LRFH (LR2021 2.4 GHz) | Not connected (test pad). Possible LoRa/mesh use later, but the module has no transmitter certification |
 
-**Debug path.** The ADSBee 1421 Developer Kit programs the module with an
-RP2040-based probe. ADSB_Test copies that approach: an **RP2040 running
-debugprobe (CMSIS-DAP)** on Dev hub port 4. That gives SWD and a UART bridge
-on one USB interface, and avoids depending on FTDI JTAG support for the TI
-CC1314 (risky).
+### Firmware updates and Dev-port access
 
-**UART sharing.** m1421 TX goes to both the P4 and the debugprobe RX. m1421 RX
-is fed from a 2:1 mux (74LVC1G157). The default source is the P4; the
-debugprobe takes over when its select GPIO is asserted. One extra GPIO on the
-RP2040, no software on the P4.
+The m1421 is normally updated over **its own console UART** through the
+CC1314 ROM bootloader. No debugger is needed. The sequence:
+1. Hold SYNC high.
+2. Pulse ~SRST.
+3. Autobaud with `0x55 0x55` (≤ 1.2 Mbaud).
+4. Erase, program and verify.
+5. Drive SYNC low, then reset.
+
+That gives two update paths on ADSB_Test:
+
+| Path | How | Use |
+|------|-----|-----|
+| **P4 (field update)** | The P4 drives SYNC (GPIO) and ~SRST (expander) and talks to the ROM bootloader on UART3. It needs a CC13x4 ROM bootloader client in the BSP. Write it from TI's protocol spec (CC13x4 TRM SWCU194, "ROM Serial Bootloader") to keep the BSP MIT. The ADSBee Programmer's client is GPL-3.0 | Firmware updates in the field, including over Wi-Fi/Ethernet via the P4 |
+| **Dev USB-C (bench)** | RP2040 on Dev hub port 4 running the **ADSBee 1421 Programmer** firmware (open source, RP2040-Zero), **built with its power-up auto-reflash disabled**. It works as a USB-serial adapter with RTS → SYNC and DTR → ~SRST, so the ADSBee web console's firmware uploader and AT terminal work unchanged. It also drives the UART mux select while its port is open | Console, AT configuration, firmware upload, logs from the PC |
+| **JTAG** | 10-pin Cortex header + Segger J-Link | Breakpoint debugging, and recovery if the bootloader backdoor was turned off (`AT+BOOTLOADER_PIN=0`) |
+
+Why the auto-reflash must be off: the stock Programmer resets the module and
+overwrites any firmware that differs from its baked-in image at every
+power-up. On ADSB_Test that would happen every time the Dev cable is plugged
+in, interrupting reception and undoing P4 field updates.
+
+JTAG over the Dev USB port isn't provided. The CC1314 is flashed and debugged
+with a J-Link (cJTAG/JTAG), and no documented RP2040/FTDI flow exists for it.
+The UART bootloader covers everything except backdoor-off recovery and
+breakpoint debugging.
 
 ## Power budget and battery
 
@@ -180,7 +232,7 @@ User USB-C ──► STUSB4500 (PD sink: 15 V pref, 9 V, 5 V fallback)
                                  ├► 3V3_M1421  [PM3 ch2]  (switch)
                                  └► 3V3_PERIPH [PM3 ch3]  (touch, microSD, PD, monitors, expander)
 
-Dev USB-C VBUS ──► LDO 3V3_DEV ──► USB2514B hub + FT2232H + RP2040 debugprobe  (separate domain)
+Dev USB-C VBUS ──► LDO 3V3_DEV ──► USB2514B hub + FT2232H + RP2040 (ADSBee Programmer fw)  (separate domain)
 ```
 
 The USB-A eFuse limit drops to 1.5 A (1–2 SDRs + hub). Use a powered hub for
@@ -202,7 +254,7 @@ second, independent measurement for checking.
 | Port | Connector | Connected to |
 |------|-----------|--------------|
 | User | USB-C (sink) | CC → STUSB4500. D+/D- → CP2102N → P4 UART1 |
-| Dev | USB-C (device) | USB2514B hub. Port 1: P4 USB-Serial/JTAG. Port 2: C5 USB-Serial/JTAG. Port 3: FT2232H (A = P4 UART0 + auto-reset, B = C5 UART0 + auto-reset). Port 4: RP2040 debugprobe (m1421 SWD + UART) |
+| Dev | USB-C (device) | USB2514B hub. Port 1: P4 USB-Serial/JTAG. Port 2: C5 USB-Serial/JTAG. Port 3: FT2232H (A = P4 UART0 + auto-reset, B = C5 UART0 + auto-reset). Port 4: RP2040 running the ADSBee 1421 Programmer firmware, auto-reflash off (m1421 console + RTS→SYNC / DTR→~SRST + UART mux select) |
 | Host | USB-A | P4 USB 2.0 HS OTG (host) → TPS25200 eFuse, ESD → external hub → SDR(s) |
 
 Design rules for the Dev domain:
@@ -250,11 +302,11 @@ Signal assignment:
 | 0 | I2C SCL | 8 | P4 UART0 TX (console) |
 | 1 | I2C SDA | 9 | C5 UART0 TX |
 | 2 | GPS PPS | 10 | User UART TX (P4 → CP2102N) |
-| 3 | GPS TX → P4 | 11 | P4 → GPS TX |
+| 3 | GPS TX → P4 | 11 | m1421 SD27 (UAT activity) |
 | 4 | m1421 UART TX | 12 | PM ALERT (wired-OR) |
 | 5 | m1421 UART RX (after mux) | 13 | Charger INT / PD ALERT |
 | 6 | m1421 SYNC | 14 | P4 debug GPIO A (firmware timing marker) |
-| 7 | m1421 DIO26 (status) | 15 | P4 debug GPIO B (firmware timing marker) |
+| 7 | m1421 SD26 (1090 activity) | 15 | P4 debug GPIO B (firmware timing marker) |
 
 ## ESP32-P4 GPIO budget (estimate)
 
@@ -271,7 +323,7 @@ not counted here. Slow outputs (load-switch enables, resets) move to a
 | Interrupts: touch, charger + PD (wired-OR), PM ALERT, expander INT | 4 |
 | LCD backlight PWM | 1 |
 | GPS UART + PPS | 3 |
-| m1421 UART3 + SYNC | 3 |
+| m1421 UART3 + SYNC (input to the module) | 3 |
 | UART0 console | 2 |
 | UART1 user | 2 |
 | USB-A eFuse FAULT | 1 |
@@ -293,8 +345,8 @@ resets must stay separate.
 |------|-----|------------|
 | AIS SDR decode load on the P4 | DDC + AIS demod of one 1.6–2.4 MS/s stream | Profile on the reference board with 1 RTL-SDR |
 | esp_hosted with C5 over SDIO | Newer slave target | C5 DevKit + reference board |
-| m1421 SWD via RP2040 debugprobe | Must match the ADSBee Dev Kit flow | Use the Dev Kit before committing the circuit |
-| m1421 SYNC direction | Symbol and article disagree | Check the m1421 datasheet / ask Pants for Birds |
+| m1421 Dev-port and P4 update paths | Programmer firmware must run with auto-reflash off; the P4 needs a ROM bootloader client | Dev Kit: run the Programmer in pass-through, then flash the module from the reference board's P4 over UART |
+| SYNC held high during a reset | Module boots into the bootloader instead of the app | P4 drives SYNC low before any reset. `AT+WATCHDOG=0` for long sleeps |
 | RF: 1090/978 MHz vs GPS L1 vs Wi-Fi 2.4/5 GHz on one board | Desense | Keep the carrier's RF layout. Separate antennas, shielding/keep-outs |
 | USB-A current | 1–2 SDRs + hub ≈ 0.5–0.8 A | Measure, set the eFuse limit |
 
@@ -315,7 +367,8 @@ resets must stay separate.
 | Ethernet PHY | IP101GRI | LAN8720A | Espressif P4 EV board, ESP-IDF driver |
 | Dev hub | USB2514B | CH334 | 4-port HS hub |
 | Dev UART | FT2232H | CH342 | 2 × UART with DTR/RTS auto-reset |
-| Dev m1421 probe | RP2040 + debugprobe firmware | XDS110 via 10-pin header | Matches the ADSBee Dev Kit |
+| Dev m1421 access | RP2040 + ADSBee 1421 Programmer firmware (auto-reflash off) | FTDI channel with RTS→SYNC, DTR→~SRST | Same as the Dev Kit, works with the ADSBee web console |
+| m1421 JTAG | 10-pin 1.27 mm Cortex header + Segger J-Link | — | Documented CC1314R10 flow |
 | User UART | CP2102N | CH343P (reference) | |
 | GNSS | u-blox MAX-M10S | NEO-M9N | Low power, time pulse |
 | GPIO expander | TCA6408A | TCA9535 | I2C, INT output |

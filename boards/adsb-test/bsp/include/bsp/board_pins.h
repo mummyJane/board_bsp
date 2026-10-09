@@ -58,11 +58,14 @@
 #define BSP_GPS_RX              (-1)    /* GPS TX -> P4 RX */
 #define BSP_GPS_PPS             (-1)
 
-/* ADSBee m1421 (GDL90 / MAVLink / CSBee over UART) */
+/* ADSBee m1421 console (AT commands + GDL90 / Beast / MAVLink / JSON output) */
 #define BSP_M1421_UART_NUM      3
-#define BSP_M1421_TX            (-1)    /* P4 TX -> mux -> m1421 SUBG_UART_RX (pad 20) */
-#define BSP_M1421_RX            (-1)    /* m1421 SUBG_UART_TX (pad 21) -> P4 RX */
-#define BSP_M1421_SYNC          (-1)    /* m1421 SYNC (pad 28), direction TBC */
+#define BSP_M1421_BAUD          1000000 /* module default; it sends "UU" at boot for autobaud */
+#define BSP_M1421_TX            (-1)    /* P4 TX -> mux -> m1421 SURX (pad 20) */
+#define BSP_M1421_RX            (-1)    /* m1421 SUTX (pad 21) -> P4 RX */
+#define BSP_M1421_SYNC          (-1)    /* P4 output -> m1421 SYNC (pad 28), active high:
+                                         * high at reset = ROM bootloader, high at run time = sleep.
+                                         * Keep LOW in normal operation and before any reset. */
 
 /* USB-A host power (TPS25200 eFuse) */
 #define BSP_USBA_FAULT          (-1)

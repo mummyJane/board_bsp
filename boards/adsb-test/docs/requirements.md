@@ -35,7 +35,7 @@ hardware exists:
 |----|-------------|-----------|
 | USB-01 | **User** USB-C: USB-PD sink (main power input + battery charging) | Eval (PD sink board) |
 | USB-02 | **User** USB-C data → USB-UART bridge → P4 "user" UART | Eval (USB-UART) |
-| USB-03 | **Dev** USB-C: one cable gives all debug: P4 USB-Serial/JTAG, C5 USB-Serial/JTAG, P4 console UART, C5 UART, m1421 SWD + UART | Partly (P4/C6 USB-JTAG) |
+| USB-03 | **Dev** USB-C: one cable gives all debug: P4 USB-Serial/JTAG, C5 USB-Serial/JTAG, P4 console UART, C5 UART, m1421 console UART with SYNC/RESET control (firmware upload + AT terminal) | Partly (P4/C6 USB-JTAG) |
 | USB-04 | Dev USB debug section is powered from the Dev port and must not back-power the target | No |
 | USB-05 | USB-A host port on the P4 high-speed USB OTG, through an **external hub**: 1 SDR (AIS or similar) required, 2 supported, 4 nice-to-have (powered hub) | Yes, if the reference board's USB OTG port is usable as host |
 | USB-06 | USB-A port has current-limited (≈ 1.5 A), switchable, measured 5 V | Eval |
@@ -71,7 +71,8 @@ hardware exists:
 | ID | Requirement | Ref board |
 |----|-------------|-----------|
 | M14-01 | Footprint for the ADSBee m1421 dual-band (1090 MHz Mode S + 978 MHz UAT) ADS-B receiver module, RF front end copied from the ADSBee 1421 carrier | Eval (ADSBee 1421 Dev Kit) |
-| M14-02 | m1421 SWD/JTAG and UART brought to the Dev USB-C port; 10-pin Cortex debug header as fallback | Eval (Dev Kit) |
+| M14-02 | m1421 console UART with SYNC/RESET control on the Dev USB-C port (ADSBee web console and firmware uploader work unchanged). JTAG on a 10-pin Cortex header for a Segger J-Link | Eval (Dev Kit) |
+| M14-05 | The P4 can update the m1421 firmware in the field via the CC1314 ROM UART bootloader (SYNC + ~SRST + UART3) | Eval (Dev Kit wired to the reference board) |
 | M14-04 | m1421 UART data link (GDL90 / MAVLink / CSBee) to the P4, plus SYNC and RESET | Eval (Dev Kit wired to the reference board) |
 | M14-03 | m1421 supply switched and measured by the power monitor | No |
 

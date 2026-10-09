@@ -8,9 +8,8 @@ the CHANGELOG.
 | # | Question | Current assumption |
 |---|----------|--------------------|
 | Q2a | Does the esp_hosted release we use support the ESP32-C5 as an SDIO slave and host-driven slave OTA? | Yes, to be confirmed in Phase 1 step 1.4 |
-| Q12 | m1421 SYNC: module output or host input? (symbol says output, article says host can sleep the CC1314 with it) | Wire to a P4 GPIO that can be either, plus the LA header |
-| Q13 | m1421 programming: what probe/firmware does the ADSBee 1421 Dev Kit's RP2040 Zero run (debugprobe / CMSIS-DAP)? Can the m1421 also be updated over its UART? | RP2040 debugprobe on Dev hub port 4 |
-| Q14 | Licensing: ADSBee design files are GPL-3.0. OK to keep the copied m1421 symbol/footprint in this MIT repo with attribution? | Kept, attribution in `hardware/kicad/lib/README.md` |
+| Q16 | Can the ADSBee 1421 Programmer firmware's power-up auto-reflash be turned off with a build option, or does it need a small patch? | Patch if needed (GPL-3.0 firmware on the RP2040, kept separate from this repo's MIT code) |
+| Q17 | m1421 module revision we'll buy (Rev D+ has the external SYNC pull-down) | Rev D or later. Our 100 kΩ pull-down covers either |
 | Q15 | Commit the Waveshare schematic PDF to this **public** repo? | Not committed. Kept locally (ignored) |
 | Q8 | GPS antenna: on-board patch or SMA for an external active antenna? | SMA, active antenna with bias |
 | Q10 | Board size / enclosure / mounting to the 7" panel? | Mounts behind the panel, same holes as the reference board |
@@ -28,4 +27,7 @@ the CHANGELOG.
 | Q7 | Dev USB powers the board? | Solder jumper, default open (unchanged) |
 | Q9 | 1090 MHz front end | Done by the m1421 (1090 + 978 MHz) |
 | Q2b | Which C5 module? | **ESP32-C5-WROOM-1-N16R8**: WROOM for more memory, so OTA is possible (a nice-to-have) |
+| Q12 | m1421 SYNC: output or input? | **Input, host-driven** (from the adsbee repo). High at reset = ROM bootloader; high at run time = sleep + LR2021 hand-off; weak pull-down keeps it awake. The official symbol says "output"; our copy is corrected. Activity outputs are SD26 (1090) / SD27 (UAT) |
+| Q13 | m1421 programming | Over its **console UART via the CC1314 ROM bootloader** (SYNC high + reset), no debugger. The Dev Kit's RP2040-Zero runs the open-source ADSBee 1421 Programmer (USB-serial bridge, RTS→SYNC, DTR→~SRST). JTAG uses a Segger J-Link (CC1314R10) |
+| Q14 | Licensing of the m1421 KiCad parts | Taken from **PantsForBirds/kicad-libs, MIT** (licence copied into `hardware/kicad/lib`). The module firmware/schematic are GPL-3.0; none of that code is in this repo |
 | Q11 | LA5016 header | **2×20 keyed header (40-way cable)**. The key-side row is CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is for the LA5032 (future) |
