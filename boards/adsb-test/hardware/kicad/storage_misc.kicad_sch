@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "e23b3a3f-d258-492c-a90d-8ec2e147bf62")
+	(uuid "888296dc-6008-4873-8266-f9ebcd131c0c")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - Storage Misc")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - STORAGE MISC\n\nCOPY FROM REFERENCE BOARD: microSD on P4 SDMMC slot 0 (4-bit), card-detect.\nRESET and BOOT buttons, status LED(s), test points for I2C, PPS, UARTs.\nOptional TCA6408A I2C GPIO expander if the P4 GPIO budget is exceeded."
+	(text_box "DESIGN NOTES - STORAGE MISC\n\nCOPY FROM REFERENCE BOARD: microSD on P4 SDMMC slot 0 (4-bit), card detect.\nRESET and BOOT buttons, status LED(s).\nTCA6408A I2C GPIO expander (INT to P4): EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN, PHY_RST, GPS_RST, M1421_RESET (OD). Consider TCA9535 if LCD/TP resets must be separate."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "5dcf7b29-9122-4144-a737-19335aca0c89")
+		(uuid "165f6940-382e-425a-9acb-32d60be0375c")
 	)
 )

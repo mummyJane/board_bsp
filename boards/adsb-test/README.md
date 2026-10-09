@@ -9,16 +9,18 @@ reference board while ADSB_Test is designed.
 
 ## Features
 
-- ESP32-P4 + ESP32-C6 (Wi-Fi 6 / BLE over SDIO), copied from the reference board
+- ESP32-P4NRW32, copied from the reference board, + **ESP32-C5** dual-band Wi-Fi 6 remote over SDIO (esp_hosted)
+- **ADSBee m1421** dual-band ADS-B receiver (1090 MHz Mode S + 978 MHz UAT), RF front end copied from the ADSBee 1421 carrier
 - 10/100 Ethernet (IP101GRI RMII PHY, RJ45)
 - **User USB-C:** USB-PD sink (main power + charging) and a USB-UART to the P4 user UART
-- **Dev USB-C:** one cable for all debug: P4 + C6 USB-Serial/JTAG, P4 + C6 UARTs, M1421 JTAG + UART
-- **USB-A host** (P4 USB 2.0 HS) for up to 4 SDR receivers
+- **Dev USB-C:** one cable for all debug: P4 + C5 USB-Serial/JTAG, P4 + C5 UARTs (FT2232H), m1421 SWD + UART (RP2040 debugprobe)
+- **USB-A host** (P4 USB 2.0 HS) to an external hub: 1 SDR (AIS etc.), 2 supported, 4 nice-to-have
 - GNSS module with PPS
-- 2S Li-ion battery, buck-boost charger with power path
+- 2S1P 18650 Li-ion (≥ 1 h with everything running), buck-boost charger with power path
 - Voltage + current monitoring on every rail (3 × PAC1954, 12 channels)
 - Same 7" 1024×600 MIPI-DSI display and touch as the reference board
-- Pads for the M1421 (part TBC), with its debug and JTAG on the Dev port
+- microSD (kept from the reference board). Audio, CAN, RS485 and camera dropped
+- Test points on every rail, and a **Kingst LA5016** plug-in header with 16 key digital signals
 
 ## Documents
 
@@ -36,7 +38,7 @@ reference board while ADSB_Test is designed.
 |--------|---------|
 | [bsp/](bsp/) | ESP-IDF BSP component. Pin map in [board_pins.h](bsp/include/bsp/board_pins.h) |
 | [test/](test/) | Test app (Unity menu) |
-| [hardware/kicad/](hardware/kicad/) | KiCad 10 project `ADSB_Test.kicad_pro`. One hierarchical sheet per block, each holding its design notes |
+| [hardware/kicad/](hardware/kicad/) | KiCad 10 project `ADSB_Test.kicad_pro`. One hierarchical sheet per block, each holding its design notes. Project library in [lib/](hardware/kicad/lib/) (m1421 symbol + footprint) |
 
 ## KiCad sheets
 
@@ -48,15 +50,16 @@ reference board while ADSB_Test is designed.
 | 4 | Power Rails | New |
 | 5 | Power Monitor | New |
 | 6 | ESP32-P4 | Copy of reference board |
-| 7 | ESP32-C6 | Copy of reference board |
+| 7 | ESP32-C5 | New (same SDIO wiring as the reference board's C6) |
 | 8 | Ethernet | New (per Espressif P4 Function EV board) |
 | 9 | USB User | New |
 | 10 | USB Dev | New |
 | 11 | USB Host | New |
 | 12 | GPS | New |
 | 13 | Display Touch | Copy of reference board connector |
-| 14 | M1421 | New, part TBC |
-| 15 | Storage Misc (microSD, buttons, LEDs) | Copy of reference board |
+| 14 | M1421 (ADSBee m1421 + RF) | Copy of the ADSBee 1421 carrier |
+| 15 | Storage Misc (microSD, buttons, LEDs, GPIO expander) | Copy of reference board |
+| 16 | Test Debug (LA5016 header, test points) | New |
 
 ## Hardware revisions
 

@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "39836a3e-b14b-41af-83d7-2deae6c25220")
+	(uuid "2dbf1c9c-2e07-46a4-9485-e17b12b92171")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - GPS")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - GPS\n\nu-blox MAX-M10S GNSS. UART -> P4, TIMEPULSE (PPS) -> P4 GPIO (interrupt, time-stamping), RESET_N from P4.\nV_BCKP from supercap/ML1220 for hot start. Active antenna: SMA/u.FL with bias-T + current limit.\nSupply 3V3_GPS (switched, PM3 ch1). Keep RF away from the 1090 MHz SDR area."
+	(text_box "DESIGN NOTES - GPS\n\nu-blox MAX-M10S GNSS. UART -> P4 UART2, TIMEPULSE (PPS) -> P4 GPIO + LA ch2, RESET_N from expander.\nV_BCKP from supercap/ML1220 for hot start. Active antenna: SMA with bias-T + current limit.\nSupply 3V3_GPS (switched, PM3 ch1). Keep L1 RF away from the 1090/978 MHz m1421 front end and Wi-Fi."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "b2fed8d4-7dc3-4c42-a00d-509745dd7514")
+		(uuid "7c3e04b0-57c3-4505-8ef4-de0b2251320d")
 	)
 )

@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "101f2c23-c88a-4080-a2f9-8e003df578f1")
+	(uuid "64fd89bc-7d9e-4d0b-9275-d8e68442f14e")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - USB User")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - USB USER\n\nCP2102N USB-UART on User USB-C D+/D- (self-powered from 3V3_PERIPH, VBUS sense from VBUS_USER via divider).\nTXD/RXD -> P4 UART1 (user UART). Optional RTS/CTS.\nNo auto-reset wiring (user port, not a debug port)."
+	(text_box "DESIGN NOTES - USB USER\n\nCP2102N USB-UART on User USB-C D+/D- (powered from 3V3_PERIPH, VBUS sense from VBUS_USER via divider).\nTXD/RXD -> P4 UART1 (user UART). Optional RTS/CTS.\nUser UART TX also to LA header ch10."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "4b69a55f-ac6b-46d9-8ed3-7bd058c76db6")
+		(uuid "41b2e763-d9c9-4e32-8633-1065e72adccb")
 	)
 )

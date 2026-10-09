@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "69502b4e-459c-4336-ba09-6f231be71d48")
+	(uuid "c14a8190-6518-4454-b035-32318fd95a10")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - Power Input")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - POWER INPUT\n\nUser USB-C receptacle (sink).\nCC1/CC2 -> STUSB4500 PD sink (NVM: PDO1 5V, PDO2 9V, PDO3 15V, 3A). I2C + ALERT to P4.\nVBUS -> TVS -> VBUS_USER (shunt, PM1 ch1) -> charger input.\nD+/D- -> ESD -> CP2102N (sheet USB User).\nOptional solder jumper: Dev VBUS -> VSYS via ideal diode (default OPEN)."
+	(text_box "DESIGN NOTES - POWER INPUT\n\nUser USB-C receptacle (sink).\nCC1/CC2 -> STUSB4500 PD sink (NVM: PDO1 5V, PDO2 9V, PDO3 15V 3A preferred). I2C + ALERT to P4.\nFirmware sets BQ25792 input current limit from the negotiated PDO.\nVBUS -> TVS -> VBUS_USER (shunt, PM1 ch1) -> charger input.\nD+/D- -> ESD -> CP2102N (sheet USB User).\nOptional solder jumper: Dev VBUS -> VSYS via ideal diode (default OPEN)."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "5e69290c-5b8c-4b52-a0e4-63e5c7d79626")
+		(uuid "8d12030f-a15e-4a20-8d89-4f378bc60d4a")
 	)
 )

@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "f89c4e62-10a7-4c4e-b3ff-e02ae3ed5cfe")
+	(uuid "569f9e94-ddeb-444a-bb84-38464404fb8b")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - Power Rails")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - POWER RAILS\n\nFrom VSYS:\n- 5V buck >=4A (part TBC): -> 5V_SDR via TPS25200 eFuse (sheet USB Host), -> 5V_LCD load switch.\n- 3V3 buck TPS62933 3A: split into branches, each with shunt (+ load switch where noted):\n  3V3_P4, 3V3_C6, 3V3_ETH (switch), 3V3_GPS (switch), 3V3_PERIPH.\n- M1421 supply (voltage TBC, switch).\nTest point + LED on every rail. 0R links between blocks for staged bring-up."
+	(text_box "DESIGN NOTES - POWER RAILS\n\nFrom VSYS:\n- 5V buck 3A (part TBC): -> 5V_SDR via TPS25200 eFuse 1.5A (sheet USB Host), -> 5V_LCD load switch.\n- 3V3 buck TPS62933 3A: branches each with shunt (+ switch where noted):\n  3V3_P4, 3V3_C5, 3V3_ETH (sw), 3V3_GPS (sw), 3V3_M1421 (sw), 3V3_PERIPH.\n- P4 core supplies (VDD_HP buck etc.): COPY FROM REFERENCE BOARD (MP1605/MP1658/RT9193 circuit).\nSwitch enables from TCA6408A expander. Test point on EVERY rail + 0R link per branch for staged bring-up."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "32f13740-c3b8-4113-986d-31adcb6ddc8c")
+		(uuid "072f976d-cfa7-4bdf-95b3-f2cb1b173811")
 	)
 )

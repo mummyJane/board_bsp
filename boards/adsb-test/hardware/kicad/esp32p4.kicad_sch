@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "beb0a555-03d2-4f0f-96ac-17d5dafe565e")
+	(uuid "238123e5-cb86-42ec-b0f9-c1adef4efbbf")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - ESP32-P4")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - ESP32-P4\n\nCOPY FROM REFERENCE BOARD (Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C):\nESP32-P4, flash, PSRAM config, 40 MHz crystal, decoupling, internal LDO caps, EN/reset RC, BOOT strap + button.\nPin assignments are owned by bsp/include/bsp/board_pins.h. GPIO budget in docs/architecture.md (~52/55)."
+	(text_box "DESIGN NOTES - ESP32-P4\n\nCOPY FROM REFERENCE BOARD (Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C, vendor PDF):\nESP32-P4NRW32 (32 MB PSRAM in package), GD25Q256EYIGR 32 MB flash, 40 MHz crystal, decoupling, VDD_HP buck, LDO caps, EN/reset, BOOT strap + button.\nPin assignments owned by bsp/include/bsp/board_pins.h. GPIO budget in docs/architecture.md (~44/55 + TCA6408A).\nUARTs: UART0 console (Dev), UART1 user, UART2 GPS, UART3 m1421. 2 debug GPIOs to LA header."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "95588662-7f2f-46ee-9762-72b8c0419d78")
+		(uuid "755abbf0-680c-4778-8d47-16b76cbf7cae")
 	)
 )

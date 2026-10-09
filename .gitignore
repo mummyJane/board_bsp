@@ -82,3 +82,6 @@ _autosave-*
 *.swp
 .DS_Store
 Thumbs.db
+
+# Vendor documents (not ours to redistribute in a public repo) - keep locally
+**/hardware/vendor/

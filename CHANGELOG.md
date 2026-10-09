@@ -8,6 +8,30 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-09
+
+### Changed
+- ADSB_Test: co-processor changed from ESP32-C6 to **ESP32-C5** (dual-band Wi-Fi remote,
+  same SDIO/esp_hosted host side).
+- ADSB_Test: "M1421" identified as the **ADSBee m1421** dual-band ADS-B module. Pad-level
+  integration plan (UART + SYNC + RESET to the P4, SWD + UART to the Dev port via an RP2040
+  debugprobe, RF combiner copied from the ADSBee 1421 carrier).
+- ADSB_Test: USB-A now targets 1 SDR (AIS etc.), 2 supported, 4 nice-to-have via an external
+  hub. eFuse limit 1.5 A, 5 V buck 3 A. Dev bridge FT4232H changed to FT2232H.
+- ADSB_Test: battery 2S1P 18650 sized from a new power budget (≥ 1 h with everything running).
+- ADSB_Test: slow control lines moved to a TCA6408A I2C GPIO expander (P4 GPIO use ≈ 44/55).
+- ADSB_Test: audio confirmed dropped, microSD confirmed kept.
+
+### Added
+- ADSB_Test KiCad project library: ADSBee m1421 symbol + footprint and MiniCircuits SCN-2-11
+  symbol + footprint, from the ADSBee 1421 carrier design (GPL-3.0, attribution in `lib/README.md`).
+- ADSB_Test "Test Debug" sheet: 2×10 header for the Kingst LA5016 (16 signals) and test points
+  on every rail. Board pin map updated to match.
+- Reference board: key parts recorded from the Waveshare schematic.
+
+### Changed (repository)
+- `hardware/vendor/` folders are git-ignored (the repo is public).
+
 ## [0.3.0] - 2026-10-09
 
 ### Added
@@ -47,7 +71,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/mummyJane/board_bsp/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mummyJane/board_bsp/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mummyJane/board_bsp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mummyJane/board_bsp/releases/tag/v0.1.0

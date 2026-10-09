@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "8a2a0429-4e00-44a2-98a4-ed4893f8686c")
+	(uuid "9e85580b-eebb-46c8-829d-875149cbc7bc")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - USB Dev")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - USB DEV\n\nDEV DOMAIN - powered from Dev USB-C VBUS via LDO (3V3_DEV). Must not back-power target.\nDev USB-C receptacle (UFP, 5.1k Rd on CC) -> ESD -> USB2514B 4-port hub (24 MHz xtal).\n  Port1: P4 USB-Serial/JTAG (FS)\n  Port2: C6 USB-Serial/JTAG\n  Port3: FT4232H (93LC56 EEPROM)\n  Port4: spare / M1421 USB (TBC)\nFT4232H: A=M1421 JTAG (MPSSE), B=M1421 UART, C=P4 UART0 + DTR/RTS auto-reset, D=C6 UART0 + auto-reset.\nAll FT->target signals through SN74LVC2T45-type buffers powered from target side (B side = target rail)."
+	(text_box "DESIGN NOTES - USB DEV\n\nDEV DOMAIN - powered from Dev USB-C VBUS via LDO (3V3_DEV). Must not back-power target.\nDev USB-C receptacle (UFP, 5.1k Rd on CC) -> ESD -> USB2514B 4-port hub (24 MHz xtal).\n  Port1: P4 USB-Serial/JTAG\n  Port2: C5 USB-Serial/JTAG\n  Port3: FT2232H (A = P4 UART0 + DTR/RTS auto-reset, B = C5 UART0 + auto-reset)\n  Port4: RP2040 + QSPI flash running debugprobe (CMSIS-DAP): SWD + UART to m1421, GPIO = m1421 UART mux select, RESET\nAll Dev->target signals through SN74LVC2T45-type buffers powered from the target side."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "dd0061da-6acc-420e-b813-7cbc3224cfd0")
+		(uuid "db478809-4be5-425b-bd40-5b465b383b8d")
 	)
 )

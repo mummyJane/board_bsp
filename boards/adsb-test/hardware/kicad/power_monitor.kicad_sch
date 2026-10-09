@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "2ab2f160-0abd-4292-84c5-a02730e43cdf")
+	(uuid "53dfe7b6-2af1-47f7-b7bc-ef83b2ef1ece")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - Power Monitor")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - POWER MONITOR\n\n3 x PAC1954 (4-ch V+I, energy accumulators) on shared I2C, ALERT wired-OR to P4.\nPM1: VBUS_USER, VBAT, VSYS, 5V_SDR\nPM2: 5V_LCD, 3V3_P4, 3V3_C6, 3V3_ETH\nPM3: 3V3_GPS, M1421, 3V3_PERIPH, spare\nKelvin sense from each shunt. I2C addresses set by ADDRSEL resistor (TBC)."
+	(text_box "DESIGN NOTES - POWER MONITOR\n\n3 x PAC1954 (4-ch V+I, energy accumulators) on shared I2C, ALERT wired-OR to P4.\nPM1: VBUS_USER, VBAT, VSYS, 5V_SDR\nPM2: 5V_LCD, 3V3_P4, 3V3_C5, 3V3_ETH\nPM3: 3V3_GPS, 3V3_M1421, 3V3_PERIPH, 5V total\nKelvin sense from each shunt + Kelvin test pads. I2C addresses set by ADDRSEL resistor (TBC)."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "5bfc1d38-d2a8-44b0-a82d-13b41dc82862")
+		(uuid "4c280932-9999-49a0-bcbe-18ef8c291c0a")
 	)
 )

@@ -1,0 +1,34 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "4123a73d-87a5-4866-8895-a005c4180a22")
+	(paper "A3")
+	(title_block
+		(title "ADSB_Test - Test Debug")
+		(date "2026-10-09")
+		(rev "A")
+		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
+	)
+	(lib_symbols)
+	(text_box "DESIGN NOTES - TEST DEBUG\n\nLOGIC ANALYSER HEADER for Kingst LA5016: 2x10 2.54 mm, 16 signals + 4 GND. Pin order TBC to match LA5016 cable.\nEach signal via 0R/100R series resistor at the header (short stub, can be cut).\nCH0 I2C SCL | CH1 I2C SDA | CH2 GPS PPS | CH3 GPS TX->P4 | CH4 m1421 TX | CH5 m1421 RX (after mux) | CH6 m1421 SYNC | CH7 m1421 DIO26\nCH8 P4 UART0 TX | CH9 C5 UART0 TX | CH10 User UART TX | CH11 P4->GPS TX | CH12 PM ALERT | CH13 CHG INT/PD ALERT | CH14 P4 DBG_A | CH15 P4 DBG_B\nTEST POINTS: every power rail (VBUS_USER, VBAT, VSYS, 5V, 5V_SDR, 5V_LCD, all 3V3 branches, P4 core rails, 3V3_DEV), GND test points near each, Kelvin pads on all PAC1954 shunts."
+		(exclude_from_sim no)
+		(at 20 20 0)
+		(size 250 90)
+		(margins 1.5 1.5 1.5 1.5)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 2 2)
+			)
+			(justify left top)
+		)
+		(uuid "57b72301-76c4-4585-a449-005cf9158034")
+	)
+)

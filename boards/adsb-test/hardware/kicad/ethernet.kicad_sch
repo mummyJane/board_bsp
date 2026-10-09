@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "5fd2043c-e0c1-46b0-be5a-652ed8d1d382")
+	(uuid "9a34c02f-c121-467a-adb2-5d115c2953ed")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - Ethernet")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - ETHERNET\n\nIP101GRI 10/100 PHY on P4 EMAC (RMII): TXD0/1, TX_EN, RXD0/1, CRS_DV, REF_CLK (50 MHz), MDC, MDIO, PHY_RST.\nRJ45 with integrated magnetics + LEDs. ESD on MDI.\nSupply 3V3_ETH (switched, PM2 ch4). Follow ESP32-P4-Function-EV-Board reference."
+	(text_box "DESIGN NOTES - ETHERNET\n\nNEW (reference board has no Ethernet).\nIP101GRI 10/100 PHY on P4 EMAC (RMII): TXD0/1, TX_EN, RXD0/1, CRS_DV, REF_CLK (50 MHz), MDC, MDIO. PHY_RST from expander.\nRJ45 with integrated magnetics + LEDs. ESD on MDI.\nSupply 3V3_ETH (switched, PM2 ch4). Follow ESP32-P4-Function-EV-Board reference."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "54a9e1b4-1299-4695-88b8-60746611982e")
+		(uuid "15e22ff1-9f68-4dc4-be07-636ff7c4052b")
 	)
 )

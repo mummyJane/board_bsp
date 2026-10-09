@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "b55ba596-a4ac-4c22-acea-2f3c6105aa09")
+	(uuid "b6f5c551-3986-47ab-864e-139a3fb77613")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - USB Host")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - USB HOST\n\nUSB-A receptacle on P4 USB 2.0 HS OTG (host mode). 90R diff pair, ESD (low-cap).\nVBUS from 5V_SDR via TPS25200 eFuse (limit ~2.5 A, set by resistor), EN + FAULT to P4.\nShunt for PM1 ch4 is upstream of the eFuse.\nBulk cap >=120 uF on VBUS for hub/SDR inrush.\nTarget: up to 4 RTL-SDR receivers via external hub (see risks in docs/architecture.md)."
+	(text_box "DESIGN NOTES - USB HOST\n\nUSB-A receptacle on P4 USB 2.0 HS OTG (host). 90R diff pair, low-cap ESD.\nVBUS from 5V_SDR via TPS25200 eFuse (limit ~1.5 A), EN from expander, FAULT to P4.\nShunt for PM1 ch4 upstream of the eFuse. Bulk cap >=120 uF on VBUS.\nExternal hub: 1 SDR (AIS etc.) typical, 2 supported, 4 nice-to-have with a powered hub."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "941f73ac-f263-4968-a1b3-9f1c6e32e7eb")
+		(uuid "9b2db20e-d3ee-4747-92ff-133657455993")
 	)
 )

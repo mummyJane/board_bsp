@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "37ab646c-ebae-4fde-9ec2-cf76501004da")
+	(uuid "3b032a80-3dd0-4bb8-89dc-9a5fc12a6e9a")
 	(paper "A3")
 	(title_block
 		(title "ADSB_Test - M1421")
@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - M1421\n\nPADS FOR M1421 - PART TBC (see docs/open-questions.md Q1).\nPlaceholder interface: VCC, VIO, GND, JTAG (TCK, TMS, TDI, TDO, nTRST, nSRST), debug UART TX/RX, RESET, BOOT.\nJTAG + UART -> buffers -> FT4232H ch A/B (sheet USB Dev).\nData link to P4 TBC (UART/SPI). Supply M1421 rail (switched, PM3 ch2).\n10-pin Cortex/ARM or 2x7 JTAG header footprint as DNP fallback."
+	(text_box "DESIGN NOTES - M1421\n\nADSBee m1421 dual-band ADS-B module (lib ADSB_Test:PantsForBirds_ADSBee_m1421). RF + support COPIED FROM ADSBee 1421 CARRIER.\nVCC pads 1,4,19,22 = 3V3_M1421 (switched, PM3 ch2). GND pads 6,18,23,25,27,34,36,MP with via stitching.\nUART: TX(21) -> P4 UART3 RX + debugprobe RX. RX(20) <- 74LVC1G157 mux (default P4 TX, debugprobe TX when selected).\nSYNC(28) -> P4 GPIO + LA ch6 (direction TBC). ~SUBG_RESET(17): open-drain from expander + debugprobe + header pin 10.\nJTAG/SWD: TMSC(8)=SWDIO, TCKC(9)=SWCLK, TDO(10), TDI(11) -> debugprobe + 2x5 1.27mm Cortex header (as carrier).\nLEDs: DIO26(15) red, DIO27(16) green (as carrier). DIO23-25, LR_*, COPRO_SPI: test pads only. LR_RF_HF(35): NC.\nRF: SUBG_RF(24) + LR_RF_LF(26) -> SCN-2-11+ combiner (100R across ports) -> ESD7351 -> SMA. Copy carrier CPW geometry."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
@@ -29,6 +29,6 @@
 			)
 			(justify left top)
 		)
-		(uuid "e1699715-56c6-46c9-9e58-b7cfca0a94b6")
+		(uuid "c1050f60-d2e6-4e32-b88c-efc478c69078")
 	)
 )
