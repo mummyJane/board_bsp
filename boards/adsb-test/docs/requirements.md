@@ -19,7 +19,7 @@ hardware exists:
 | ID | Requirement | Ref board |
 |----|-------------|-----------|
 | CORE-01 | ESP32-P4 main processor, same flash/PSRAM configuration as the reference board | Yes |
-| CORE-02 | ESP32-C5 dual-band Wi-Fi 6 co-processor over SDIO (esp_hosted / esp_wifi_remote), same host-side wiring as the reference board's C6 | Yes (API on C6), Eval (C5 DevKit) |
+| CORE-02 | ESP32-C5-WROOM-1-N16R8 dual-band Wi-Fi 6 co-processor over SDIO (esp_hosted / esp_wifi_remote), same host-side wiring as the reference board's C6 | Yes (API on C6), Eval (C5 DevKit) |
 | CORE-03 | BSP and test firmware shared with the reference board where hardware is the same | Yes |
 
 ## Connectivity
@@ -89,6 +89,6 @@ Dropped from the reference board: audio, CAN, RS485, CSI camera.
 | ID | Requirement |
 |----|-------------|
 | TEST-01 | Test points on every power rail, Kelvin pads on every monitor shunt |
-| TEST-04 | 16 key digital signals routed to one 2×10 header that the Kingst LA5016 cable plugs straight into (channel map in architecture.md) |
+| TEST-04 | 16 key digital signals on a 2×20 keyed header that the Kingst LA5016 40-way cable plugs straight into. Second row reserved for an LA5032. LA PWM outputs to test pads (pin-out in architecture.md) |
 | TEST-02 | Each block can be brought up independently (solder jumpers / 0 Ω links between blocks) |
 | TEST-03 | Every requirement has a test in `boards/adsb-test/test` or a manual step in [test-plan.md](test-plan.md) |

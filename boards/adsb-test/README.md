@@ -9,7 +9,7 @@ reference board while ADSB_Test is designed.
 
 ## Features
 
-- ESP32-P4NRW32, copied from the reference board, + **ESP32-C5** dual-band Wi-Fi 6 remote over SDIO (esp_hosted)
+- ESP32-P4NRW32, copied from the reference board, + **ESP32-C5-WROOM-1-N16R8** dual-band Wi-Fi 6 remote over SDIO (esp_hosted), room for OTA
 - **ADSBee m1421** dual-band ADS-B receiver (1090 MHz Mode S + 978 MHz UAT), RF front end copied from the ADSBee 1421 carrier
 - 10/100 Ethernet (IP101GRI RMII PHY, RJ45)
 - **User USB-C:** USB-PD sink (main power + charging) and a USB-UART to the P4 user UART
@@ -20,7 +20,7 @@ reference board while ADSB_Test is designed.
 - Voltage + current monitoring on every rail (3 × PAC1954, 12 channels)
 - Same 7" 1024×600 MIPI-DSI display and touch as the reference board
 - microSD (kept from the reference board). Audio, CAN, RS485 and camera dropped
-- Test points on every rail, and a **Kingst LA5016** plug-in header with 16 key digital signals
+- Test points on every rail, and a 2×20 keyed header for the **Kingst LA5016** cable: 16 key digital signals + PWM outputs. Second row reserved for an LA5032
 
 ## Documents
 

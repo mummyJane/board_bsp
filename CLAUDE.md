@@ -21,7 +21,8 @@ is derived from it.
 - Hardware: KiCad 10, project in `boards/<board>/hardware/kicad/`, local libs via `${KIPRJMOD}`.
 - Shared code goes in `common/components/`.
 - Every board: test point on every power rail, Kelvin pads on current shunts, and key
-  digital signals on a 2x10 header for the user's Kingst LA5016 logic analyser.
+  digital signals on a 2x20 keyed header for the user's Kingst LA5016 logic analyser
+  (key-side row: CH0-7, GND, CH8-15, GND, PWM1, PWM2; other row reserved for LA5032).
 - Vendor documents go in `boards/<board>/hardware/vendor/` (git-ignored, public repo).
 - Third-party KiCad parts go in the board's `hardware/kicad/lib/` with source + licence in its README.
 

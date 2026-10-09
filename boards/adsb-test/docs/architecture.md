@@ -28,7 +28,7 @@ flowchart LR
   RAILS -.->|shunts| PM[Power monitors<br/>3x PAC1954]
 
   P4[ESP32-P4NRW32]
-  C5[ESP32-C5<br/>module]
+  C5[ESP32-C5-WROOM-1<br/>N16R8]
   P4 <-->|SDIO esp_hosted| C5
   P4 <-->|RMII| PHY[IP101GRI + RJ45]
   P4 <-->|USB HS OTG| USBA[USB-A host<br/>ext. hub, 1-2 SDR]
@@ -61,7 +61,7 @@ Facts below are from the Waveshare schematic
 | SoC | ESP32-P4NRW32 (32 MB in-package PSRAM) | Same |
 | Flash | GD25Q256EYIGR (32 MB) | Same |
 | Core supplies | MP1605 / MP1658 bucks, RT9193 LDOs | Same circuit for the P4 core rails (VDD_HP buck etc.) |
-| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5** module (dual-band Wi-Fi 6). Same SDIO wiring and esp_hosted host side |
+| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM). Same SDIO wiring and esp_hosted host side |
 | USB-UART | CH343P | Moves to the Dev port (FT2232H) and User port (CP2102N) |
 | Battery | ETA6098 1S charger, RTC battery | Replaced by 2S BQ25792 power path. RTC battery kept if used |
 | Display + touch | 7" MIPI-DSI connector | Same connector and pin-out |
@@ -83,7 +83,15 @@ Facts below are from the Waveshare schematic
   datasheet, not a copy of the C6 sheet.
 - **Testing before hardware:** the reference board has a C6, so the Wi-Fi
   remote API is tested there. C5-specific behaviour (5 GHz) is tested with an
-  ESP32-C5 DevKit running esp_hosted, wired to the reference board.
+  ESP32-C5 DevKit running esp_hosted, wired to the reference board. The DevKit
+  uses the same N16R8 module.
+- **Memory and OTA:** 16 MB flash allows a factory image plus two OTA slots for
+  the C5 slave firmware. OTA is a nice-to-have: the P4 can push new C5 firmware
+  over SDIO (esp_hosted host-driven slave OTA) or the C5 can be reflashed over
+  the Dev port. 8 MB PSRAM gives headroom for larger Wi-Fi buffers.
+- **Antenna:** WROOM-1 has a PCB antenna and needs the module's antenna
+  keep-out at the board edge. The WROOM-1U variant (u.FL) is an option if the
+  enclosure or RF crowding needs an external antenna.
 
 ## ADSBee m1421 integration
 
@@ -212,11 +220,30 @@ Design rules for the Dev domain:
 
 - Every power rail gets a test point (and a 0 Ω link for staged bring-up).
 - Every PAC1954 shunt gets Kelvin test pads.
-- Key digital signals go to **one 2×10 2.54 mm header (16 signals + 4 GND)**
-  that the **Kingst LA5016** cable plugs straight into. Pin order is to be
-  matched to the LA5016 harness (open question Q11).
+- Key digital signals go to **one 2×20 2.54 mm keyed box header** that the
+  **Kingst LA5016** 40-way cable plugs straight into. The LA5016 uses only the
+  row on the key side: CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is
+  NC on the LA5016 apart from 2 GND. It's reserved for the LA5032
+  (CH16–31) as a future upgrade.
+- **PWM1 / PWM2** are outputs from the analyser. They go to test pads, and
+  PWM1 can be linked by a DNP 0 Ω to the GPS PPS net to simulate PPS without a
+  GPS fix.
 - Each signal is tapped through a 0 Ω/100 Ω series resistor at the header.
   That keeps stubs short and lets a misbehaving channel be cut.
+
+Header pin-out. The signal row is the key-side row, using the odd pins. Check
+pin 1 against the cable's triangle mark before layout.
+
+| Pin | LA5016 | Pin | LA5016 (row 2) |
+|-----|--------|-----|----------------|
+| 1–15 (odd) | CH0–CH7 | 2–16 (even) | NC (LA5032 reserved) |
+| 17 | GND | 18 | GND |
+| 19–33 (odd) | CH8–CH15 | 20–34 (even) | NC (LA5032 reserved) |
+| 35 | GND | 36 | GND |
+| 37 | PWM1 (LA output) | 38 | NC |
+| 39 | PWM2 (LA output) | 40 | NC |
+
+Signal assignment:
 
 | LA ch | Signal | LA ch | Signal |
 |-------|--------|-------|--------|
@@ -277,7 +304,7 @@ resets must stay separate.
 |----------|----------|--------------|--------|
 | ADS-B receiver | ADSBee m1421 | — | User choice. Dual-band, < 60 mW, UART |
 | ADS-B RF combiner | MiniCircuits SCN-2-11+ | — | As on the ADSBee 1421 carrier |
-| Co-processor | ESP32-C5 module (C5-WROOM-1 or MINI class, TBC) | ESP32-C6-MINI-1 (reference) | Dual-band, esp_hosted |
+| Co-processor | ESP32-C5-WROOM-1-N16R8 | -1U (u.FL) variant; N8R8 | Dual-band, esp_hosted, room for OTA. Same module as the C5 DevKit |
 | PD sink | STUSB4500 | AP33772S, CH224K | Standalone (NVM), I2C status |
 | Charger | BQ25792 | MP2762A | 1–4 cell buck-boost, power path, ADC |
 | Battery | 2S1P 18650 ≥ 3000 mAh, protected | 2S2P | ≈ 21.6 Wh, 1.5–2.7 h |

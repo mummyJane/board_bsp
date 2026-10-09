@@ -8,6 +8,15 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-09
+
+### Changed
+- ADSB_Test: C5 module fixed as **ESP32-C5-WROOM-1-N16R8** (16 MB flash / 8 MB PSRAM). Room for
+  C5 OTA slots, same module as the C5 DevKit.
+- ADSB_Test: LA header changed to a **2×20 keyed box header** matching the Kingst LA5016 40-way
+  cable (key-side row: CH0–7, GND, CH8–15, GND, PWM1, PWM2). The second row is reserved for an LA5032.
+  LA PWM1 can simulate GPS PPS via a DNP link.
+
 ## [0.4.0] - 2026-10-09
 
 ### Changed
@@ -71,7 +80,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/mummyJane/board_bsp/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/mummyJane/board_bsp/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mummyJane/board_bsp/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mummyJane/board_bsp/compare/v0.1.0...v0.2.0
