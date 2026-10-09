@@ -10,7 +10,7 @@ Current version: see [VERSION](VERSION) · History: see [CHANGELOG.md](CHANGELOG
 | Board | Folder | Status |
 |-------|--------|--------|
 | Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C (reference / test board) | [boards/esp32-p4-wifi6-touch-lcd-7b](boards/esp32-p4-wifi6-touch-lcd-7b/) | Bring-up |
-| Custom board derived from the above | _not started_ (copy [boards/_template](boards/_template/)) | Planned |
+| ADSB_Test — ESP32-P4 ADS-B test board derived from the above | [boards/adsb-test](boards/adsb-test/) | Rev A design (requirements / architecture) |
 
 The Waveshare board is used to develop and validate the BSP and test code. The
 next (custom) board reuses its design as a starting point, so everything proven

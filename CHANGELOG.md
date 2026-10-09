@@ -8,6 +8,21 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-09
+
+### Added
+- New board **ADSB_Test** (`boards/adsb-test`), derived from the reference board:
+  - Requirements, architecture (block diagram, power tree, power-monitor
+    channel map, USB topology, GPIO budget, risks, proposed parts), open
+    questions, two-phase test plan and bring-up log.
+  - KiCad 10 project `ADSB_Test` with 14 hierarchical sheets, each holding
+    its design notes. ERC clean (no components yet).
+  - BSP component and test app. `board_pins.h` lists every planned signal
+    (all unassigned). Test app builds with ESP-IDF v6.1.
+
+### Changed
+- Reference board BSP component version moved to 0.3.0, in step with the project.
+
 ## [0.2.0] - 2026-10-09
 
 ### Changed
@@ -32,6 +47,7 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/mummyJane/board_bsp/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mummyJane/board_bsp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mummyJane/board_bsp/releases/tag/v0.1.0

@@ -1,0 +1,34 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "39836a3e-b14b-41af-83d7-2deae6c25220")
+	(paper "A3")
+	(title_block
+		(title "ADSB_Test - GPS")
+		(date "2026-10-09")
+		(rev "A")
+		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
+	)
+	(lib_symbols)
+	(text_box "DESIGN NOTES - GPS\n\nu-blox MAX-M10S GNSS. UART -> P4, TIMEPULSE (PPS) -> P4 GPIO (interrupt, time-stamping), RESET_N from P4.\nV_BCKP from supercap/ML1220 for hot start. Active antenna: SMA/u.FL with bias-T + current limit.\nSupply 3V3_GPS (switched, PM3 ch1). Keep RF away from the 1090 MHz SDR area."
+		(exclude_from_sim no)
+		(at 20 20 0)
+		(size 250 90)
+		(margins 1.5 1.5 1.5 1.5)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 2 2)
+			)
+			(justify left top)
+		)
+		(uuid "b2fed8d4-7dc3-4c42-a00d-509745dd7514")
+	)
+)

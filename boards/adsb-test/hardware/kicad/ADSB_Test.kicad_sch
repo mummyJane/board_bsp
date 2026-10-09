@@ -1,0 +1,669 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "72f1bc5b-0804-40f1-ac08-aeea898ba754")
+	(paper "A3")
+	(title_block
+		(title "ADSB_Test - Top level")
+		(date "2026-10-09")
+		(rev "A")
+		(comment 1 "ESP32-P4 ADS-B test board, derived from Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C")
+	)
+	(lib_symbols)
+	(text_box "ADSB_Test Rev A - hierarchy overview\nESP32-P4 + ESP32-C6, Ethernet, User USB-C (PD sink + user UART), Dev USB-C (hub: P4/C6 USB-JTAG, FT4232H UARTs + M1421 JTAG),\nUSB-A host for up to 4 SDRs, GPS, 2S battery + charger, V/I monitoring on every rail, 7in MIPI-DSI display + touch, M1421 pads.\nDocs: boards/adsb-test/docs (requirements, architecture, open questions, test plan)."
+		(exclude_from_sim no)
+		(at 20 20 0)
+		(size 380 22)
+		(margins 1.5 1.5 1.5 1.5)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left top)
+		)
+		(uuid "78d063a4-ddc9-41b0-9d96-3348cca996eb")
+	)
+	(sheet
+		(at 125 189)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "0c426186-6038-4a6f-b863-7ea9fd80430f")
+		(property "Sheetname" "Storage Misc"
+			(at 125 188.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "storage_misc.kicad_sch"
+			(at 125 214.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "15")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 315 146)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "0f385d8e-0071-4f06-8fad-9024f0996d62")
+		(property "Sheetname" "Display Touch"
+			(at 315 145.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "display_touch.kicad_sch"
+			(at 315 171.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "13")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 146)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "1b96785c-bab9-4b38-8e16-58243f39444e")
+		(property "Sheetname" "USB Dev"
+			(at 30 145.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "usb_dev.kicad_sch"
+			(at 30 171.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "10")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 103)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "2fb4673c-2677-4e23-8490-5e27d3e7f979")
+		(property "Sheetname" "ESP32-P4"
+			(at 30 102.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "esp32p4.kicad_sch"
+			(at 30 128.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 125 103)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "3a3316c1-3f6c-44dc-8dff-8cddd1a64c08")
+		(property "Sheetname" "ESP32-C6"
+			(at 125 102.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "esp32c6.kicad_sch"
+			(at 125 128.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 125 60)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "3da670d3-16cc-4604-a9fb-f61aed8d7558")
+		(property "Sheetname" "Charger Battery"
+			(at 125 59.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "charger_battery.kicad_sch"
+			(at 125 85.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 315 60)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "5c89f5e0-04cb-420c-9923-1351453e666e")
+		(property "Sheetname" "Power Monitor"
+			(at 315 59.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power_monitor.kicad_sch"
+			(at 315 85.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 220 146)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7f52561a-f371-41f6-a1b8-274ca0977c7a")
+		(property "Sheetname" "GPS"
+			(at 220 145.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "gps.kicad_sch"
+			(at 220 171.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "12")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 60)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "8ee70c84-261e-4c8c-a82d-a1cdba93035a")
+		(property "Sheetname" "Power Input"
+			(at 30 59.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power_input.kicad_sch"
+			(at 30 85.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 220 60)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "a01816be-dc15-4654-b180-f205e6dbe611")
+		(property "Sheetname" "Power Rails"
+			(at 220 59.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power_rails.kicad_sch"
+			(at 220 85.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 125 146)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "b18e04f4-b105-45de-b293-befd794d0717")
+		(property "Sheetname" "USB Host"
+			(at 125 145.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "usb_host.kicad_sch"
+			(at 125 171.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "11")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 315 103)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "c059bf22-829c-404a-8d07-3961e994d773")
+		(property "Sheetname" "USB User"
+			(at 315 102.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "usb_user.kicad_sch"
+			(at 315 128.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "9")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 189)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "dbae7556-ba5c-4cdf-86b2-1a754ac93c85")
+		(property "Sheetname" "M1421"
+			(at 30 188.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "m1421.kicad_sch"
+			(at 30 214.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "14")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 220 103)
+		(size 60 25)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "e10b1929-0f12-4d66-a830-2459c624223e")
+		(property "Sheetname" "Ethernet"
+			(at 220 102.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.5 1.5)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "ethernet.kicad_sch"
+			(at 220 128.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ADSB_Test"
+				(path "/72f1bc5b-0804-40f1-ac08-aeea898ba754"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)

@@ -1,0 +1,34 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "18488ad4-8120-4274-83fc-b358fa90a6d8")
+	(paper "A3")
+	(title_block
+		(title "ADSB_Test - Charger Battery")
+		(date "2026-10-09")
+		(rev "A")
+		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
+	)
+	(lib_symbols)
+	(text_box "DESIGN NOTES - CHARGER BATTERY\n\nBQ25792 buck-boost charger, power path, 2S Li-ion.\nVBUS_USER in, VSYS out (6.0-8.4 V), BAT via shunt (PM1 ch2, bidirectional).\nNTC on TS pin. I2C + INT to P4. BC1.2 (D+/D-) detection DISABLED / not connected.\nBattery connector (JST-PH/XH TBC), pack protection if cells unprotected.\nVSYS shunt -> PM1 ch3."
+		(exclude_from_sim no)
+		(at 20 20 0)
+		(size 250 90)
+		(margins 1.5 1.5 1.5 1.5)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 2 2)
+			)
+			(justify left top)
+		)
+		(uuid "eea3c283-e4b3-417d-aac8-354f560044b0")
+	)
+)
