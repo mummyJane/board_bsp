@@ -53,3 +53,32 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# ---------------- ESP-IDF ----------------
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+.cache/
+
+# ---------------- KiCad ----------------
+*-backups/
+*.kicad_prl
+*.lck
+fp-info-cache
+_autosave-*
+*.bak
+\#auto_saved_files#
+~*.lck
+
+# Fabrication outputs are generated per release, not tracked
+**/hardware/**/fab/
+**/hardware/**/production/
+
+# ---------------- Editors / OS ----------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
