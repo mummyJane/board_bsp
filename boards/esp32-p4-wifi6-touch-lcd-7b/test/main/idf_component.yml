@@ -1,0 +1,6 @@
+dependencies:
+  # Host side of Wi-Fi through the on-board ESP32-C6. ESP-IDF 6.1 has esp_wifi_remote
+  # built in, so only the esp_hosted transport is added. The C6 must run a matching
+  # esp_hosted slave firmware (see boards/esp32-p4-wifi6-touch-lcd-7b/docs/wifi.md).
+  espressif/esp_hosted:
+    version: "^3.0.9"

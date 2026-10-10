@@ -8,6 +8,26 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-10
+
+### Added
+- `common/components/p4_board_common`: shared ESP32-P4 helpers: I2C bus + probe, LEDC backlight
+  (supports inverted drive), EK79007 MIPI-DSI panel (DSI PHY LDO), GT911 touch (auto-detects
+  0x5D/0x14), microSD on SDMMC slot 0 (power-enable GPIO + I/O LDO). Uses `esp_lcd_ek79007` ^2.0.2
+  and `esp_lcd_touch_gt911` ^1.2.1.
+- BSP API for both boards (`bsp_i2c_init`, `bsp_display_new`, `bsp_display_backlight_set`,
+  `bsp_touch_new`, `bsp_sdcard_mount/unmount`), driven from `board_pins.h`.
+- Hardware tests: `[i2c]` scan, `[display]` colour bars + backlight sweep, `[touch]`, `[sdcard]`
+  write/read. Reference board also has `[wifi]`: AP scan through the C6 via esp_hosted 3.x and
+  IDF 6.1's built-in Wi-Fi remote (`docs/wifi.md`).
+- `sdkconfig.defaults` from the Waveshare examples (P4 rev ≥ v3, 32 MB QIO flash, PSRAM 200 MHz,
+  bootloader log WARN) plus pinned esp_hosted SDIO pins.
+
+### Notes
+- Waveshare's pinned Wi-Fi stack (esp_wifi_remote 1.2.5 + esp_hosted 1.4) doesn't build on
+  ESP-IDF 6.1. esp_hosted 3.x host is back-compatible with 1.x/2.x co-processor firmware.
+- Both test apps build with no warnings. **Not yet run on hardware.**
+
 ## [0.8.0] - 2026-10-10
 
 ### Added
@@ -161,7 +181,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/mummyJane/board_bsp/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/mummyJane/board_bsp/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/mummyJane/board_bsp/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/mummyJane/board_bsp/compare/v0.6.0...v0.7.0

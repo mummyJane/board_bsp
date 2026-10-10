@@ -26,7 +26,9 @@
 #define BSP_LCD_DSI_LANES       2
 #define BSP_LCD_DSI_PHY_LDO_CH  3
 #define BSP_LCD_DSI_PHY_LDO_MV  2500
+#define BSP_LCD_BITS_PER_PIXEL  24      /* RGB888, as the vendor example */
 #define BSP_LCD_RST             (33)
+#define BSP_LCD_BACKLIGHT_INVERTED 1    /* higher PWM duty = dimmer */
 #define BSP_LCD_BACKLIGHT       (32)    /* PWM, RC-filtered into backlight driver FB */
 
 /* Touch GT911 */
@@ -40,6 +42,7 @@
 #define BSP_SD_D1               (40)
 #define BSP_SD_D2               (41)
 #define BSP_SD_D3               (42)
+#define BSP_SD_IO_LDO_CH        4       /* P4 internal LDO VO4 powers the SD I/O domain */
 #define BSP_SD_PWR_EN           (45)    /* LOW = card powered */
 
 /* ESP32-C5 co-processor over SDIO (same P4 pins as the reference C6) */

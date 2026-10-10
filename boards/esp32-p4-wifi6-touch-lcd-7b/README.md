@@ -59,13 +59,29 @@ Other hardware notes:
 
 ## Bring-up status
 
-| Feature | BSP | Test | Notes |
-|---------|-----|------|-------|
-| Boot / chip info | ✅ skeleton | ✅ | |
-| Pin map | ✅ from schematic | — | `board_pins.h` |
-| Display | ☐ | ☐ | |
-| Touch | ☐ | ☐ | |
-| Wi-Fi (C6 via esp_hosted) | ☐ | ☐ | |
-| Audio | ☐ | ☐ | |
-| microSD | ☐ | ☐ | |
-| USB | ☐ | ☐ | |
+BSP API: [`bsp/include/bsp/bsp.h`](bsp/include/bsp/bsp.h). Shared driver code is in
+[`common/components/p4_board_common`](../../common/components/p4_board_common/).
+
+| Feature | BSP | Test (Unity tag) | Hardware result |
+|---------|-----|------------------|-----------------|
+| Boot / chip info | ✅ | `[bsp]` | not run yet |
+| Pin map | ✅ from schematic | — | |
+| I2C bus scan | ✅ `bsp_i2c_init()` | `[i2c]` | not run yet |
+| Display (EK79007, MIPI-DSI) | ✅ `bsp_display_new()` | `[display]` colour bars | not run yet |
+| Backlight (inverted PWM) | ✅ `bsp_display_backlight_set()` | `[display]` sweep | not run yet |
+| Touch (GT911) | ✅ `bsp_touch_new()` | `[touch]` | not run yet |
+| microSD | ✅ `bsp_sdcard_mount()` | `[sdcard]` | not run yet |
+| Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | not run yet |
+| Audio / CAN / RS485 | ☐ (not needed for ADSB_Test) | | |
+
+### Running the tests
+
+```powershell
+. .	ools\idf_env.ps1
+cd boards\esp32-p4-wifi6-touch-lcd-7b	est
+idf.py -p COMx flash monitor      # COMx = the CH343P port (USB-C "UART")
+```
+
+The Unity menu appears on the console. Enter a test number, `[tag]` (e.g.
+`[display]`), or `*` for everything. Tests marked CHECK need you to look at
+the screen or touch it. Record results in [docs/bringup-log.md](docs/bringup-log.md).
