@@ -77,4 +77,11 @@
 #define BSP_RS485_TX            (26)
 #define BSP_RS485_RX            (27)
 
-/* Free GPIOs on headers: P1 = 46..52, P3 = 2, 3, 4, 5, 28, 29, 30, 31, 34, 36 */
+/* Phase-1 eval wiring (same GPIOs as ADSB_Test), on header P3:
+ * P3 pin 10 = GPIO2, 9 = GPIO3, 8 = GPIO4, 11 = GND, 12 = ESP_3V3 */
+#define BSP_GPS_UART_NUM        2
+#define BSP_GPS_TX              (2)     /* P4 TX -> GPS RX  (P3 pin 10) */
+#define BSP_GPS_RX              (3)     /* GPS TX -> P4 RX  (P3 pin 9) */
+#define BSP_GPS_PPS             (4)     /* GPS PPS/TIMEPULSE (P3 pin 8) */
+
+/* Free GPIOs on headers: P1 = 46..52, P3 = 5, 28, 29, 30, 31, 34, 36 */

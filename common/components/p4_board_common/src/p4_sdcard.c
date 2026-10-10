@@ -13,7 +13,7 @@ static sdmmc_card_t *s_card;
 static sd_pwr_ctrl_handle_t s_pwr;
 static const char *s_mount_point;
 
-esp_err_t p4c_sdcard_mount(const p4c_sdcard_cfg_t *cfg, sdmmc_card_t **out_card)
+static esp_err_t sdcard_mount(const p4c_sdcard_cfg_t *cfg, bool format_if_failed, sdmmc_card_t **out_card)
 {
     ESP_RETURN_ON_FALSE(cfg && cfg->mount_point, ESP_ERR_INVALID_ARG, TAG, "bad args");
     ESP_RETURN_ON_FALSE(!s_card, ESP_ERR_INVALID_STATE, TAG, "already mounted");
@@ -45,9 +45,9 @@ esp_err_t p4c_sdcard_mount(const p4c_sdcard_cfg_t *cfg, sdmmc_card_t **out_card)
     slot.flags |= SDMMC_SLOT_FLAG_INTERNAL_PULLUP;
 
     const esp_vfs_fat_sdmmc_mount_config_t mount_cfg = {
-        .format_if_mount_failed = false,
+        .format_if_mount_failed = format_if_failed,
         .max_files = 5,
-        .allocation_unit_size = 16 * 1024,
+        .allocation_unit_size = 32 * 1024,
     };
     ESP_RETURN_ON_ERROR(esp_vfs_fat_sdmmc_mount(cfg->mount_point, &host, &slot, &mount_cfg, &s_card),
                         TAG, "mount");
@@ -57,6 +57,17 @@ esp_err_t p4c_sdcard_mount(const p4c_sdcard_cfg_t *cfg, sdmmc_card_t **out_card)
         *out_card = s_card;
     }
     return ESP_OK;
+}
+
+esp_err_t p4c_sdcard_mount(const p4c_sdcard_cfg_t *cfg, sdmmc_card_t **out_card)
+{
+    return sdcard_mount(cfg, false, out_card);
+}
+
+esp_err_t p4c_sdcard_format(const p4c_sdcard_cfg_t *cfg)
+{
+    ESP_RETURN_ON_ERROR(sdcard_mount(cfg, true, NULL), TAG, "mount/format");
+    return esp_vfs_fat_sdcard_format(s_mount_point, s_card);
 }
 
 esp_err_t p4c_sdcard_unmount(void)

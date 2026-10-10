@@ -33,6 +33,9 @@ esp_err_t bsp_touch_new(esp_lcd_touch_handle_t *out);
 esp_err_t bsp_sdcard_mount(void);
 esp_err_t bsp_sdcard_unmount(void);
 
+/** Format the microSD card as FAT32 (ERASES IT) and leave it mounted. */
+esp_err_t bsp_sdcard_format(void);
+
 #ifdef __cplusplus
 }
 #endif

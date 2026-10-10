@@ -70,18 +70,52 @@ BSP API: [`bsp/include/bsp/bsp.h`](bsp/include/bsp/bsp.h). Shared driver code is
 | Display (EK79007, MIPI-DSI) | ✅ `bsp_display_new()` | `[display]` colour bars | not run yet |
 | Backlight (inverted PWM) | ✅ `bsp_display_backlight_set()` | `[display]` sweep | not run yet |
 | Touch (GT911) | ✅ `bsp_touch_new()` | `[touch]` | not run yet |
-| microSD | ✅ `bsp_sdcard_mount()` | `[sdcard]` | not run yet |
+| microSD | ✅ `bsp_sdcard_mount()`, `bsp_sdcard_format()` | `[sdcard]`; `[sdcard_format]` (erases, not in `*`) | not run yet |
 | Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | not run yet |
+| USB host on USB-A (hub, RTL-SDR) | `espressif/usb` | `[usb]` lists devices, flags RTL-SDRs | not run yet |
+| GPS (eval module on P3) | UART2 + PPS | `[gps]` baud detect, NMEA, PPS jitter | not run yet |
 | Audio / CAN / RS485 | ☐ (not needed for ADSB_Test) | | |
 
 ### Running the tests
 
+The console is on the P4's **USB-Serial/JTAG**: the USB-C port labelled
+"USB1.1" (H2). On the dev PC it shows up as **COM3**, "USB Serial Device",
+VID 303A / PID 1001. The CH343P "UART" port isn't used.
+
 ```powershell
 . .\tools\idf_env.ps1
 cd boards\esp32-p4-wifi6-touch-lcd-7b\test
-idf.py -p COMx flash monitor      # COMx = the CH343P port (USB-C "UART")
+idf.py -p COM3 flash monitor
 ```
 
 The Unity menu appears on the console. Enter a test number, `[tag]` (e.g.
-`[display]`), or `*` for everything. Tests marked CHECK need you to look at
-the screen or touch it. Record results in [docs/bringup-log.md](docs/bringup-log.md).
+`[display]`), or `*` for everything. `*` skips `[ignore]` tests, which
+includes the SD format. Tests marked CHECK need you to look at the screen or
+touch it. Record results in [docs/bringup-log.md](docs/bringup-log.md).
+
+### microSD cards over 32 GB
+
+Large cards ship formatted **exFAT**, and ESP-IDF 6.1's FatFs is built without
+exFAT. So they won't mount until reformatted as **FAT32**. Either:
+- format it on the PC with a FAT32 tool (Windows' own format dialog refuses
+  FAT32 above 32 GB), or
+- run the `[sdcard_format]` test, which **erases the card** and formats it
+  FAT32 (32 KB clusters).
+
+### GPS module wiring (Phase 1)
+
+The GPS goes on header **P3** (PH2.0 12-pin), on the same GPIOs ADSB_Test
+uses:
+
+| GPS module | P3 pin | P4 GPIO |
+|------------|--------|---------|
+| TX (data out) | 9 | GPIO3 (P4 RX) |
+| RX (data in) | 10 | GPIO2 (P4 TX) |
+| PPS / TIMEPULSE | 8 | GPIO4 |
+| GND | 11 | — |
+| VCC | 12 (ESP_3V3, 3.3 V) | — |
+
+Check the module's supply first: some MAX-M10S breakouts are 5 V boards with
+a regulator, and P3 only provides 3.3 V. The test detects the baud rate
+(38400, 9600, 115200, ...). PPS only starts pulsing once the receiver has a
+time fix, so put the antenna where it can see the sky.

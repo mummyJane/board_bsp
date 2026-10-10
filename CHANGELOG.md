@@ -8,6 +8,20 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-10
+
+### Added
+- Reference board tests `[usb]` (USB host on the USB-A port via `espressif/usb` ^1.6.0: lists devices
+  incl. behind a hub, flags RTL-SDR 0bda:2838/2832) and `[gps]` (UART2 on P3 header GPIO2/3, PPS on
+  GPIO4: baud auto-detect, NMEA count, PPS interval/jitter). `[gps]` also in the ADSB_Test app.
+- `bsp_sdcard_format()` / `p4c_sdcard_format()` and an opt-in `[sdcard_format][ignore]` test (ERASES the
+  card) for large exFAT cards: ESP-IDF 6.1 FatFs has no exFAT (`FF_FS_EXFAT 0`).
+- Reference board README: COM3 = P4 USB-Serial/JTAG, GPS wiring table for header P3, >32 GB SD notes.
+
+### Changed
+- Reference test app console moved to the P4 USB-Serial/JTAG (the port the board is connected on);
+  USB host hub support enabled; FAT long file names enabled; SD allocation unit 32 KB.
+
 ## [0.10.0] - 2026-10-10
 
 ### Added
@@ -205,7 +219,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/mummyJane/board_bsp/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/mummyJane/board_bsp/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/mummyJane/board_bsp/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/mummyJane/board_bsp/compare/v0.7.1...v0.8.0

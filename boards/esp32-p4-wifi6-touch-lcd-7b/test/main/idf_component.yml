@@ -4,3 +4,6 @@ dependencies:
   # esp_hosted slave firmware (see boards/esp32-p4-wifi6-touch-lcd-7b/docs/wifi.md).
   espressif/esp_hosted:
     version: "^3.0.9"
+  # USB host stack (moved out of ESP-IDF in 6.x) for the USB-A port: hub + RTL-SDR test
+  espressif/usb:
+    version: "^1.6.0"

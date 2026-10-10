@@ -79,6 +79,9 @@ typedef struct {
 } p4c_sdcard_cfg_t;
 
 esp_err_t p4c_sdcard_mount(const p4c_sdcard_cfg_t *cfg, sdmmc_card_t **out_card);
+
+/** Mount (formatting if the mount fails) and then format the card as FAT. ERASES THE CARD. Leaves it mounted. */
+esp_err_t p4c_sdcard_format(const p4c_sdcard_cfg_t *cfg);
 esp_err_t p4c_sdcard_unmount(void);
 
 #ifdef __cplusplus

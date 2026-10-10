@@ -88,16 +88,22 @@ esp_err_t bsp_touch_new(esp_lcd_touch_handle_t *out)
     return p4c_touch_gt911_new(&cfg, out);
 }
 
+static const p4c_sdcard_cfg_t s_sd_cfg = {
+    .power_en_gpio = BSP_SD_PWR_EN,
+    .power_en_active_low = true,
+    .io_ldo_chan = BSP_SD_IO_LDO_CH,
+    .bus_width = 4,
+    .mount_point = BSP_SD_MOUNT_POINT,
+};
+
 esp_err_t bsp_sdcard_mount(void)
 {
-    const p4c_sdcard_cfg_t cfg = {
-        .power_en_gpio = BSP_SD_PWR_EN,
-        .power_en_active_low = true,
-        .io_ldo_chan = BSP_SD_IO_LDO_CH,
-        .bus_width = 4,
-        .mount_point = BSP_SD_MOUNT_POINT,
-    };
-    return p4c_sdcard_mount(&cfg, NULL);
+    return p4c_sdcard_mount(&s_sd_cfg, NULL);
+}
+
+esp_err_t bsp_sdcard_format(void)
+{
+    return p4c_sdcard_format(&s_sd_cfg);
 }
 
 esp_err_t bsp_sdcard_unmount(void)
