@@ -77,8 +77,8 @@ BSP API: [`bsp/include/bsp/bsp.h`](bsp/include/bsp/bsp.h). Shared driver code is
 ### Running the tests
 
 ```powershell
-. .	ools\idf_env.ps1
-cd boards\esp32-p4-wifi6-touch-lcd-7b	est
+. .\tools\idf_env.ps1
+cd boards\esp32-p4-wifi6-touch-lcd-7b\test
 idf.py -p COMx flash monitor      # COMx = the CH343P port (USB-C "UART")
 ```
 

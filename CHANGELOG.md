@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Fixed
+- Reference board README: PowerShell paths in the test instructions (tab characters instead of `	`).
+
 ## [0.9.0] - 2026-10-10
 
 ### Added
