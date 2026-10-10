@@ -11,10 +11,10 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - ESP32-P4\n\nCOPY FROM REFERENCE BOARD (Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C, vendor PDF):\nESP32-P4NRW32 (32 MB PSRAM in package), GD25Q256EYIGR 32 MB flash, 40 MHz crystal, decoupling, VDD_HP buck, LDO caps, EN/reset, BOOT strap + button.\nPin assignments owned by bsp/include/bsp/board_pins.h. GPIO budget in docs/architecture.md (~44/55 + TCA6408A).\nUARTs: UART0 console (Dev), UART1 user, UART2 GPS, UART3 m1421. 2 debug GPIOs to LA header."
+	(text_box "DESIGN NOTES - ESP32-P4\n\nCOPY FROM REFERENCE BOARD (Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C, vendor PDF):\nESP32-P4NRW32 (32 MB PSRAM in package), GD25Q256EYIGR 32 MB flash, 40 MHz crystal, decoupling, VDD_HP buck, LDO caps, EN/reset, BOOT strap + button.\nPin assignments owned by bsp/include/bsp/board_pins.h. GPIO budget in docs/architecture.md (~44/55 + TCA6408A).\nUARTs: UART0 console (Dev), UART1 user, UART2 GPS, UART3 m1421. 2 debug GPIOs to LA header.\nPIN MAP (from reference schematic + new allocation): see docs/architecture.md 'ESP32-P4 pin allocation'. 51/55 used; spare 12, 13, 20, 36.\n32.768 kHz crystal on GPIO0/1 (10M + 22 pF). BOOT strap GPIO35 4.7k pull-up. UART0 TX37/RX38. USB-Serial/JTAG GPIO24/25. microSD pull-ups to LDO VO4."
 		(exclude_from_sim no)
 		(at 20 20 0)
-		(size 250 90)
+		(size 250 150)
 		(margins 1.5 1.5 1.5 1.5)
 		(stroke
 			(width 0)

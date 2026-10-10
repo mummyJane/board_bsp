@@ -64,7 +64,7 @@ Facts below are from the Waveshare schematic
 | Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM, PCB antenna). Same SDIO wiring and esp_hosted host side |
 | USB-UART | CH343P | Moves to the Dev port (FT2232H) and User port (CP2102N) |
 | Battery | ETA6098 1S charger, RTC battery | Replaced by 2S BQ25792 power path. RTC battery kept if used |
-| Display + touch | 7" EK79007 panel, 2-lane MIPI-DSI, GT911 touch | Same connector and pin-out, same panel stack-up (see Mechanical) |
+| Display + touch | 7" EK79007 bare COG panel, 2-lane MIPI-DSI, GT911 touch. Panel supplies generated on the board | Same FPC connectors, pin-out and **panel supply circuits** (AVDD 9.6 V boost, VGH/VGL charge pumps, VCOM, 1V8 LDO, AP3032 backlight driver), same stack-up. Touch INT newly wired to the P4 |
 | microSD | Yes | Same |
 | Audio (ES8311, ES7210, NS4150B) | Yes | **Dropped** |
 | CAN (TJA1051), RS485 | Yes | Dropped (not in requirements) |
@@ -318,36 +318,73 @@ Signal assignment:
 | 6 | m1421 SYNC | 14 | P4 debug GPIO A (firmware timing marker) |
 | 7 | m1421 SD26 (1090 activity) | 15 | P4 debug GPIO B (firmware timing marker) |
 
-## ESP32-P4 GPIO budget (estimate)
+## ESP32-P4 pin allocation
 
-The ESP32-P4 has 55 GPIOs. MIPI-DSI and USB HS use dedicated pins and are
-not counted here. Slow outputs (load-switch enables, resets) move to a
-**TCA6408A I2C GPIO expander** to keep P4 pins free.
+The source of truth is [`bsp/include/bsp/board_pins.h`](../bsp/include/bsp/board_pins.h).
+- **Reused pins** come from the Waveshare schematic and are identical to the
+  reference board.
+- **New pins** use GPIOs freed by dropping audio, CAN, RS485 and the battery
+  ADC. They follow the ESP32-P4 EMAC IOMUX table and the ESP-IDF Ethernet
+  defaults (`esp_eth_mac_esp.h`; `examples/ethernet/basic`: MDC 31, MDIO 52,
+  PHY_RST 51).
+- MIPI-DSI, USB HS and the flash use dedicated pins and aren't listed.
 
-| Function | P4 pins |
-|----------|---------|
-| SDIO to C5 (CLK, CMD, D0–D3) + C5 EN + C5 BOOT | 8 |
-| microSD (SDMMC slot 0) | 6 |
-| Ethernet RMII + MDC/MDIO | 9 |
-| I2C (shared) | 2 |
-| Interrupts: touch, charger + PD (wired-OR), PM ALERT, expander INT | 4 |
-| LCD backlight PWM | 1 |
-| GPS UART + PPS | 3 |
-| m1421 UART3 + SYNC (input to the module) | 3 |
-| UART0 console | 2 |
-| UART1 user | 2 |
-| USB-A eFuse FAULT | 1 |
-| P4 debug GPIO A/B (LA header) | 2 |
-| BOOT strap button | 1 |
-| **Total on P4** | **≈ 44 of 55** |
+| GPIO | ADSB_Test | Reference board | Ref header |
+|------|-----------|-----------------|------------|
+| 0, 1 | 32.768 kHz crystal | same | |
+| 2 / 3 | GPS UART2 TX / RX | free | P3 |
+| 4 | GPS PPS | free | P3 |
+| 5 | PM ALERT (PAC1954, wired-OR) | free | P3 |
+| 6 | C5 GPIO (ref: C6 IO2) | same | |
+| 7 / 8 | I2C SDA / SCL | same | |
+| 9 | Charger INT + PD ALERT (wired-OR) | I2S DOUT | |
+| 10 / 11 | DBG_A / DBG_B (LA CH14/15) | I2S LRCK / DIN | |
+| 12, 13 | spare | I2S SCLK / MCLK | |
+| 14–17 | SDIO D0–D3 to C5 | same (C6) | |
+| 18 / 19 | SDIO CLK / CMD to C5 | same (C6) | |
+| 20 | spare (ADC) | battery sense | |
+| 21 / 22 | User UART1 TX / RX (CP2102N) | CAN RX / TX | |
+| 23 | Touch reset | same | |
+| 24 / 25 | USB-Serial/JTAG → Dev hub | USB-C H2 | |
+| 26 | Touch INT | RS485 TX | |
+| 27 | USB-A eFuse FAULT | RS485 RX | |
+| 28 / 29 / 30 | RMII CRS_DV / RXD0 / RXD1 | free | P3 |
+| 31 | MDC | free | P3 |
+| 32 | Backlight PWM | same | |
+| 33 | LCD reset | same | |
+| 34 | RMII TXD0 | free | P3 |
+| 35 | **BOOT strap + RMII TXD1** | BOOT strap | (BOOT button) |
+| 36 | spare (strap, keep unloaded) | free | P3 |
+| 37 / 38 | UART0 TX / RX → Dev FT2232H A | → CH343P | |
+| 39–42 | microSD D0–D3 | same | |
+| 43 / 44 | microSD CLK / CMD | same | |
+| 45 | microSD power enable (low = on) | same | |
+| 46 / 47 | m1421 UART3 TX / RX | free | P1 |
+| 48 | m1421 SYNC | free | P1 |
+| 49 | RMII TX_EN | free | P1 |
+| 50 | RMII REF_CLK in (50 MHz) | free | P1 |
+| 51 | PHY reset | free | P1 |
+| 52 | MDIO | free | P1 |
+| 53 | Expander INT | PA_CTRL | |
+| 54 | C5 CHIP_PU (reset) | same (C6) | |
 
-| Function | On TCA6408A expander (8 bits) |
-|----------|-------------------------------|
-| Enables | EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN |
-| Resets | PHY_RST, GPS_RST, M1421_RESET (open-drain), LCD_RST / TP_RST (shared) |
+**51 of 55 GPIOs used. Spare: 12, 13, 20, 36.** Slow outputs are on the
+TCA6408A: EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN, GPS_RST, M1421_RESET,
+and one spare bit.
 
-That's 9 needed against 8 bits. Use a TCA9535 (16-bit) if LCD and touch
-resets must stay separate.
+**Phase 1 bonus:** GPS (2, 3, 4), PM ALERT (5), m1421 (46, 47, 48) and
+Ethernet (28–31, 34, 49–52) are all on the reference board's P1/P3 headers.
+Eval boards wired to the reference board therefore use **the same GPIOs as
+ADSB_Test**. The exceptions are RMII TXD1 (GPIO35, only on the BOOT button
+pad) and charger/PD INT (GPIO9, used by the codec on the reference board).
+For those, use a spare header pin in Phase 1.
+
+**Checks:**
+- **GPIO35** is both the BOOT strap and RMII TXD1, as on Espressif's P4 EV
+  board. The PHY's TXD1 input must not pull it low during reset (check the
+  IP101GRI pin state at reset). Keep the reference 4.7 kΩ pull-up.
+- Confirm the P4 strapping-pin list against the P4 datasheet (believed
+  GPIO34–38). GPIO36 is left unloaded on purpose.
 
 ## Mechanical and RF layout
 

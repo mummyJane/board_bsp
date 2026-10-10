@@ -5,7 +5,10 @@ ADSB_Test hardware is weeks away, so testing runs in two phases.
 ## Phase 1 — on the reference board (now)
 
 Use the Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C, plus eval/dev boards wired
-to its headers. Build `boards/adsb-test/test` (or the reference board's test
+to its headers. **Wire each eval board to the same GPIO numbers as ADSB_Test**:
+GPS 2/3/4, PM ALERT 5, m1421 46/47/48 and Ethernet 28–31/34/49–52 are all on
+headers P1/P3, so Phase-1 firmware runs unchanged on ADSB_Test (see the
+architecture pin table). Build `boards/adsb-test/test` (or the reference board's test
 app) with the matching pin map. The reference board has **no Ethernet** and
 uses a **C6**, not a C5. Those items use add-on boards.
 
@@ -19,7 +22,7 @@ uses a **C6**, not a C5. Those items use add-on boards.
 | 1.6 | M14-02 | Dev Kit + its RP2040 Programmer, ADSBee web console | AT terminal and firmware upload from the PC. Then rebuild the Programmer with auto-reflash off and confirm plugging it in no longer resets the module (Q16) |
 | 1.6a | M14-05 | Dev Kit wired to the reference board | The P4 enters the ROM bootloader (SYNC high + reset), reads the CRC, flashes a release `.hex`, and boots the app with SYNC low |
 | 1.6b | M14-04 | As 1.5 | SYNC sleep/wake: current drops on sleep, the aircraft table survives, and a reset with SYNC low always boots the app |
-| 1.7 | USB-05 | Reference board USB OTG + external hub + 1 RTL-SDR, then 2 | Enumeration; sustained bulk rate at 2.0 / 2.4 MS/s with no drops |
+| 1.7 | USB-05 | Reference board **USB-A (J1, P4 HS OTG)** + external hub + 1 RTL-SDR, then 2 | Enumeration; sustained bulk rate at 2.0 / 2.4 MS/s with no drops |
 | 1.8 | USB-05 | As 1.7 | AIS decode from one SDR: CPU % on the P4 |
 | 1.9 | GPS-01/02 | MAX-M10S breakout on a UART + PPS GPIO | NMEA/UBX parsed, PPS interrupt jitter measured |
 | 1.10 | PWR-03 | PAC1954 (or INA3221) breakout on I2C | Channels read, energy accumulator works, values match a multimeter |

@@ -8,6 +8,28 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-10
+
+### Added
+- Reference board **pin map confirmed from the Waveshare schematic** (`board_pins.h` fully
+  populated): I2C 7/8, LCD reset 33, backlight 32, touch reset 23, C6 SDIO 18/19/14–17, C6 reset 54,
+  microSD 39–45, UART0 37/38, BOOT 35, USB-JTAG 24/25, audio, CAN, RS485, battery sense, free header pins.
+  The board also has a USB-A host socket (J1) on the P4 HS OTG port.
+- ADSB_Test **full P4 pin allocation** (51/55 used, spare 12, 13, 20, 36). Reused blocks keep the
+  reference pins. Ethernet follows the P4 EMAC IOMUX table and ESP-IDF defaults (MDC 31, MDIO 52,
+  PHY_RST 51, RMII 28–30/34/35/49/50). New signals sit on the reference board's P1/P3 header pins
+  where possible, so Phase-1 eval wiring uses the same GPIOs.
+- ADSB_Test requirement DISP-04: the panel is a bare COG panel, so its supplies (AVDD 9.6 V,
+  VGH/VGL, VCOM, 1V8, LED backlight boost) are copied from the reference board. FPC/touch connector
+  pin-outs recorded in the Display sheet.
+
+### Changed
+- ADSB_Test LCD and touch resets stay on P4 GPIO33/23 (as reference), not the expander. PHY reset on
+  GPIO51 (IDF default). Touch INT newly wired (GPIO26).
+
+### Fixed
+- Display sheet design notes didn't render (raw newlines in the KiCad string); now escaped.
+
 ## [0.7.1] - 2026-10-10
 
 ### Changed
@@ -139,7 +161,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/mummyJane/board_bsp/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/mummyJane/board_bsp/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/mummyJane/board_bsp/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mummyJane/board_bsp/compare/v0.5.0...v0.6.0

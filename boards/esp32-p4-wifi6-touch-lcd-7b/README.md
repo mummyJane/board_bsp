@@ -23,9 +23,30 @@ Vendor docs: https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B
 
 ## Pin map
 
-The authoritative pin assignments live in
-[`bsp/include/bsp/board_pins.h`](bsp/include/bsp/board_pins.h). All entries are
-`-1` (unassigned) until confirmed from the Waveshare schematic.
+Confirmed from the Waveshare schematic. The full list with notes is in
+[`bsp/include/bsp/board_pins.h`](bsp/include/bsp/board_pins.h).
+
+| Function | GPIO |
+|----------|------|
+| I2C SDA / SCL (GT911, ES8311, ES7210; 2.2k pull-ups) | 7 / 8 |
+| LCD reset / backlight PWM | 33 / 32 |
+| Touch reset (INT only on test point TP1) | 23 |
+| SDIO to C6: CLK / CMD / D0–D3 | 18 / 19 / 14–17 |
+| C6 CHIP_PU / C6 IO2 | 54 / 6 |
+| microSD CLK / CMD / D0–D3 / power enable (low = on) | 43 / 44 / 39–42 / 45 |
+| UART0 TX / RX (CH343P, header H8) / BOOT strap | 37 / 38 / 35 |
+| USB-Serial/JTAG (USB-C H2) | 24 / 25 |
+| I2S MCLK / SCLK / LRCK / DOUT / DIN, amp enable | 13 / 12 / 10 / 9 / 11, 53 |
+| CAN TX / RX, RS485 TX / RX | 22 / 21, 26 / 27 |
+| Battery sense (1/3 divider) | 20 |
+| 32.768 kHz crystal | 0 / 1 |
+| **Free on headers** P1: 46–52; P3: 2, 3, 4, 5, 28, 29, 30, 31, 34, 36 | |
+
+Other hardware notes:
+- **USB-A host socket (J1)** on the P4 USB 2.0 HS OTG port, VBUS via a DIO7003 load switch.
+- Two USB-C ports: H1 = CH343P UART, H2 = P4 USB-Serial/JTAG.
+- The panel is a bare COG panel. Its supplies (AVDD 9.6 V, VGH/VGL, VCOM,
+  1V8, LED backlight boost) are generated on this board.
 
 ## Folders
 
@@ -41,6 +62,7 @@ The authoritative pin assignments live in
 | Feature | BSP | Test | Notes |
 |---------|-----|------|-------|
 | Boot / chip info | ✅ skeleton | ✅ | |
+| Pin map | ✅ from schematic | — | `board_pins.h` |
 | Display | ☐ | ☐ | |
 | Touch | ☐ | ☐ | |
 | Wi-Fi (C6 via esp_hosted) | ☐ | ☐ | |

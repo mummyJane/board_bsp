@@ -11,12 +11,10 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - DISPLAY TOUCH\n\nSAME CONNECTOR AND PIN-OUT AS REFERENCE BOARD so the 7in 1024x600 panel is interchangeable. Panel: EK79007 driver, 2-lane MIPI-DSI (esp_lcd_ek79007), GT911 touch.
-DSI PHY powered from P4 internal LDO ch3 = 2.5 V (decouple per reference). Vendor example LCD_RST = GPIO33 (confirm vs schematic).
-STACK-UP (Waveshare drawing): panel bonded to PCB TOP side with ~1.4 mm tape, top side component-free under the panel, all parts on the bottom. 4x M2.5 holes at 156 x 89 mm.\nMIPI-DSI lanes from P4 dedicated pins (100R diff, length-matched).\nLCD_RST / TP_RST from expander, backlight PWM from P4, touch I2C (shared bus) + TP_INT to P4.\nPanel/backlight supply 5V_LCD (switched, PM2 ch1)."
+	(text_box "DESIGN NOTES - DISPLAY TOUCH\n\nSAME CONNECTOR AND PIN-OUT AS REFERENCE BOARD so the 7in 1024x600 panel is interchangeable. Panel: EK79007 driver, 2-lane MIPI-DSI (esp_lcd_ek79007), GT911 touch.\nDSI PHY powered from P4 internal LDO ch3 = 2.5 V (decouple per reference). LCD_RST = GPIO33 (confirmed from reference schematic).\nSTACK-UP (Waveshare drawing): panel bonded to PCB TOP side with ~1.4 mm tape, top side component-free under the panel, all parts on the bottom. 4x M2.5 holes at 156 x 89 mm.\nMIPI-DSI lanes from P4 dedicated pins (100R diff, length-matched).\nLCD_RST (GPIO33) / TP_RST (GPIO23) from P4 as on reference, backlight PWM GPIO32, touch I2C (shared bus) + TP_INT to P4 GPIO26.\nPanel/backlight supply 5V_LCD (switched, PM2 ch1).\nPANEL IS A BARE COG PANEL - copy these supplies from the reference board (all from 5V_LCD, reference Core_5V):\n - AVDD 9.6 V: AP3012KTR-E1 boost (L 10 uH, 1N5819, FB 22k/3.3k). VGH +18 V / VGL -6 V: charge pumps off the boost SW node (BAT54S + BZT52C18S / BZT52C7V5S clamps).\n - VCOM: AVDD / 3 (2k/1k divider + 10 uF/0.1 uF) to FPC pin 30. VCC_1V8: RT9193-18 LDO (FPC 28/29 + 10k straps to pins 5 and 26).\n - Backlight: AP3032KTR-G1 LED boost to LED+/LED-, sense 1.3R (~150 mA). Dimming: GPIO32 PWM -> 10k/100nF RC -> 68k into FB.\nFPC P2: 30-pin 0.5 mm flip-lock bottom-contact, 2.0H. 1-2 LED+, 3 VGH, 4 VGL, 5 1V8 strap, 6 GND, 7-8 LED-, 9 AVDD, 10/13/16/19/22/25 GND, 17/18 CLK P/N, 20/21 D1 P/N, 23/24 D0 P/N, 26 1V8 strap, 27 RESET_LCD, 28-29 VCC_1V8, 30 VCOM.\nTouch J3: 6-pin 0.5 mm back-flip 2.0H: 1 RESET_TP (GPIO23), 2 3V3, 3 GND, 4 INT_TP (GPIO26 - new), 5 SDA (GPIO7), 6 SCL (GPIO8).\nLCD_RST = GPIO33 (0R + 10k pull-down)."
 		(exclude_from_sim no)
 		(at 20 20 0)
-		(size 250 90)
+		(size 250 150)
 		(margins 1.5 1.5 1.5 1.5)
 		(stroke
 			(width 0)

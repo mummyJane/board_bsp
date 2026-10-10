@@ -11,10 +11,10 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - ETHERNET\n\nNEW (reference board has no Ethernet).\nIP101GRI 10/100 PHY on P4 EMAC (RMII): TXD0/1, TX_EN, RXD0/1, CRS_DV, REF_CLK (50 MHz), MDC, MDIO. PHY_RST from expander.\nRJ45 with integrated magnetics + LEDs. ESD on MDI.\nSupply 3V3_ETH (switched, PM2 ch4). Follow ESP32-P4-Function-EV-Board reference."
+	(text_box "DESIGN NOTES - ETHERNET\n\nNEW (reference board has no Ethernet).\nIP101GRI 10/100 PHY on P4 EMAC (RMII): TXD0/1, TX_EN, RXD0/1, CRS_DV, REF_CLK (50 MHz), MDC, MDIO. PHY_RST from P4 GPIO51.\nRJ45 with integrated magnetics + LEDs. ESD on MDI.\nSupply 3V3_ETH (switched, PM2 ch4). Follow ESP32-P4-Function-EV-Board reference.\nP4 PINS (ESP-IDF P4 defaults, IOMUX): TX_EN 49, TXD0 34, TXD1 35 (= BOOT strap, as Espressif P4 EV board; PHY must not pull low at reset), CRS_DV 28, RXD0 29, RXD1 30, REF_CLK in 50 (50 MHz from PHY), MDC 31, MDIO 52, PHY_RST 51."
 		(exclude_from_sim no)
 		(at 20 20 0)
-		(size 250 90)
+		(size 250 150)
 		(margins 1.5 1.5 1.5 1.5)
 		(stroke
 			(width 0)

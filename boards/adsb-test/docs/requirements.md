@@ -65,6 +65,7 @@ hardware exists:
 | DISP-01 | Same 7" 1024×600 MIPI-DSI panel and connector pin-out as the reference board, so the panel is interchangeable | Yes |
 | DISP-02 | Same capacitive touch controller and I2C wiring as the reference board | Yes |
 | DISP-03 | Firmware-controlled backlight (PWM) | Yes |
+| DISP-04 | Panel supplies copied from the reference board (the panel is a bare COG panel): AVDD 9.6 V, VGH +18 V, VGL −6 V, VCOM, VCC_1V8, LED backlight boost (~150 mA) | Yes |
 
 ## ADSBee m1421
 

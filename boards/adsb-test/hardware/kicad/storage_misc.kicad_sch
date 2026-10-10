@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - STORAGE MISC\n\nCOPY FROM REFERENCE BOARD: microSD on P4 SDMMC slot 0 (4-bit), card detect.\nRESET and BOOT buttons, status LED(s).\nTCA6408A I2C GPIO expander (INT to P4): EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN, PHY_RST, GPS_RST, M1421_RESET (OD). Consider TCA9535 if LCD/TP resets must be separate."
+	(text_box "DESIGN NOTES - STORAGE MISC\n\nCOPY FROM REFERENCE BOARD: microSD on P4 SDMMC slot 0 (4-bit), card detect.\nRESET and BOOT buttons, status LED(s).\nTCA6408A I2C GPIO expander (INT to P4): EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN, (spare), GPS_RST, M1421_RESET (OD). LCD/TP resets stay on P4 GPIO33/23 (as reference)."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)
