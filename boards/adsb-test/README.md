@@ -9,14 +9,14 @@ reference board while ADSB_Test is designed.
 
 ## Features
 
-- ESP32-P4NRW32, copied from the reference board, + **ESP32-C5-WROOM-1U-N16R8** dual-band Wi-Fi 6 remote over SDIO (esp_hosted), room for OTA, u.FL antenna
+- ESP32-P4NRW32, copied from the reference board, + **ESP32-C5-WROOM-1-N16R8** dual-band Wi-Fi 6 backup link over SDIO (esp_hosted), room for OTA, on-module antenna
 - **ADSBee m1421** dual-band ADS-B receiver (1090 MHz Mode S + 978 MHz UAT), RF front end copied from the ADSBee 1421 carrier
 - 10/100 Ethernet (IP101GRI RMII PHY, RJ45)
 - **User USB-C:** USB-PD sink (main power + charging) and a USB-UART to the P4 user UART
 - **Dev USB-C:** one cable for all debug: P4 + C5 USB-Serial/JTAG, P4 + C5 UARTs (FT2232H), m1421 console + firmware upload (RP2040 with ADSBee 1421 Programmer firmware). m1421 JTAG on a J-Link header
 - **USB-A host** (P4 USB 2.0 HS) to an external hub: 1 SDR (AIS etc.), 2 supported, 4 nice-to-have
 - GNSS module with PPS
-- Screen-sized board with the 7" panel mounted on it. Digital connectors on one edge; GNSS and ADS-B SMA connectors on the opposite edge, with optional RF cans
+- Screen-sized board with the 7" EK79007 panel bonded to its top side (Waveshare stack-up, all parts on the bottom). Digital connectors on one edge; GNSS and ADS-B SMA connectors on the opposite edge, with optional RF cans
 - 2S1P 18650 Li-ion (≥ 1 h with everything running), buck-boost charger with power path
 - Voltage + current monitoring on every rail (3 × PAC1954, 12 channels)
 - Same 7" 1024×600 MIPI-DSI display and touch as the reference board

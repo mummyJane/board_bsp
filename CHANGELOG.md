@@ -8,6 +8,23 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-10
+
+### Added
+- ADSB_Test **7" panel data and stack-up** from Waveshare's dimension drawing and STEP model (no
+  bare-panel datasheet is public): lens 164.28 × 99.17 mm, panel 5.7 mm deep, ≈ 1.4 mm tape to
+  the PCB top side, all components on the bottom side, 4 × M2.5 at 156 × 89 mm. Panel is EK79007,
+  2-lane MIPI-DSI, GT911 touch.
+- Requirements MECH-04 (panel bonded to the component-free top side) and MECH-05 (minimum depth:
+  mid-mount connectors, battery off-board). Open question Q20 (margin widths, case).
+- Reference board: display/touch details and links to the drawing ZIP, examples repo and EK79007AD
+  datasheet. Vendor drawing/STEP kept locally (git-ignored).
+
+### Changed
+- ADSB_Test C5 back to the **on-module antenna (ESP32-C5-WROOM-1-N16R8)**: Wi-Fi is a backup and the
+  unit normally runs offline. Antenna placed in a board margin outside the panel outline.
+- Q18 and Q19 answered.
+
 ## [0.6.0] - 2026-10-10
 
 ### Added
@@ -114,7 +131,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/mummyJane/board_bsp/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mummyJane/board_bsp/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/mummyJane/board_bsp/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mummyJane/board_bsp/compare/v0.4.0...v0.4.1

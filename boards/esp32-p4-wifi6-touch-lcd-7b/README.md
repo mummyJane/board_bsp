@@ -15,8 +15,8 @@ Vendor docs: https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B
 | Main SoC | ESP32-P4NRW32 (dual-core RISC-V, 32 MB in-package PSRAM) | — | From schematic |
 | Flash | GD25Q256EYIGR (32 MB) | QSPI | From schematic |
 | Wireless | ESP32-C6-MINI-1 co-processor (Wi-Fi 6 / BLE 5) | SDIO (esp_hosted) | From schematic |
-| Display | 7" 1024×600 LCD | MIPI-DSI | TBC |
-| Touch | Capacitive touch controller | I2C | TBC part |
+| Display | 7" 1024×600 LCD, EK79007 driver | 2-lane MIPI-DSI (`esp_lcd_ek79007`), PHY on P4 LDO ch3 2.5 V | From vendor example |
+| Touch | GT911 capacitive touch | I2C | From vendor examples |
 | Audio | Codec + speaker / mic | I2S + I2C | TBC |
 | Storage | microSD | SDMMC | TBC |
 | USB | USB-C (USB-Serial/JTAG / USB OTG) | USB | TBC |

@@ -11,7 +11,9 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - DISPLAY TOUCH\n\nSAME CONNECTOR AND PIN-OUT AS REFERENCE BOARD so the 7in 1024x600 MIPI-DSI panel is interchangeable.\nMIPI-DSI lanes from P4 dedicated pins (100R diff, length-matched).\nLCD_RST / TP_RST from expander, backlight PWM from P4, touch I2C (shared bus) + TP_INT to P4.\nPanel/backlight supply 5V_LCD (switched, PM2 ch1)."
+	(text_box "DESIGN NOTES - DISPLAY TOUCH\n\nSAME CONNECTOR AND PIN-OUT AS REFERENCE BOARD so the 7in 1024x600 panel is interchangeable. Panel: EK79007 driver, 2-lane MIPI-DSI (esp_lcd_ek79007), GT911 touch.
+DSI PHY powered from P4 internal LDO ch3 = 2.5 V (decouple per reference). Vendor example LCD_RST = GPIO33 (confirm vs schematic).
+STACK-UP (Waveshare drawing): panel bonded to PCB TOP side with ~1.4 mm tape, top side component-free under the panel, all parts on the bottom. 4x M2.5 holes at 156 x 89 mm.\nMIPI-DSI lanes from P4 dedicated pins (100R diff, length-matched).\nLCD_RST / TP_RST from expander, backlight PWM from P4, touch I2C (shared bus) + TP_INT to P4.\nPanel/backlight supply 5V_LCD (switched, PM2 ch1)."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)

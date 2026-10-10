@@ -28,7 +28,7 @@ flowchart LR
   RAILS -.->|shunts| PM[Power monitors<br/>3x PAC1954]
 
   P4[ESP32-P4NRW32]
-  C5[ESP32-C5-WROOM-1U<br/>N16R8]
+  C5[ESP32-C5-WROOM-1<br/>N16R8]
   P4 <-->|SDIO esp_hosted| C5
   P4 <-->|RMII| PHY[IP101GRI + RJ45]
   P4 <-->|USB HS OTG| USBA[USB-A host<br/>ext. hub, 1-2 SDR]
@@ -61,10 +61,10 @@ Facts below are from the Waveshare schematic
 | SoC | ESP32-P4NRW32 (32 MB in-package PSRAM) | Same |
 | Flash | GD25Q256EYIGR (32 MB) | Same |
 | Core supplies | MP1605 / MP1658 bucks, RT9193 LDOs | Same circuit for the P4 core rails (VDD_HP buck etc.) |
-| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1U-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM, u.FL antenna). Same SDIO wiring and esp_hosted host side |
+| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM, PCB antenna). Same SDIO wiring and esp_hosted host side |
 | USB-UART | CH343P | Moves to the Dev port (FT2232H) and User port (CP2102N) |
 | Battery | ETA6098 1S charger, RTC battery | Replaced by 2S BQ25792 power path. RTC battery kept if used |
-| Display + touch | 7" MIPI-DSI connector | Same connector and pin-out |
+| Display + touch | 7" EK79007 panel, 2-lane MIPI-DSI, GT911 touch | Same connector and pin-out, same panel stack-up (see Mechanical) |
 | microSD | Yes | Same |
 | Audio (ES8311, ES7210, NS4150B) | Yes | **Dropped** |
 | CAN (TJA1051), RS485 | Yes | Dropped (not in requirements) |
@@ -89,10 +89,10 @@ Facts below are from the Waveshare schematic
   the C5 slave firmware. OTA is a nice-to-have: the P4 can push new C5 firmware
   over SDIO (esp_hosted host-driven slave OTA) or the C5 can be reflashed over
   the Dev port. 8 MB PSRAM gives headroom for larger Wi-Fi buffers.
-- **Antenna:** the panel's metal back covers the board, so the default is now
-  the **WROOM-1U** (u.FL) with an external or flex antenna. The PCB-antenna
-  WROOM-1 is only an option with a clear antenna edge (see Mechanical and RF
-  layout, Q18). Memory is the same.
+- **Antenna:** on-module PCB antenna (WROOM-1). Wi-Fi is a backup and the unit
+  normally runs offline. The antenna end sits in a board margin outside the
+  panel outline (see Mechanical and RF layout). WROOM-1U (u.FL) remains the
+  fallback if range turns out too poor.
 
 ## ADSBee m1421 integration
 
@@ -368,12 +368,52 @@ Consequences:
 
 | Topic | Rule |
 |-------|------|
-| Component side | The panel covers the top side, so tall parts go on the **bottom** side or in a defined height zone under the panel (height limit TBC from the panel's stand-off height) |
+| Component side | The panel is bonded to the top side (≈ 1.4 mm tape gap), so **all components go on the bottom side**. See the panel stack-up below |
 | Board zoning | RF zone (m1421 + combiner + SMA, GNSS + bias-T + SMA) along the RF edge. Digital zone (P4, PSRAM/flash, MIPI-DSI, USB, Ethernet) and power zone (bucks, charger) away from it. Continuous ground plane, stitched along the zone boundary |
 | RF cans _(optional)_ | Two-piece shield footprints (frame soldered, lid removable for probing) over: (1) m1421 + SCN-2-11 combiner + ESD; (2) GNSS module + bias-T; (3, optional) the switching regulators, as a noise source. Fit the frames, decide on lids after the first RF tests. Clear the m1421's 2.7 mm height and the footprint's top-copper keep-outs |
 | RF feeds | 50 Ω CPW from each module to its edge SMA, as short as possible, ground-via fenced. m1421 RF routing copied from the ADSBee 1421 carrier |
-| C5 antenna | **Problem:** the WROOM-1 PCB antenna needs a clear board edge with no metal nearby, but the panel's metal back sits on top of the board. Default changed to **ESP32-C5-WROOM-1U-N16R8** (same memory, u.FL) with a pigtail to a third SMA or an internal flex antenna. Keep the WROOM-1 only if a clear antenna edge outside the panel's footprint is available (Q18) |
+| C5 antenna | **On-module PCB antenna (ESP32-C5-WROOM-1-N16R8)**: Wi-Fi is a backup and the unit normally runs offline (Q18). Place the module's antenna end in a **board margin strip outside the panel outline**, at the board edge, with the datasheet copper keep-out on all layers. Keep it away from the SMA/RF edge and the metal panel frame. The case must be non-metallic over the antenna. Expect reduced range, which is acceptable for a backup link |
 | Noise | MIPI-DSI and the bucks are the main digital noise sources near the 1090/978 and GNSS L1 inputs. Keep the switch-node copper small. The buck frequencies must not have harmonics landing on 978/1090/1575 MHz (check during part selection) |
+
+### 7" panel: what we know (Q19)
+
+There's no public datasheet for the bare panel. Panels with the EK79007 driver
+vary by vendor in outline (about 164 × 97 mm up to 170 × 103 mm) and in lane
+count. So **the authoritative source is Waveshare's own dimension drawing and
+STEP model** of the ESP32-P4-WIFI6-Touch-LCD-7B (resources page →
+"Drawing (3D ZIP)", 2025-11-08). The files are kept locally in
+`boards/esp32-p4-wifi6-touch-lcd-7b/hardware/vendor/` (git-ignored).
+
+| Item | Value | Source |
+|------|-------|--------|
+| Cover lens outline | 164.28 ± 0.1 × 99.17 ± 0.1 mm | Waveshare drawing |
+| Viewing area | 154.58 × 86.42 mm (offsets from lens edge: 3.06 left, 6.64 right, 4.02 top) | Waveshare drawing |
+| LCD module outline | 164 × 97.1 mm | Waveshare drawing |
+| Lens front → LCD back | 5.7 mm | Waveshare drawing |
+| LCD back → PCB top face | **≈ 1.4 mm** (scaled from the drawing; looks like a bonding tape/foam layer, no stand-offs) | Waveshare drawing, measured |
+| Waveshare PCB | 164 × 97 × 1.6 mm, PCB edge 1.58 mm in from the lens bottom edge | Waveshare drawing |
+| Overall depth (lens front → tallest back-side part) | 15.3 mm, so about **6.6 mm** component height behind the PCB | Waveshare drawing |
+| Mounting | 4 × M2.5 threaded holes, **156 × 89 mm** pitch (4 mm in from the PCB edges) | Waveshare drawing |
+| Driver IC / interface | EK79007, **2-lane MIPI-DSI**, 1024 × 600, RGB888/565. ESP-IDF component `esp_lcd_ek79007` | Waveshare `07_color_panel` example |
+| DSI PHY supply | P4 internal LDO channel 3 at 2.5 V | Waveshare example |
+| Touch | GT911 (I2C) | Waveshare examples |
+| LCD reset | GPIO33 in the vendor example (check against the schematic before it goes into `board_pins.h`) | Waveshare example |
+
+**Stack-up for ADSB_Test ("as short as we can get away with"):** copy the
+Waveshare stack.
+- The panel is bonded straight to the **top side of the PCB** with the same
+  ≈ 1.4 mm tape layer. No stand-offs.
+- The top side under the panel is **component-free**: only flat items such as
+  test pads, fiducials and the panel FPC exit.
+- All components go on the **bottom side** (single-sided assembly).
+- The case depth is set by the tallest bottom-side part. Waveshare manages 6.6
+  mm. Ethernet and USB-A make that hard, so use **mid-mount / sink-in RJ45 and
+  USB-A** through cut-outs in the board margin, and edge-straddle SMAs.
+- The 2S 18650 pack (18.6 mm diameter) goes in the case behind the board, off
+  the PCB.
+- **Board outline:** the 164 × 97 mm panel area plus margin strips on the
+  connector edges (width TBC, to suit the case wall and the C5 antenna). The
+  4 × M2.5 holes stay on the Waveshare 156 × 89 mm pitch.
 
 ## Risks to test early
 
@@ -392,7 +432,7 @@ Consequences:
 |----------|----------|--------------|--------|
 | ADS-B receiver | ADSBee m1421 | — | User choice. Dual-band, < 60 mW, UART |
 | ADS-B RF combiner | MiniCircuits SCN-2-11+ | — | As on the ADSBee 1421 carrier |
-| Co-processor | ESP32-C5-WROOM-1U-N16R8 | WROOM-1-N16R8 (PCB antenna) if a clear edge exists | Dual-band, esp_hosted, room for OTA. The panel's metal back rules out a PCB antenna under it |
+| Co-processor | ESP32-C5-WROOM-1-N16R8 | WROOM-1U-N16R8 (u.FL) if range is poor | Dual-band, esp_hosted, room for OTA. Wi-Fi is a backup. Antenna in a board margin outside the panel |
 | PD sink | STUSB4500 | AP33772S, CH224K | Standalone (NVM), I2C status |
 | Charger | BQ25792 | MP2762A | 1–4 cell buck-boost, power path, ADC |
 | Battery | 2S1P 18650 ≥ 3000 mAh, protected | 2S2P | ≈ 21.6 Wh, 1.5–2.7 h |

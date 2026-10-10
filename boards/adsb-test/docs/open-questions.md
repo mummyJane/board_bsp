@@ -7,8 +7,7 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
-| Q18 | C5 antenna: WROOM-1U (u.FL) with an external SMA/flex antenna (new default, because the panel's metal back covers the board), or WROOM-1 if a clear antenna edge is available? If external, a third SMA on the RF edge? | WROOM-1U-N16R8, u.FL pigtail to a third SMA on the RF edge |
-| Q19 | Panel stand-off height, which sets the component height limit under the panel. Also the exact panel outline/holes (from the Waveshare 7B mechanical drawing) | TBC |
+| Q20 | Margin strip widths on each edge, and the case (material, wall thickness, back depth for the 2S pack) | TBC. Needed before PCB outline |
 
 ## Answered
 
@@ -22,7 +21,7 @@ the CHANGELOG.
 | Q6 | Audio | **Drop** |
 | Q7 | Dev USB powers the board? | Solder jumper, default open (unchanged) |
 | Q9 | 1090 MHz front end | Done by the m1421 (1090 + 978 MHz) |
-| Q2b | Which C5 module? | **WROOM, N16R8** (16 MB flash / 8 MB PSRAM) for more memory, so OTA is possible (a nice-to-have). Antenna variant (-1 vs -1U) in Q18 |
+| Q2b | Which C5 module? | **WROOM, N16R8** (16 MB flash / 8 MB PSRAM) for more memory, so OTA is possible (a nice-to-have). On-module antenna (Q18) |
 | Q12 | m1421 SYNC: output or input? | **Input, host-driven** (from the adsbee repo). High at reset = ROM bootloader; high at run time = sleep + LR2021 hand-off; weak pull-down keeps it awake. The official symbol says "output"; our copy is corrected. Activity outputs are SD26 (1090) / SD27 (UAT) |
 | Q13 | m1421 programming | Over its **console UART via the CC1314 ROM bootloader** (SYNC high + reset), no debugger. The Dev Kit's RP2040-Zero runs the open-source ADSBee 1421 Programmer (USB-serial bridge, RTS→SYNC, DTR→~SRST). JTAG uses a Segger J-Link (CC1314R10) |
 | Q14 | Licensing of the m1421 KiCad parts | Taken from **PantsForBirds/kicad-libs, MIT** (licence copied into `hardware/kicad/lib`). The module firmware/schematic are GPL-3.0; none of that code is in this repo |
@@ -32,4 +31,6 @@ the CHANGELOG.
 | Q15 | Waveshare schematic | Not committed (public repo). Linked instead: https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B |
 | Q8 | Antennas | **SMA for both GNSS and the m1421**, on the edge opposite the digital ports. Optional RF cans to keep digital/screen noise out |
 | Q10 | Size / mounting | **About the size of the screen, slightly bigger** so connectors go through the case. **Screen mounted on the PCB** |
+| Q18 | C5 antenna | **On-module PCB antenna (WROOM-1-N16R8)**: Wi-Fi is a backup and the unit normally runs offline. Antenna in a board margin outside the panel |
+| Q19 | Panel stand-off / outline | **As short as possible.** No bare-panel datasheet is public. Use Waveshare's dimension drawing + STEP: lens 164.28 × 99.17 mm, panel 5.7 mm deep, ≈ 1.4 mm tape to the PCB, all parts on the bottom side, M2.5 holes at 156 × 89 mm |
 | Q11 | LA5016 header | **2×20 keyed header (40-way cable)**. The key-side row is CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is for the LA5032 (future) |
