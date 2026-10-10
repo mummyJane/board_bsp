@@ -7,6 +7,7 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
+| Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
 
 ## Answered
 

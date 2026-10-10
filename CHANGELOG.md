@@ -8,8 +8,29 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-10
+
+### Added
+- **Reference document library**: `docs/datasheets.json` lists 63 documents (datasheets, TRMs, design
+  guidelines, vendor files, repos) for every part on both boards. `tools/fetch_datasheets.py` (stdlib
+  only, curl fallback) downloads them into `datasheets/` (git-ignored, public repo) with SHA-256
+  manifest and regenerates the committed index `docs/datasheets.md`. 39 of 41 files fetched (plus 22 links); STUSB4500 and
+  CP2102N need a manual browser download (sites block scripts).
+- ADSB_Test: ESP32-C5 pin and strap table from the C5 datasheet; P4 strapping pins confirmed from
+  the P4 datasheet (GPIO34–38).
+
+### Changed
+- ADSB_Test **C5 USB-Serial/JTAG removed from the Dev hub**: on the ESP32-C5, SDIO D3/D2 (GPIO13/14)
+  are the same pins as USB D-/D+, so with 4-bit SDIO the C5 is flashed/debugged over UART0
+  (FT2232H ch B, auto-reset on CHIP_PU + GPIO28). Dev hub port 2 is spare. GPIO26 gets a 10 kΩ
+  pull-up so the C5 can't strap into SDIO download mode.
+- ADSB_Test charger proposal **BQ25792 → BQ25798**: TI's BQ25792 pages return 404; the BQ25798
+  (same family, adds MPPT) is live, I2C address 0x6B confirmed. Pin compatibility to confirm (Q21).
+- P4: GPIO2–5 confirmed free for GPS/PM as long as `EFUSE_JTAG_SEL_ENABLE` is never burned.
+
 ### Fixed
-- Reference board README: PowerShell paths in the test instructions (tab characters instead of `	`).
+- Reference board README: PowerShell paths in the test instructions had tab characters where the
+  backslash-t of `\tools` / `\test` should be.
 
 ## [0.9.0] - 2026-10-10
 
@@ -184,7 +205,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/mummyJane/board_bsp/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/mummyJane/board_bsp/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/mummyJane/board_bsp/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/mummyJane/board_bsp/compare/v0.7.0...v0.7.1

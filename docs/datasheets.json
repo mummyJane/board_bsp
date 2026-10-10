@@ -1,0 +1,719 @@
+{
+  "_comment": "Reference documents for every part. 'file' entries are downloaded by tools/fetch_datasheets.py into datasheets/ (git-ignored). 'link' entries are web pages kept as links only. boards: ref = Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C, adsb = ADSB_Test. 'manual': true marks sites that block scripted downloads - save the PDF by hand as datasheets/<category>/<id>.pdf and re-run the script.",
+  "documents": [
+    {
+      "id": "esp32-p4_datasheet",
+      "part": "ESP32-P4",
+      "title": "ESP32-P4 datasheet",
+      "category": "espressif",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://documentation.espressif.com/esp32-p4_datasheet_en.pdf"
+    },
+    {
+      "id": "esp32-p4_trm",
+      "part": "ESP32-P4",
+      "title": "ESP32-P4 Technical Reference Manual",
+      "category": "espressif",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://documentation.espressif.com/esp32-p4_technical_reference_manual_en.pdf"
+    },
+    {
+      "id": "esp32-p4_hw_design",
+      "part": "ESP32-P4",
+      "title": "ESP32-P4 hardware design guidelines",
+      "category": "espressif",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32p4/esp-hardware-design-guidelines-en-master-esp32p4.pdf"
+    },
+    {
+      "id": "esp32-c5_datasheet",
+      "part": "ESP32-C5",
+      "title": "ESP32-C5 datasheet",
+      "category": "espressif",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    },
+    {
+      "id": "esp32-c5_trm",
+      "part": "ESP32-C5",
+      "title": "ESP32-C5 Technical Reference Manual",
+      "category": "espressif",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://documentation.espressif.com/esp32-c5_technical_reference_manual_en.pdf"
+    },
+    {
+      "id": "esp32-c5_hw_design",
+      "part": "ESP32-C5",
+      "title": "ESP32-C5 hardware design guidelines",
+      "category": "espressif",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c5/esp-hardware-design-guidelines-en-master-esp32c5.pdf"
+    },
+    {
+      "id": "esp32-c5-wroom-1_datasheet",
+      "part": "ESP32-C5-WROOM-1-N16R8",
+      "title": "ESP32-C5-WROOM-1 / WROOM-1U datasheet",
+      "category": "espressif",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://documentation.espressif.com/esp32-c5-wroom-1_wroom-1u_datasheet_en.pdf"
+    },
+    {
+      "id": "esp32-c6_datasheet",
+      "part": "ESP32-C6",
+      "title": "ESP32-C6 datasheet",
+      "category": "espressif",
+      "boards": [
+        "ref"
+      ],
+      "type": "file",
+      "url": "https://documentation.espressif.com/esp32-c6_datasheet_en.pdf"
+    },
+    {
+      "id": "esp32-c6-mini-1_datasheet",
+      "part": "ESP32-C6-MINI-1",
+      "title": "ESP32-C6-MINI-1 / MINI-1U datasheet",
+      "category": "espressif",
+      "boards": [
+        "ref"
+      ],
+      "type": "file",
+      "url": "https://documentation.espressif.com/esp32-c6-mini-1_mini-1u_datasheet_en.pdf"
+    },
+    {
+      "id": "esp-idf_p4_docs",
+      "part": "ESP-IDF",
+      "title": "ESP-IDF programming guide (ESP32-P4)",
+      "category": "espressif",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32p4/"
+    },
+    {
+      "id": "esp-hosted-mcu",
+      "part": "esp_hosted",
+      "title": "ESP-Hosted-MCU (Wi-Fi co-processor) repository and docs",
+      "category": "espressif",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://github.com/espressif/esp-hosted-mcu"
+    },
+    {
+      "id": "waveshare_7b_schematic",
+      "part": "ESP32-P4-WIFI6-Touch-LCD-7B",
+      "title": "Waveshare schematic",
+      "category": "waveshare",
+      "boards": [
+        "ref"
+      ],
+      "type": "file",
+      "url": "https://files.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-7B/ESP32-P4-WIFI6-Touch-LCD-7B.pdf"
+    },
+    {
+      "id": "waveshare_7b_3d",
+      "part": "ESP32-P4-WIFI6-Touch-LCD-7B",
+      "title": "Waveshare dimension drawing + STEP (ZIP)",
+      "category": "waveshare",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "ext": "zip",
+      "url": "https://files.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-7B/ESP32-P4-WIFI6-Touch-LCD-7B-3D.zip"
+    },
+    {
+      "id": "waveshare_7b_docs",
+      "part": "ESP32-P4-WIFI6-Touch-LCD-7B",
+      "title": "Waveshare product docs",
+      "category": "waveshare",
+      "boards": [
+        "ref"
+      ],
+      "type": "link",
+      "url": "https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B"
+    },
+    {
+      "id": "waveshare_7b_examples",
+      "part": "ESP32-P4-WIFI6-Touch-LCD-7B",
+      "title": "Waveshare example code",
+      "category": "waveshare",
+      "boards": [
+        "ref"
+      ],
+      "type": "link",
+      "url": "https://github.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-7B"
+    },
+    {
+      "id": "ek79007ad_datasheet",
+      "part": "EK79007AD",
+      "title": "EK79007AD LCD driver IC (Espressif mirror)",
+      "category": "display",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://dl.espressif.com/dl/schematics/display_driver_chip_EK79007AD_datasheet.pdf"
+    },
+    {
+      "id": "gt911_datasheet",
+      "part": "GT911",
+      "title": "GT911 capacitive touch controller",
+      "category": "display",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.crystalfontz.com/controllers/GOODIX/GT911/464/"
+    },
+    {
+      "id": "ap3012_datasheet",
+      "part": "AP3012KTR-E1",
+      "title": "AP3012 boost (panel AVDD)",
+      "category": "display",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.diodes.com/assets/Datasheets/AP3012.pdf"
+    },
+    {
+      "id": "ap3032_datasheet",
+      "part": "AP3032KTR-G1",
+      "title": "AP3032 LED backlight boost",
+      "category": "display",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.diodes.com/assets/Datasheets/AP3032.pdf"
+    },
+    {
+      "id": "bat54s_datasheet",
+      "part": "BAT54S-7-F",
+      "title": "BAT54S Schottky (VGH/VGL charge pumps)",
+      "category": "display",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.diodes.com/assets/Datasheets/ds11005.pdf"
+    },
+    {
+      "id": "rt9193_datasheet",
+      "part": "RT9193-18 / -33",
+      "title": "RT9193 300 mA LDO (product page; no direct PDF link)",
+      "category": "power",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.richtek.com/Products/Linear%20Regulators/Single%20Output%20Linear%20Regulator/RT9193?sc_lang=en"
+    },
+    {
+      "id": "mp1658_datasheet",
+      "part": "MP1658GTF-Z",
+      "title": "MP1658 3 A buck (product page; MPS has no public PDF link)",
+      "category": "power",
+      "boards": [
+        "ref"
+      ],
+      "type": "link",
+      "url": "https://www.monolithicpower.com/en/mp1658.html"
+    },
+    {
+      "id": "mp1605_datasheet",
+      "part": "MP1605GTF-Z",
+      "title": "MP1605 2 A buck (product page)",
+      "category": "power",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.monolithicpower.com/en/mp1605.html"
+    },
+    {
+      "id": "ao3401a_datasheet",
+      "part": "AO3401A",
+      "title": "AO3401A P-MOSFET (SD power, VBUS OR)",
+      "category": "power",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.aosmd.com/res/datasheets/AO3401A.pdf"
+    },
+    {
+      "id": "eta6098_datasheet",
+      "part": "ETA6098",
+      "title": "ETA6098 1S Li-ion charger",
+      "category": "power",
+      "boards": [
+        "ref"
+      ],
+      "type": "link",
+      "url": "https://www.lcsc.com/search?q=ETA6098"
+    },
+    {
+      "id": "stusb4500_datasheet",
+      "part": "STUSB4500",
+      "title": "STUSB4500 USB-PD sink controller",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.st.com/resource/en/datasheet/stusb4500.pdf",
+      "manual": true
+    },
+    {
+      "id": "bq25792_datasheet",
+      "part": "BQ25792",
+      "title": "BQ25792 charger: TI product/datasheet pages return 404 (2026-10-10), see BQ25798",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://ti.com/document-viewer/lit/html/slusdg1"
+    },
+    {
+      "id": "bq25798_datasheet",
+      "part": "BQ25798",
+      "title": "BQ25798 1-4S buck-boost charger with MPPT (proposed replacement for BQ25792)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/bq25798.pdf"
+    },
+    {
+      "id": "pac1954_datasheet",
+      "part": "PAC1954",
+      "title": "PAC195x power monitor (Microchip product page; site blocks scripts)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.microchip.com/en-us/product/PAC1954",
+      "manual": true
+    },
+    {
+      "id": "tps62933_datasheet",
+      "part": "TPS62933",
+      "title": "TPS62933 3 A buck (3V3)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/tps62933.pdf"
+    },
+    {
+      "id": "tps25200_datasheet",
+      "part": "TPS25200",
+      "title": "TPS25200 eFuse (USB-A VBUS)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/tps25200.pdf"
+    },
+    {
+      "id": "ap2112_datasheet",
+      "part": "AP2112K-3.3",
+      "title": "AP2112 600 mA LDO (ADSBee carrier)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.diodes.com/assets/Datasheets/AP2112.pdf"
+    },
+    {
+      "id": "gd25q256e_datasheet",
+      "part": "GD25Q256EYIGR",
+      "title": "GD25Q256E 32 MB QSPI flash",
+      "category": "memory",
+      "boards": [
+        "ref",
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.gigadevice.com/product/flash/spi-nor-flash/gd25q256e"
+    },
+    {
+      "id": "ip101gri_datasheet",
+      "part": "IP101GRI",
+      "title": "IP101G family datasheet IP101G-DS-R01 (unofficial distributor mirror; IC Plus has no public link)",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://dfsimg2.hqewimg.com/group1/M00/1E/7E/wKhk72GgdAWACBnTACa6J2TDLkI754.pdf"
+    },
+    {
+      "id": "usb2514b_datasheet",
+      "part": "USB2514B",
+      "title": "USB2514B 4-port USB 2.0 hub (Microchip product page; site blocks scripts)",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.microchip.com/en-us/product/USB2514B",
+      "manual": true
+    },
+    {
+      "id": "ft2232h_datasheet",
+      "part": "FT2232H",
+      "title": "FT2232H dual USB-UART (FTDI product page; site blocks scripts)",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://ftdichip.com/products/ft2232hq/",
+      "manual": true
+    },
+    {
+      "id": "cp2102n_datasheet",
+      "part": "CP2102N",
+      "title": "CP2102N USB-UART",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf",
+      "manual": true
+    },
+    {
+      "id": "ch343_datasheet",
+      "part": "CH343P",
+      "title": "CH343 USB-UART (reference board)",
+      "category": "interface",
+      "boards": [
+        "ref"
+      ],
+      "type": "link",
+      "url": "https://www.wch-ic.com/products/CH343.html"
+    },
+    {
+      "id": "rp2040_datasheet",
+      "part": "RP2040",
+      "title": "RP2040 datasheet",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf"
+    },
+    {
+      "id": "rp2040_hw_design",
+      "part": "RP2040",
+      "title": "Hardware design with RP2040",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://datasheets.raspberrypi.com/rp2040/hardware-design-with-rp2040.pdf"
+    },
+    {
+      "id": "tca6408a_datasheet",
+      "part": "TCA6408A",
+      "title": "TCA6408A I2C GPIO expander",
+      "category": "logic",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/tca6408a.pdf"
+    },
+    {
+      "id": "74lvc1g157_datasheet",
+      "part": "74LVC1G157 (Nexperia)",
+      "title": "2:1 mux (m1421 UART RX); TI has no SN74LVC1G157",
+      "category": "logic",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://assets.nexperia.com/documents/data-sheet/74LVC1G157.pdf"
+    },
+    {
+      "id": "sn74lvc1g32_datasheet",
+      "part": "SN74LVC1G32",
+      "title": "OR gate (m1421 SYNC)",
+      "category": "logic",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g32.pdf"
+    },
+    {
+      "id": "sn74lvc1g07_datasheet",
+      "part": "SN74LVC1G07",
+      "title": "Open-drain buffer (resets)",
+      "category": "logic",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g07.pdf"
+    },
+    {
+      "id": "sn74lvc1g125_datasheet",
+      "part": "SN74LVC1G125",
+      "title": "3-state buffer (Dev isolation)",
+      "category": "logic",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc1g125.pdf"
+    },
+    {
+      "id": "sn74lvc2t45_datasheet",
+      "part": "SN74LVC2T45",
+      "title": "Dual level translator (Dev isolation)",
+      "category": "logic",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/sn74lvc2t45.pdf"
+    },
+    {
+      "id": "max-m10s_datasheet",
+      "part": "MAX-M10S",
+      "title": "u-blox MAX-M10S GNSS",
+      "category": "rf",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://content.u-blox.com/sites/default/files/MAX-M10S_DataSheet_UBX-20035208.pdf"
+    },
+    {
+      "id": "max-m10s_integration",
+      "part": "MAX-M10S",
+      "title": "u-blox MAX-M10S integration manual",
+      "category": "rf",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://content.u-blox.com/sites/default/files/MAX-M10S_IntegrationManual_UBX-20053088.pdf"
+    },
+    {
+      "id": "scn-2-11_datasheet",
+      "part": "SCN-2-11+",
+      "title": "Mini-Circuits SCN-2-11+ power splitter/combiner",
+      "category": "rf",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.minicircuits.com/pdfs/SCN-2-11+.pdf"
+    },
+    {
+      "id": "esd7351_datasheet",
+      "part": "ESD7351",
+      "title": "ESD7351 RF ESD diode",
+      "category": "rf",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.onsemi.com/download/data-sheet/pdf/esd7351-d.pdf"
+    },
+    {
+      "id": "adsbee_m1421_datasheet",
+      "part": "ADSBee m1421",
+      "title": "ADSBee m1421 datasheet (pinout, AT commands)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://github.com/PantsForBirds/adsbee/raw/main/word/exports/datasheet_adsbee_m1421.pdf"
+    },
+    {
+      "id": "adsbee_1421_devkit_datasheet",
+      "part": "ADSBee 1421 Dev Kit",
+      "title": "ADSBee 1421 Developer Kit datasheet",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://github.com/PantsForBirds/adsbee/raw/main/word/exports/datasheet_adsbee_1421_devkit.pdf"
+    },
+    {
+      "id": "adsbee_1421_carrier",
+      "part": "ADSBee 1421 carrier",
+      "title": "ADSBee 1421 carrier KiCad reference design (ZIP, ~300 MB)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://pantsforbirds.com/wp-content/uploads/2026/06/adsbee_1421-A.zip"
+    },
+    {
+      "id": "adsbee_m1421_docs",
+      "part": "ADSBee m1421",
+      "title": "m1421 module docs (pinout, SYNC, bootloader)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://github.com/PantsForBirds/adsbee/blob/main/docs/adsbee-1421/m1421.md"
+    },
+    {
+      "id": "adsbee_1421_fw_readme",
+      "part": "ADSBee m1421",
+      "title": "m1421 firmware README (SYNC backdoor, UART flashing)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://github.com/PantsForBirds/adsbee/blob/main/firmware/adsbee_1421/README.md"
+    },
+    {
+      "id": "adsbee_kicad_libs",
+      "part": "ADSBee m1421",
+      "title": "PantsForBirds KiCad libraries (MIT)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://github.com/PantsForBirds/kicad-libs"
+    },
+    {
+      "id": "cc1314r10_datasheet",
+      "part": "CC1314R10",
+      "title": "TI CC1314R10 (inside the m1421)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/cc1314r10.pdf"
+    },
+    {
+      "id": "cc13x4_trm",
+      "part": "CC1314R10",
+      "title": "CC13x4/CC26x4 TRM SWCU194 (ROM serial bootloader)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ug/swcu194/swcu194.pdf"
+    },
+    {
+      "id": "lr2021_product",
+      "part": "LR2021",
+      "title": "Semtech LR2021 (inside the m1421)",
+      "category": "adsbee",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.semtech.com/products/wireless-rf/lora-plus/lr2021"
+    },
+    {
+      "id": "es8311_datasheet",
+      "part": "ES8311",
+      "title": "ES8311 audio codec (reference only)",
+      "category": "reference-only",
+      "boards": [
+        "ref"
+      ],
+      "type": "link",
+      "url": "http://www.everest-semi.com/pdf/ES8311%20PB.pdf"
+    },
+    {
+      "id": "es7210_datasheet",
+      "part": "ES7210",
+      "title": "ES7210 4-ch ADC (reference only)",
+      "category": "reference-only",
+      "boards": [
+        "ref"
+      ],
+      "type": "link",
+      "url": "http://www.everest-semi.com/pdf/ES7210%20PB.pdf"
+    },
+    {
+      "id": "tja1051_datasheet",
+      "part": "TJA1051",
+      "title": "TJA1051 CAN transceiver (reference only)",
+      "category": "reference-only",
+      "boards": [
+        "ref"
+      ],
+      "type": "file",
+      "url": "https://www.nxp.com/docs/en/data-sheet/TJA1051.pdf"
+    },
+    {
+      "id": "kingst_la5016",
+      "part": "LA5016",
+      "title": "Kingst LA5016 logic analyser (product page; header pin-out in architecture.md)",
+      "category": "tools",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "http://www.qdkingst.com/en/products"
+    }
+  ]
+}

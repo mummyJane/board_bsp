@@ -22,7 +22,7 @@ flowchart LR
     FT[Dual UART<br/>FT2232H]
     DP[RP2040<br/>ADSBee Programmer fw]
   end
-  PD -->|5-20 V| CHG[Charger + power path<br/>BQ25792]
+  PD -->|5-20 V| CHG[Charger + power path<br/>BQ25798]
   BAT[(2S Li-ion<br/>2x 18650)] <--> CHG
   CHG -->|VSYS| RAILS[5V / 3V3 bucks<br/>+ load switches]
   RAILS -.->|shunts| PM[Power monitors<br/>3x PAC1954]
@@ -42,7 +42,6 @@ flowchart LR
   P4 <-->|I2C| EXP[GPIO expander<br/>TCA6408A]
   UUART <-->|UART1| P4
   HUB -->|USB-JTAG| P4
-  HUB -->|USB-JTAG| C5
   HUB --> FT
   HUB --> DP
   FT -->|ch A UART0| P4
@@ -63,7 +62,7 @@ Facts below are from the Waveshare schematic
 | Core supplies | MP1605 / MP1658 bucks, RT9193 LDOs | Same circuit for the P4 core rails (VDD_HP buck etc.) |
 | Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM, PCB antenna). Same SDIO wiring and esp_hosted host side |
 | USB-UART | CH343P | Moves to the Dev port (FT2232H) and User port (CP2102N) |
-| Battery | ETA6098 1S charger, RTC battery | Replaced by 2S BQ25792 power path. RTC battery kept if used |
+| Battery | ETA6098 1S charger, RTC battery | Replaced by 2S BQ25798 power path. RTC battery kept if used |
 | Display + touch | 7" EK79007 bare COG panel, 2-lane MIPI-DSI, GT911 touch. Panel supplies generated on the board | Same FPC connectors, pin-out and **panel supply circuits** (AVDD 9.6 V boost, VGH/VGL charge pumps, VCOM, 1V8 LDO, AP3032 backlight driver), same stack-up. Touch INT newly wired to the P4 |
 | microSD | Yes | Same |
 | Audio (ES8311, ES7210, NS4150B) | Yes | **Dropped** |
@@ -93,6 +92,32 @@ Facts below are from the Waveshare schematic
   normally runs offline. The antenna end sits in a board margin outside the
   panel outline (see Mechanical and RF layout). WROOM-1U (u.FL) remains the
   fallback if range turns out too poor.
+
+### ESP32-C5 pins and straps (from the C5 datasheet)
+
+| C5 GPIO | Use | Note |
+|---------|-----|------|
+| 9 / 10 | SDIO CLK / CMD | to P4 GPIO18 / 19 |
+| 8 / 7 / 14 / 13 | SDIO D0 / D1 / D2 / D3 | to P4 GPIO14–17 |
+| 11 / 12 | UART0 TX / RX | to Dev FT2232H ch B |
+| 28 | BOOT strap (low = download, with 27 high) | FT2232H auto-reset + P4 optional |
+| 26 / 27 | Boot-mode straps (27 pulled up internally) | **10 kΩ pull-up on GPIO26**: it floats by default, and 26 = 27 = 28 = 0 selects SDIO download |
+| 25, MTDI | SDIO sampling/drive edge straps | defaults unless esp_hosted needs otherwise (check) |
+| 7 | JTAG-source strap (= SDIO D1) | ignored with unburned eFuses |
+
+**GPIO13/14 are both SDIO D3/D2 and the C5's USB D−/D+.** With 4-bit SDIO to
+the P4, the C5's USB-Serial/JTAG port **can't be used**. So the C5 is flashed and
+debugged over **UART0** (Dev FT2232H ch B, DTR/RTS auto-reset on CHIP_PU and
+GPIO28), and Dev hub port 2 is spare. Field updates still go over SDIO
+(esp_hosted host-driven OTA).
+
+### ESP32-P4 strapping pins (from the P4 datasheet)
+
+- **GPIO35–38:** boot mode. GPIO36 also controls ROM printing.
+- **GPIO34:** JTAG source. With unburned eFuses (default) GPIO34 is
+  **ignored** and JTAG comes from the USB-Serial/JTAG controller, so the
+  P4's GPIO2–5 (an alternative JTAG pad set) are free for GPS/PM. **Never burn
+  `EFUSE_JTAG_SEL_ENABLE`** on this board.
 
 ## ADSBee m1421 integration
 
@@ -218,7 +243,7 @@ Both meet the 1 h target with margin. If 4 SDRs are ever run from battery
 
 Charging while running at the worst case needs about 10.5 W + 2 A × 8.4 V ≈
 28 W at the input. So the PD sink requests **15 V / 3 A** first, and
-firmware sets the BQ25792 input-current limit from the negotiated contract.
+firmware sets the BQ25798 input-current limit from the negotiated contract.
 At 9 V the charge current is reduced automatically. At 5 V the board runs
 but charges slowly.
 
@@ -228,7 +253,7 @@ but charges slowly.
 User USB-C ──► STUSB4500 (PD sink: 15 V pref, 9 V, 5 V fallback)
                    │ VBUS_USER  [PM1 ch1]
                    ▼
-              BQ25792 buck-boost charger, power path ◄──► 2S Li-ion + NTC  [PM1 ch2 VBAT, bidirectional]
+              BQ25798 buck-boost charger, power path ◄──► 2S Li-ion + NTC  [PM1 ch2 VBAT, bidirectional]
                    │ VSYS 6.0–8.4 V  [PM1 ch3]
      ┌─────────────┴─────────────┐
      ▼                           ▼
@@ -256,7 +281,7 @@ The USB-A eFuse limit drops to 1.5 A (1–2 SDRs + hub). Use a powered hub for
 | PM2 — main loads | 5V_LCD | 3V3_P4 | 3V3_C5 | 3V3_ETH |
 | PM3 — peripherals | 3V3_GPS | 3V3_M1421 | 3V3_PERIPH | spare (5V rail total) |
 
-The BQ25792's built-in ADC also reports VBUS/VBAT/IBAT/IBUS, which gives a
+The BQ25798's built-in ADC also reports VBUS/VBAT/IBAT/IBUS, which gives a
 second, independent measurement for checking.
 
 ## USB topology
@@ -264,7 +289,7 @@ second, independent measurement for checking.
 | Port | Connector | Connected to |
 |------|-----------|--------------|
 | User | USB-C (sink) | CC → STUSB4500. D+/D- → CP2102N → P4 UART1 |
-| Dev | USB-C (device) | USB2514B hub. Port 1: P4 USB-Serial/JTAG. Port 2: C5 USB-Serial/JTAG. Port 3: FT2232H (A = P4 UART0 + auto-reset, B = C5 UART0 + auto-reset). Port 4: RP2040 running the ADSBee 1421 Programmer firmware, auto-reflash off (m1421 console + RTS→SYNC / DTR→~SRST + UART mux select) |
+| Dev | USB-C (device) | USB2514B hub. Port 1: P4 USB-Serial/JTAG. Port 2: spare (the C5's USB pins are used by SDIO). Port 3: FT2232H (A = P4 UART0 + auto-reset, B = C5 UART0 + auto-reset). Port 4: RP2040 running the ADSBee 1421 Programmer firmware, auto-reflash off (m1421 console + RTS→SYNC / DTR→~SRST + UART mux select) |
 | Host | USB-A | P4 USB 2.0 HS OTG (host) → TPS25200 eFuse, ESD → external hub → SDR(s) |
 
 Design rules for the Dev domain:
@@ -273,9 +298,9 @@ Design rules for the Dev domain:
 - Every signal crossing into the target goes through a buffer powered from the
   target rail (e.g. SN74LVC2T45), or uses open-drain, so the Dev domain can't
   back-power the target (USB-04).
-- The P4 and C5 USB-Serial/JTAG lines get series resistors and ESD protection
+- The P4 USB-Serial/JTAG lines get series resistors and ESD protection
   only.
-- The BQ25792's BC1.2 detection is **disabled**, because the User D+/D- lines
+- The BQ25798's BC1.2 detection is **disabled**, because the User D+/D- lines
   go to the CP2102N.
 
 ## Test points and logic-analyser header
@@ -383,8 +408,8 @@ For those, use a spare header pin in Phase 1.
 - **GPIO35** is both the BOOT strap and RMII TXD1, as on Espressif's P4 EV
   board. The PHY's TXD1 input must not pull it low during reset (check the
   IP101GRI pin state at reset). Keep the reference 4.7 kΩ pull-up.
-- Confirm the P4 strapping-pin list against the P4 datasheet (believed
-  GPIO34–38). GPIO36 is left unloaded on purpose.
+- P4 strapping pins confirmed from the datasheet: GPIO34–38 (see above).
+  GPIO36 is left unloaded on purpose.
 
 ## Mechanical and RF layout
 
@@ -482,7 +507,7 @@ Waveshare stack.
 | ADS-B RF combiner | MiniCircuits SCN-2-11+ | — | As on the ADSBee 1421 carrier |
 | Co-processor | ESP32-C5-WROOM-1-N16R8 | WROOM-1U-N16R8 (u.FL) if range is poor | Dual-band, esp_hosted, room for OTA. Wi-Fi is a backup. Antenna in a board margin outside the panel |
 | PD sink | STUSB4500 | AP33772S, CH224K | Standalone (NVM), I2C status |
-| Charger | BQ25792 | MP2762A | 1–4 cell buck-boost, power path, ADC |
+| Charger | BQ25798 | BQ25792 (TI pages 404 since 2026-10-10), MP2762A | 1–4 cell buck-boost, power path, ADC, MPPT. Same family as BQ25792: check pin compatibility (Q21) |
 | Battery | 2S1P 18650 ≥ 3000 mAh, protected | 2S2P | ≈ 21.6 Wh, 1.5–2.7 h |
 | Power monitor | PAC1954 | INA3221 | 4 ch + energy accumulators |
 | 3V3 buck | TPS62933 | TPS62130 | 3.8–30 V in, 3 A |

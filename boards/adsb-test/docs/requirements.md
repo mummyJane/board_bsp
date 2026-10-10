@@ -35,7 +35,7 @@ hardware exists:
 |----|-------------|-----------|
 | USB-01 | **User** USB-C: USB-PD sink (main power input + battery charging) | Eval (PD sink board) |
 | USB-02 | **User** USB-C data → USB-UART bridge → P4 "user" UART | Eval (USB-UART) |
-| USB-03 | **Dev** USB-C: one cable gives all debug: P4 USB-Serial/JTAG, C5 USB-Serial/JTAG, P4 console UART, C5 UART, m1421 console UART with SYNC/RESET control (firmware upload + AT terminal) | Partly (P4/C6 USB-JTAG) |
+| USB-03 | **Dev** USB-C: one cable gives all debug: P4 USB-Serial/JTAG, P4 console UART, C5 UART0 with auto-reset (the C5's USB pins are used by SDIO), m1421 console UART with SYNC/RESET control (firmware upload + AT terminal) | Partly (P4/C6 USB-JTAG) |
 | USB-04 | Dev USB debug section is powered from the Dev port and must not back-power the target | No |
 | USB-05 | USB-A host port on the P4 high-speed USB OTG, through an **external hub**: 1 SDR (AIS or similar) required, 2 supported, 4 nice-to-have (powered hub) | Yes, if the reference board's USB OTG port is usable as host |
 | USB-06 | USB-A port has current-limited (≈ 1.5 A), switchable, measured 5 V | Eval |

@@ -27,7 +27,7 @@ uses a **C6**, not a C5. Those items use add-on boards.
 | 1.9 | GPS-01/02 | MAX-M10S breakout on a UART + PPS GPIO | NMEA/UBX parsed, PPS interrupt jitter measured |
 | 1.10 | PWR-03 | PAC1954 (or INA3221) breakout on I2C | Channels read, energy accumulator works, values match a multimeter |
 | 1.11 | NET-01 | IP101 / LAN8720 RMII breakout | Link up, DHCP, iperf |
-| 1.12 | USB-01/02, PWR-01 | STUSB4500 + BQ25792 eval boards, 2S pack | PD contract at 15 V, charge/discharge, input-current limit set from the PDO, I2C status read |
+| 1.12 | USB-01/02, PWR-01 | STUSB4500 + BQ25798 eval boards, 2S pack | PD contract at 15 V, charge/discharge, input-current limit set from the PDO, I2C status read |
 | 1.13 | PWR-02 | Reference board + all eval boards, USB power meter on each | Measured power budget replaces the estimate in architecture.md |
 | 1.14 | KEEP-01 | Reference board microSD | Write/read throughput, logging while decoding |
 
@@ -39,7 +39,7 @@ uses a **C6**, not a C5. Those items use add-on boards.
 | 2.2 | Dev USB only: hub, FT2232H and RP2040 enumerate, no voltage on target rails (back-power check, USB-04) |
 | 2.3 | Bench supply on VSYS with current limit: bring up rails one at a time via the 0 Ω links. Check each rail at its test point |
 | 2.4 | LA5016 plugged into the LA header: all 16 channels toggle (firmware walks each signal) |
-| 2.5 | P4 USB-JTAG, C5 USB-JTAG, both UARTs and the m1421 probe over the single Dev cable |
+| 2.5 | P4 USB-JTAG, both UARTs (C5 flashed over UART0 with auto-reset) and the m1421 probe over the single Dev cable |
 | 2.6 | m1421 UART mux: P4 ↔ m1421 by default, probe takes over when selected |
 | 2.7 | Repeat all Phase 1 steps on ADSB_Test |
 | 2.8 | Battery-only run: display + Wi-Fi + Ethernet + GPS + m1421 + 1 SDR (then 2) for ≥ 1 h. All rails logged by the PAC1954s to microSD. Record temperatures |

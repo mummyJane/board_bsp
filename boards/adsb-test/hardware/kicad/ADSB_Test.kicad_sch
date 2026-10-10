@@ -11,7 +11,7 @@
 		(comment 1 "ESP32-P4 ADS-B test board, derived from Waveshare ESP32-P4-WIFI6-Touch-LCD-7B-C")
 	)
 	(lib_symbols)
-	(text_box "ADSB_Test Rev A - hierarchy overview\nESP32-P4 + ESP32-C5 (Wi-Fi remote), Ethernet, User USB-C (PD sink + user UART), Dev USB-C (hub: P4/C5 USB-JTAG, FT2232H UARTs, RP2040 probe for m1421),\nADSBee m1421 (1090 + 978 MHz), USB-A host (ext. hub, 1-2 SDR), GPS, 2S Li-ion + charger, V/I monitoring on every rail, 7in display + touch, microSD, LA5016 header.\nDocs: boards/adsb-test/docs (requirements, architecture, open questions, test plan)."
+	(text_box "ADSB_Test Rev A - hierarchy overview\nESP32-P4 + ESP32-C5 (Wi-Fi remote), Ethernet, User USB-C (PD sink + user UART), Dev USB-C (hub: P4 USB-JTAG, FT2232H P4+C5 UARTs, RP2040 probe for m1421),\nADSBee m1421 (1090 + 978 MHz), USB-A host (ext. hub, 1-2 SDR), GPS, 2S Li-ion + charger, V/I monitoring on every rail, 7in display + touch, microSD, LA5016 header.\nDocs: boards/adsb-test/docs (requirements, architecture, open questions, test plan)."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 380 22)

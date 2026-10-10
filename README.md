@@ -34,6 +34,12 @@ board_bsp/
         └── hardware/       KiCad project (schematic / PCB)
 ```
 
+## Reference documents
+
+Datasheets and links for every part: [docs/datasheets.md](docs/datasheets.md).
+Run `python tools/fetch_datasheets.py` to download the PDFs into `datasheets/`
+(git-ignored; vendor documents aren't redistributed in this public repo).
+
 ## Toolchain
 
 - **Firmware:** ESP-IDF v6.1 (ESP32-P4 target) — see [docs/setup.md](docs/setup.md)

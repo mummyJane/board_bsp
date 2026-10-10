@@ -102,7 +102,7 @@
 #define BSP_USBA_FAULT          (27)
 
 /* Interrupts */
-#define BSP_CHG_PD_INT          (9)     /* BQ25792 INT + STUSB4500 ALERT, wired-OR */
+#define BSP_CHG_PD_INT          (9)     /* BQ25798 INT + STUSB4500 ALERT, wired-OR */
 #define BSP_PM_ALERT            (5)     /* PAC1954 ALERT, wired-OR */
 #define BSP_EXP_INT             (53)    /* TCA6408A INT */
 
@@ -124,7 +124,7 @@
 
 /* I2C addresses (7-bit) */
 #define BSP_I2C_ADDR_PD         0x28    /* STUSB4500 default */
-#define BSP_I2C_ADDR_CHG        0x6B    /* BQ25792 */
+#define BSP_I2C_ADDR_CHG        0x6B    /* BQ25798 */
 #define BSP_I2C_ADDR_EXP        0x20    /* TCA6408A, ADDR = GND */
 #define BSP_I2C_ADDR_PM1        (-1)    /* PAC1954, set by ADDRSEL resistor */
 #define BSP_I2C_ADDR_PM2        (-1)

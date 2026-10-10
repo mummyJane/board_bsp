@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - POWER INPUT\n\nUser USB-C receptacle (sink).\nCC1/CC2 -> STUSB4500 PD sink (NVM: PDO1 5V, PDO2 9V, PDO3 15V 3A preferred). I2C + ALERT to P4.\nFirmware sets BQ25792 input current limit from the negotiated PDO.\nVBUS -> TVS -> VBUS_USER (shunt, PM1 ch1) -> charger input.\nD+/D- -> ESD -> CP2102N (sheet USB User).\nOptional solder jumper: Dev VBUS -> VSYS via ideal diode (default OPEN)."
+	(text_box "DESIGN NOTES - POWER INPUT\n\nUser USB-C receptacle (sink).\nCC1/CC2 -> STUSB4500 PD sink (NVM: PDO1 5V, PDO2 9V, PDO3 15V 3A preferred). I2C + ALERT to P4.\nFirmware sets BQ25798 input current limit from the negotiated PDO.\nVBUS -> TVS -> VBUS_USER (shunt, PM1 ch1) -> charger input.\nD+/D- -> ESD -> CP2102N (sheet USB User).\nOptional solder jumper: Dev VBUS -> VSYS via ideal diode (default OPEN)."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)

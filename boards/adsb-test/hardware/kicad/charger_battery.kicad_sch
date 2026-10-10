@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - CHARGER BATTERY\n\nBQ25792 buck-boost charger, power path. Battery 2S1P 18650 >=3000 mAh, protected (~21.6 Wh, 1.5-2.7 h runtime).\nVBUS_USER in, VSYS out (6.0-8.4 V), BAT via shunt (PM1 ch2, bidirectional).\nNTC on TS pin. I2C + INT to P4. BC1.2 (D+/D-) detection DISABLED / not connected.\nBattery connector TBC. VSYS shunt -> PM1 ch3.\nKeep reference-board RTC battery for the P4 RTC if used."
+	(text_box "DESIGN NOTES - CHARGER BATTERY\n\nBQ25798 buck-boost charger, power path. Battery 2S1P 18650 >=3000 mAh, protected (~21.6 Wh, 1.5-2.7 h runtime).\nVBUS_USER in, VSYS out (6.0-8.4 V), BAT via shunt (PM1 ch2, bidirectional).\nNTC on TS pin. I2C + INT to P4. BC1.2 (D+/D-) detection DISABLED / not connected.\nBattery connector TBC. VSYS shunt -> PM1 ch3.\nKeep reference-board RTC battery for the P4 RTC if used."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)

@@ -88,3 +88,6 @@ Thumbs.db
 
 # Local build logs
 build_log.txt
+
+# Downloaded vendor datasheets (see docs/datasheets.json, tools/fetch_datasheets.py)
+/datasheets/
