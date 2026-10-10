@@ -19,7 +19,7 @@ hardware exists:
 | ID | Requirement | Ref board |
 |----|-------------|-----------|
 | CORE-01 | ESP32-P4 main processor, same flash/PSRAM configuration as the reference board | Yes |
-| CORE-02 | ESP32-C5-WROOM-1-N16R8 dual-band Wi-Fi 6 co-processor over SDIO (esp_hosted / esp_wifi_remote), same host-side wiring as the reference board's C6 | Yes (API on C6), Eval (C5 DevKit) |
+| CORE-02 | ESP32-C5-WROOM-1U-N16R8 (u.FL antenna) dual-band Wi-Fi 6 co-processor over SDIO (esp_hosted / esp_wifi_remote), same host-side wiring as the reference board's C6 | Yes (API on C6), Eval (C5 DevKit) |
 | CORE-03 | BSP and test firmware shared with the reference board where hardware is the same | Yes |
 
 ## Connectivity
@@ -84,6 +84,17 @@ hardware exists:
 | KEEP-02 | BOOT and RESET buttons, status LED | Yes |
 
 Dropped from the reference board: audio, CAN, RS485, CSI camera.
+
+## Mechanical and RF
+
+| ID | Requirement | Ref board |
+|----|-------------|-----------|
+| MECH-01 | Board outline about the size of the 7" panel, slightly larger so connectors reach through the case | No |
+| MECH-02 | Panel mounted on the PCB (as on the reference board) | Yes (reference concept) |
+| MECH-03 | Digital/power connectors on one edge; GNSS and m1421 SMA connectors on the opposite edge | No |
+| RF-01 | SMA connectors for GNSS (active antenna, bias-T) and the m1421 (1090/978 dual-band) | Eval |
+| RF-02 | Optional two-piece RF can footprints over the m1421 RF section, the GNSS section and (optionally) the switching regulators | No |
+| RF-03 | Wi-Fi antenna not under the panel: u.FL module (WROOM-1U) to an external or flex antenna | Eval (C5 DevKit) |
 
 ## Test and production
 

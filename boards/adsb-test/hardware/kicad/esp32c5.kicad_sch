@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - ESP32-C5\n\nESP32-C5-WROOM-1-N16R8 (16 MB flash, 8 MB PSRAM) as esp_hosted Wi-Fi remote (2.4 + 5 GHz Wi-Fi 6). Same module as the ESP32-C5 DevKit.\n16 MB flash: factory + 2 OTA slots so the P4 can update the C5 over SDIO (host-driven slave OTA, nice-to-have).\nSDIO to P4 on the SAME P4 pins as the reference board's ESP32-C6-MINI-1 (host firmware shared).\nC5 EN and BOOT strap: open-drain from P4 AND from FT2232H ch B (DTR/RTS auto-reset).\nC5 USB-Serial/JTAG -> Dev hub port 2. C5 UART0 -> buffer -> FT2232H ch B. Pin numbers from C5 datasheet (differ from C6).\nSupply 3V3_C5 (PM2 ch3). PCB antenna: module keep-out at board edge. WROOM-1U (u.FL) variant is the fallback."
+	(text_box "DESIGN NOTES - ESP32-C5\n\nESP32-C5-WROOM-1U-N16R8 (16 MB flash, 8 MB PSRAM, u.FL; panel metal covers the board so no PCB antenna - Q18) as esp_hosted Wi-Fi remote (2.4 + 5 GHz Wi-Fi 6). Same module as the ESP32-C5 DevKit.\n16 MB flash: factory + 2 OTA slots so the P4 can update the C5 over SDIO (host-driven slave OTA, nice-to-have).\nSDIO to P4 on the SAME P4 pins as the reference board's ESP32-C6-MINI-1 (host firmware shared).\nC5 EN and BOOT strap: open-drain from P4 AND from FT2232H ch B (DTR/RTS auto-reset).\nC5 USB-Serial/JTAG -> Dev hub port 2. C5 UART0 -> buffer -> FT2232H ch B. Pin numbers from C5 datasheet (differ from C6).\nSupply 3V3_C5 (PM2 ch3). u.FL pigtail to a 3rd SMA on the RF edge or an internal flex antenna. WROOM-1 (PCB antenna) only if a clear edge outside the panel exists."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)

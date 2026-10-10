@@ -11,7 +11,7 @@
 		(comment 1 "Requirements: boards/adsb-test/docs/requirements.md")
 	)
 	(lib_symbols)
-	(text_box "DESIGN NOTES - GPS\n\nu-blox MAX-M10S GNSS. UART -> P4 UART2, TIMEPULSE (PPS) -> P4 GPIO + LA ch2, RESET_N from expander.\nV_BCKP from supercap/ML1220 for hot start. Active antenna: SMA with bias-T + current limit.\nSupply 3V3_GPS (switched, PM3 ch1). Keep L1 RF away from the 1090/978 MHz m1421 front end and Wi-Fi."
+	(text_box "DESIGN NOTES - GPS\n\nu-blox MAX-M10S GNSS. UART -> P4 UART2, TIMEPULSE (PPS) -> P4 GPIO + LA ch2, RESET_N from expander.\nV_BCKP from supercap/ML1220 for hot start. Active antenna: edge SMA on the RF edge (opposite the digital connectors) with bias-T + current limit. Optional two-piece RF can over module + bias-T.\nSupply 3V3_GPS (switched, PM3 ch1). Keep L1 RF away from the 1090/978 MHz m1421 front end and Wi-Fi."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(size 250 90)

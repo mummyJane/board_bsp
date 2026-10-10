@@ -2,7 +2,7 @@
 
 This is a commercial Waveshare board, so there is no KiCad project here.
 The vendor schematic is kept locally in `vendor/` (git-ignored, because the repo is
-public). Notes on the circuits we intend to reuse in the custom board go in this file.
+public). Download it from https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B. Notes on the circuits we intend to reuse in the custom board go in this file.
 
 Key parts (from the schematic): ESP32-P4NRW32, GD25Q256EYIGR flash, ESP32-C6-MINI-1
 (SDIO), CH343P USB-UART, ETA6098 1S charger, MP1605/MP1658 bucks, RT9193 LDOs,

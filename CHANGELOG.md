@@ -8,6 +8,24 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-10
+
+### Added
+- ADSB_Test **mechanical and RF layout** rules (architecture.md) and new requirements MECH-01..03,
+  RF-01..03: screen-sized board with the 7" panel mounted on it; digital connectors on one edge,
+  GNSS + m1421 SMA connectors on the opposite edge; optional two-piece RF cans over the m1421
+  section, GNSS section and switching regulators.
+- Open questions Q18 (C5 antenna variant) and Q19 (panel stand-off height / outline).
+- Reference board: link to the Waveshare docs page. SoC, flash and C6 module confirmed from the schematic.
+
+### Changed
+- ADSB_Test C5 default is now **ESP32-C5-WROOM-1U-N16R8** (u.FL), because the panel's metal back
+  covers the board. WROOM-1 stays an option if a clear antenna edge exists.
+- ADSB_Test Dev port keeps the **stock ADSBee 1421 Programmer firmware** (any fork goes in a
+  separate repo linking back). Operating rule: Programmer baked image = m1421 firmware version.
+  0 Ω links let the RP2040 be isolated from SYNC/~SRST.
+- Open questions Q2a, Q8, Q10, Q15, Q16, Q17 answered.
+
 ## [0.5.0] - 2026-10-09
 
 ### Changed
@@ -96,7 +114,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/mummyJane/board_bsp/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/mummyJane/board_bsp/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mummyJane/board_bsp/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/mummyJane/board_bsp/compare/v0.3.0...v0.4.0

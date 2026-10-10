@@ -28,7 +28,7 @@ flowchart LR
   RAILS -.->|shunts| PM[Power monitors<br/>3x PAC1954]
 
   P4[ESP32-P4NRW32]
-  C5[ESP32-C5-WROOM-1<br/>N16R8]
+  C5[ESP32-C5-WROOM-1U<br/>N16R8]
   P4 <-->|SDIO esp_hosted| C5
   P4 <-->|RMII| PHY[IP101GRI + RJ45]
   P4 <-->|USB HS OTG| USBA[USB-A host<br/>ext. hub, 1-2 SDR]
@@ -61,7 +61,7 @@ Facts below are from the Waveshare schematic
 | SoC | ESP32-P4NRW32 (32 MB in-package PSRAM) | Same |
 | Flash | GD25Q256EYIGR (32 MB) | Same |
 | Core supplies | MP1605 / MP1658 bucks, RT9193 LDOs | Same circuit for the P4 core rails (VDD_HP buck etc.) |
-| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM). Same SDIO wiring and esp_hosted host side |
+| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1U-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM, u.FL antenna). Same SDIO wiring and esp_hosted host side |
 | USB-UART | CH343P | Moves to the Dev port (FT2232H) and User port (CP2102N) |
 | Battery | ETA6098 1S charger, RTC battery | Replaced by 2S BQ25792 power path. RTC battery kept if used |
 | Display + touch | 7" MIPI-DSI connector | Same connector and pin-out |
@@ -89,9 +89,10 @@ Facts below are from the Waveshare schematic
   the C5 slave firmware. OTA is a nice-to-have: the P4 can push new C5 firmware
   over SDIO (esp_hosted host-driven slave OTA) or the C5 can be reflashed over
   the Dev port. 8 MB PSRAM gives headroom for larger Wi-Fi buffers.
-- **Antenna:** WROOM-1 has a PCB antenna and needs the module's antenna
-  keep-out at the board edge. The WROOM-1U variant (u.FL) is an option if the
-  enclosure or RF crowding needs an external antenna.
+- **Antenna:** the panel's metal back covers the board, so the default is now
+  the **WROOM-1U** (u.FL) with an external or flex antenna. The PCB-antenna
+  WROOM-1 is only an option with a clear antenna edge (see Mechanical and RF
+  layout, Q18). Memory is the same.
 
 ## ADSBee m1421 integration
 
@@ -162,13 +163,22 @@ That gives two update paths on ADSB_Test:
 | Path | How | Use |
 |------|-----|-----|
 | **P4 (field update)** | The P4 drives SYNC (GPIO) and ~SRST (expander) and talks to the ROM bootloader on UART3. It needs a CC13x4 ROM bootloader client in the BSP. Write it from TI's protocol spec (CC13x4 TRM SWCU194, "ROM Serial Bootloader") to keep the BSP MIT. The ADSBee Programmer's client is GPL-3.0 | Firmware updates in the field, including over Wi-Fi/Ethernet via the P4 |
-| **Dev USB-C (bench)** | RP2040 on Dev hub port 4 running the **ADSBee 1421 Programmer** firmware (open source, RP2040-Zero), **built with its power-up auto-reflash disabled**. It works as a USB-serial adapter with RTS → SYNC and DTR → ~SRST, so the ADSBee web console's firmware uploader and AT terminal work unchanged. It also drives the UART mux select while its port is open | Console, AT configuration, firmware upload, logs from the PC |
+| **Dev USB-C (bench)** | RP2040 on Dev hub port 4 running the **stock ADSBee 1421 Programmer** firmware (open source, RP2040-Zero). Any changes go in a separate fork repo that links back to PantsForBirds/adsbee (Q16). It works as a USB-serial adapter with RTS → SYNC and DTR → ~SRST, so the ADSBee web console's firmware uploader and AT terminal work unchanged. It also drives the UART mux select while its port is open | Console, AT configuration, firmware upload, logs from the PC |
 | **JTAG** | 10-pin Cortex header + Segger J-Link | Breakpoint debugging, and recovery if the bootloader backdoor was turned off (`AT+BOOTLOADER_PIN=0`) |
 
-Why the auto-reflash must be off: the stock Programmer resets the module and
-overwrites any firmware that differs from its baked-in image at every
-power-up. On ADSB_Test that would happen every time the Dev cable is plugged
-in, interrupting reception and undoing P4 field updates.
+Living with the stock Programmer (Q16):
+- At every power-up (that is, every time the Dev cable is plugged in) it
+  resets the module into the bootloader, CRC-checks it against its baked-in
+  image, reflashes any sectors that differ, then restarts the app. Reception
+  stops for a moment.
+- **Rule:** keep the Programmer's baked image the same as the m1421 firmware
+  release in use. Update both together: re-flash the RP2040 `.uf2` from the same
+  `adsbee_1421-<version>` release. A P4 field update to a newer version is
+  reverted the next time the Dev cable is plugged in, unless the Programmer is
+  updated too.
+- **Hardware escape hatch:** 0 Ω links (fitted) in the RP2040 → DEV_SYNC and
+  RP2040 → ~SRST paths. Removing them makes the Dev port a console-only UART
+  that can't reset or reflash the module.
 
 JTAG over the Dev USB port isn't provided. The CC1314 is flashed and debugged
 with a J-Link (cJTAG/JTAG), and no documented RP2040/FTDI flow exists for it.
@@ -339,6 +349,32 @@ not counted here. Slow outputs (load-switch enables, resets) move to a
 That's 9 needed against 8 bits. Use a TCA9535 (16-bit) if LCD and touch
 resets must stay separate.
 
+## Mechanical and RF layout
+
+Decided 2026-10-10 (Q8, Q10):
+- **Board outline:** about the size of the 7" panel, slightly larger so the
+  connectors reach through the case wall.
+- **Panel mounting:** the panel mounts on the PCB, as the reference board does
+  (stand-offs/adhesive frame on the top side, FPC to the display connector).
+- **Connector edges:** digital/power connectors (User USB-C, Dev USB-C, USB-A,
+  RJ45, microSD) go on one edge. The two RF SMA connectors (GNSS and m1421
+  1090/978) go on the **opposite** edge, so RF and digital cables don't share a
+  side.
+- **Inside the case:** the LA5016 header and the 10-pin m1421 JTAG header
+  don't need to reach the case wall, but stay reachable with the back cover
+  off.
+
+Consequences:
+
+| Topic | Rule |
+|-------|------|
+| Component side | The panel covers the top side, so tall parts go on the **bottom** side or in a defined height zone under the panel (height limit TBC from the panel's stand-off height) |
+| Board zoning | RF zone (m1421 + combiner + SMA, GNSS + bias-T + SMA) along the RF edge. Digital zone (P4, PSRAM/flash, MIPI-DSI, USB, Ethernet) and power zone (bucks, charger) away from it. Continuous ground plane, stitched along the zone boundary |
+| RF cans _(optional)_ | Two-piece shield footprints (frame soldered, lid removable for probing) over: (1) m1421 + SCN-2-11 combiner + ESD; (2) GNSS module + bias-T; (3, optional) the switching regulators, as a noise source. Fit the frames, decide on lids after the first RF tests. Clear the m1421's 2.7 mm height and the footprint's top-copper keep-outs |
+| RF feeds | 50 Ω CPW from each module to its edge SMA, as short as possible, ground-via fenced. m1421 RF routing copied from the ADSBee 1421 carrier |
+| C5 antenna | **Problem:** the WROOM-1 PCB antenna needs a clear board edge with no metal nearby, but the panel's metal back sits on top of the board. Default changed to **ESP32-C5-WROOM-1U-N16R8** (same memory, u.FL) with a pigtail to a third SMA or an internal flex antenna. Keep the WROOM-1 only if a clear antenna edge outside the panel's footprint is available (Q18) |
+| Noise | MIPI-DSI and the bucks are the main digital noise sources near the 1090/978 and GNSS L1 inputs. Keep the switch-node copper small. The buck frequencies must not have harmonics landing on 978/1090/1575 MHz (check during part selection) |
+
 ## Risks to test early
 
 | Risk | Why | Early test |
@@ -356,7 +392,7 @@ resets must stay separate.
 |----------|----------|--------------|--------|
 | ADS-B receiver | ADSBee m1421 | — | User choice. Dual-band, < 60 mW, UART |
 | ADS-B RF combiner | MiniCircuits SCN-2-11+ | — | As on the ADSBee 1421 carrier |
-| Co-processor | ESP32-C5-WROOM-1-N16R8 | -1U (u.FL) variant; N8R8 | Dual-band, esp_hosted, room for OTA. Same module as the C5 DevKit |
+| Co-processor | ESP32-C5-WROOM-1U-N16R8 | WROOM-1-N16R8 (PCB antenna) if a clear edge exists | Dual-band, esp_hosted, room for OTA. The panel's metal back rules out a PCB antenna under it |
 | PD sink | STUSB4500 | AP33772S, CH224K | Standalone (NVM), I2C status |
 | Charger | BQ25792 | MP2762A | 1–4 cell buck-boost, power path, ADC |
 | Battery | 2S1P 18650 ≥ 3000 mAh, protected | 2S2P | ≈ 21.6 Wh, 1.5–2.7 h |

@@ -5,14 +5,16 @@ code. The next custom board in this repo is derived from this design.
 
 ## Hardware summary
 
-> Verify every item below against the Waveshare wiki / schematic before relying
+Vendor docs: https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B
+
+> Verify every item below against the Waveshare docs / schematic before relying
 > on it, then replace "TBC" with the confirmed value.
 
 | Block | Part | Interface | Status |
 |-------|------|-----------|--------|
-| Main SoC | ESP32-P4 (dual-core RISC-V, up to 400 MHz) | — | TBC |
-| PSRAM / Flash | in-package PSRAM, external QSPI flash | — | TBC sizes |
-| Wireless | ESP32-C6 co-processor (Wi-Fi 6 / BLE 5) | SDIO (esp_hosted) | TBC |
+| Main SoC | ESP32-P4NRW32 (dual-core RISC-V, 32 MB in-package PSRAM) | — | From schematic |
+| Flash | GD25Q256EYIGR (32 MB) | QSPI | From schematic |
+| Wireless | ESP32-C6-MINI-1 co-processor (Wi-Fi 6 / BLE 5) | SDIO (esp_hosted) | From schematic |
 | Display | 7" 1024×600 LCD | MIPI-DSI | TBC |
 | Touch | Capacitive touch controller | I2C | TBC part |
 | Audio | Codec + speaker / mic | I2S + I2C | TBC |
