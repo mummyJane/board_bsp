@@ -16,7 +16,7 @@ reference board while ADSB_Test is designed.
 - **Dev USB-C:** one cable for all debug: P4 + C5 USB-Serial/JTAG, P4 + C5 UARTs (FT2232H), m1421 console + firmware upload (RP2040 with ADSBee 1421 Programmer firmware). m1421 JTAG on a J-Link header
 - **USB-A host** (P4 USB 2.0 HS) to an external hub: 1 SDR (AIS etc.), 2 supported, 4 nice-to-have
 - GNSS module with PPS
-- Screen-sized board with the 7" EK79007 panel bonded to its top side (Waveshare stack-up, all parts on the bottom). Digital connectors on one edge; GNSS and ADS-B SMA connectors on the opposite edge, with optional RF cans
+- ≈ 188 × 97 mm board (screen + 12 mm margins on the short edges) with the 7" EK79007 panel bonded to its top side (Waveshare stack-up, all parts on the bottom). 3D-printed plastic case, thicker long walls Digital connectors on one edge; GNSS and ADS-B SMA connectors on the opposite edge, with optional RF cans
 - 2S1P 18650 Li-ion (≥ 1 h with everything running), buck-boost charger with power path
 - Voltage + current monitoring on every rail (3 × PAC1954, 12 channels)
 - Same 7" 1024×600 MIPI-DSI display and touch as the reference board

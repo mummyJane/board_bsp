@@ -93,6 +93,8 @@ Dropped from the reference board: audio, CAN, RS485, CSI camera.
 | MECH-02 | Panel mounted on the PCB (as on the reference board) | Yes (reference concept) |
 | MECH-03 | Digital/power connectors on one edge; GNSS and m1421 SMA connectors on the opposite edge | No |
 | MECH-04 | Panel bonded straight to the PCB top side (≈ 1.4 mm tape, as on the reference board). Top side component-free under the panel; all parts on the bottom side | Yes (reference stack-up) |
+| MECH-06 | Board ≈ 188 × 97 mm: ≈ 12 mm margins on both short edges (digital connectors one side, RF SMAs the other); C5 antenna in the digital margin away from RJ45/USB-A | No |
+| MECH-07 | Prototype case: 3D-printed plastic, ≈ 2 mm walls on the short (connector) edges, ≈ 3 mm (optionally ribbed) on the long edges; 2 × 18650 behind the board | No |
 | MECH-05 | Minimum overall depth: low-profile / mid-mount connectors; battery off-board in the case. 4 × M2.5 holes on the reference 156 × 89 mm pitch | No |
 | RF-01 | SMA connectors for GNSS (active antenna, bias-T) and the m1421 (1090/978 dual-band) | Eval |
 | RF-02 | Optional two-piece RF can footprints over the m1421 RF section, the GNSS section and (optionally) the switching regulators | No |

@@ -8,6 +8,14 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-10-10
+
+### Changed
+- ADSB_Test Q20 answered: board ≈ 188 × 97 mm (≈ 12 mm margins on both short edges: digital
+  connectors on one, RF SMAs on the other, C5 antenna at the digital edge away from RJ45/USB-A).
+  Prototype case 3D-printed plastic, ≈ 2 mm walls on the short edges, thicker (≈ 3 mm) on the long
+  edges for strength; 2 × 18650 behind the board. New requirements MECH-06/07.
+
 ## [0.7.0] - 2026-10-10
 
 ### Added
@@ -131,7 +139,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/mummyJane/board_bsp/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/mummyJane/board_bsp/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mummyJane/board_bsp/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/mummyJane/board_bsp/compare/v0.4.1...v0.5.0

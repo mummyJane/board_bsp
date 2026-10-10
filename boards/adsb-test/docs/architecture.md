@@ -364,6 +364,17 @@ Decided 2026-10-10 (Q8, Q10):
   don't need to reach the case wall, but stay reachable with the back cover
   off.
 
+Outline and case (Q20, decided 2026-10-10):
+
+| Item | Decision |
+|------|----------|
+| Board outline | Panel area 164 × 97 mm plus a **≈ 12 mm margin on each short edge**, so ≈ **188 × 97 mm** (final widths set during layout) |
+| Digital edge (one short edge) | User USB-C, Dev USB-C, USB-A, RJ45, microSD (mid-mount/sink-in parts, ≈ 70 mm of the 97 mm edge) |
+| RF edge (other short edge) | GNSS SMA and m1421 SMA, spaced apart |
+| C5 antenna | In the digital-edge margin, at the end **furthest from the RJ45 and USB-A metal shells** |
+| Case | **3D-printed plastic** for the prototypes (RF-friendly for the on-module Wi-Fi antenna). ≈ 2 mm walls on the **short edges** so the connectors reach through. **Thicker walls (≈ 3 mm, optionally ribbed) on the long edges** for stiffness, since nothing passes through them |
+| Battery | 2 × 18650 (2S1P) in the case behind the board. Expected overall depth ≈ 33–35 mm. A 2S flat pouch pack (≈ 22–25 mm total) is a later option needing no PCB change |
+
 Consequences:
 
 | Topic | Rule |
