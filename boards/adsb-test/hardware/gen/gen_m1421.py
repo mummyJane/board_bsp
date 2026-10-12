@@ -158,14 +158,15 @@ sh = s.add("Mechanical:Housing_Pad", "SH1401", "RF can frame (DNP)", (279.4, 76.
 s.connect(sh, "1", "GND")
 
 # ------------------------------------------------------------------ notes
-s.text("FIT OPTIONS: (a) solder U1401 m1421, or (b) leave U1401 off and plug the ADSBee 1421 Dev Kit\n"
-       "into J1402 with its JST-GH-to-DuPont harness (Dev Kit uses its own U.FL antenna).\n"
-       "SYNC (pad 28) is an INPUT: high at reset = ROM bootloader, high at run time = sleep.\n"
-       "M1421_NRST: TCA6408A bit 7 drives it open-drain style (output-low = reset, input = release),\n"
-       "U1404 for the Dev-port RP2040, J1401 pin 10 for a J-Link.\n"
-       "RF: copy the ADSBee 1421 carrier CPW layout; keep the footprint keep-outs; filled+capped vias.\n"
-       "SH1401 RF can frame (optional): stitch its pad ring to GND; RF trace to J1403 leaves on an inner layer.",
-       (127.0, 241.3))
+s.text("FIT OPTIONS: solder U1401 (m1421), or leave it off and plug\n"
+       "the ADSBee 1421 Dev Kit into J1402 (JST-GH harness, own antenna).\n"
+       "SYNC (pad 28) is an INPUT: high at reset = ROM bootloader,\n"
+       "high at run time = sleep. SURX = P4 TX AND Dev TX (U1402).\n"
+       "M1421_NRST: TCA6408A bit 7 (open-drain style), U1404 for the\n"
+       "Dev-port RP2040, J1401 pin 10 for a J-Link.\n"
+       "RF: copy the ADSBee 1421 carrier CPW layout, footprint keep-outs,\n"
+       "filled + capped vias. SH1401 can frame (DNP): pad ring to GND.",
+       (139.7, 236.22))
 
 if notes is not None:
     notes[1] = notes[1].replace("74LVC1G157 mux", "74LVC1G97 (as 2:1 mux)")
@@ -181,7 +182,7 @@ if notes is not None:
         if isinstance(k, list) and k[0] == "effects":
             k[1] = ["font", ["size", "1.27", "1.27"]]
 
-s.write(SHEET, "ADSB_Test - M1421", "Requirements: boards/adsb-test/docs/requirements.md", keep_notes=notes)
+s.write(SHEET, "ADSB_Test - M1421", "Requirements: boards/adsb-test/docs/requirements.md")   # old notes box dropped
 missing = s.missing_footprints({"ADSB_Test": KICAD / "lib/ADSB_Test.pretty"})
 if missing:
     print("  MISSING FOOTPRINTS:", missing)

@@ -18,7 +18,7 @@ How it works:
 | Power Input, Charger Battery, Power Rails, Power Monitor (pages 2–5) | [gen_power.py](gen_power.py) | Generated |
 | MCU Module (page 6), RTC (page 7) | [gen_mcu.py](gen_mcu.py) | Generated (OSPTEK ESP32-P4C5 Core + optional DS3231M) |
 | OSPTEK ESP32-P4C5 Core symbol + `_HandSolder` footprint (library) | [gen_osptek_p4c5.py](gen_osptek_p4c5.py) | Generated from OSPTEK's pin table and dimension drawing |
-| Ethernet, USB User, USB Dev (A2), USB Host, GPS, Display Touch, Storage Misc, Test Debug (pages 8-13, 15, 16) | [gen_periph.py](gen_periph.py) | Generated |
+| Ethernet, User USB-C, Dev USB Hub, USB Host, GPS, Display Touch, Storage Misc, Test Debug, Dev UARTs, Dev m1421 Programmer (pages 8-13, 15-18) | [gen_periph.py](gen_periph.py) | Generated |
 | AP3032 symbol, STUSB4500QTR copy with VSYS at the bottom (library) | [gen_symbols.py](gen_symbols.py) | Generated (uses `tools/kicad_sym_make.py`) |
 | Net classes + pair rules (`ADSB_Test.kicad_pro`, `ADSB_Test.kicad_dru`) | [gen_netclasses.py](gen_netclasses.py) | Generated |
 | `_HandSolder` copies of vendor footprints (library) | [gen_footprints.py](gen_footprints.py) | Generated |

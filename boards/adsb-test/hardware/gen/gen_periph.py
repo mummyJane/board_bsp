@@ -3,8 +3,9 @@
 
   page 8  Ethernet      LAN8720A RMII PHY + HR911105A MagJack
   page 9  User USB-C    User USB-C receptacle (PD sink + UART), TVS, ESD, CP2102N -> P4 UART1
-  page 10 USB Dev       Dev USB-C -> USB2514B hub -> P4 USB-Serial/JTAG, FT2232H (P4 + C5 consoles,
-                        auto-reset), RP2040 (stock ADSBee 1421 Programmer firmware)
+  page 10 Dev USB Hub   Dev USB-C -> USB2514B hub, 3V3_DEV regulator
+  page 17 Dev UARTs     FT2232H (P4 + C5 consoles, esptool auto-reset), Ioff/open-drain buffers
+  page 18 Dev m1421 Programmer  RP2040 + W25Q16 (stock ADSBee 1421 Programmer), m1421 buffers, GPIO header
   page 11 USB Host      USB-A on the P4 HS OTG port, TPS259621 eFuse
   page 12 GPS           MAX-M10S, active-antenna bias, SMA, optional RF can
   page 13 Display Touch EK79007 panel FPC + panel supplies copied from the reference board, GT911 touch FPC
@@ -42,6 +43,7 @@ missing = {}
 
 
 PAGES = {"ethernet.kicad_sch": 8, "usb_user.kicad_sch": 9, "usb_dev.kicad_sch": 10, "usb_host.kicad_sch": 11,
+         "dev_uart.kicad_sch": 17, "dev_prog.kicad_sch": 18,
          "gps.kicad_sch": 12, "display_touch.kicad_sch": 13, "storage_misc.kicad_sch": 15, "test_debug.kicad_sch": 16}
 
 
@@ -536,18 +538,13 @@ s.text("LOGIC ANALYSER: Kingst LA5016 40-way cable into J1601. Key-side row (odd
        (25.4, 233.68))
 done(s, "test_debug.kicad_sch", "ADSB_Test - Test Debug")
 
-# =================================================================== USB Dev (page 10), A2
+# =================================================================== Dev USB Hub (page 10)
+# The Dev domain is split over three A3 pages: 10 hub, 17 UARTs, 18 m1421 programmer. 3V3_DEV, VBUS_DEV and the
+# hub's downstream USB pairs (FT_D_*, RP_HUB_D_*) cross between them as global labels.
 s = new("usb_dev.kicad_sch")
-s.locals |= {"DEV_D_P", "DEV_D_N", "DEV_CC1", "DEV_CC2", "3V3_DEV", "HUB_XI", "HUB_XO", "HUB_RBIAS", "HUB_CRFILT",
+s.locals |= {"DEV_D_P", "DEV_D_N", "DEV_CC1", "DEV_CC2", "HUB_XI", "HUB_XO", "HUB_RBIAS", "HUB_CRFILT",
              "HUB_PLLFILT", "HUB_RESET", "HUB_VBUS_DET", "HUB_CFG0", "HUB_CFG1", "HUB_NONREM0", "HUB_NONREM1",
-             "HUB_DN2_M", "HUB_DN2_P", "FT_D_N", "FT_D_P", "RP_HUB_D_N", "RP_HUB_D_P", "RP_D_N", "RP_D_P",
-             "FT_1V8", "FT_XI", "FT_XO", "FT_REF", "FT_RESET", "FT_EECS", "FT_EECLK", "FT_EEDATA", "FT_EEDO",
-             "FT_A_TXD", "FT_A_RXD", "FT_A_RTS", "FT_A_DTR", "FT_B_TXD", "FT_B_RXD", "FT_B_RTS", "FT_B_DTR",
-             "QA1_B", "QA2_B", "QB1_B", "QB2_B",
-             "RP_1V1", "RP_XI", "RP_XO", "RP_XO_R", "RP_SWCLK", "RP_SWDIO", "RP_RUN", "RP_QSS", "RP_QSCK",
-             "RP_QD0", "RP_QD1", "RP_QD2", "RP_QD3", "RP_BOOTSEL", "RP_LED", "RP_LED_D", "LED_VDD",
-             "RP_NRST", "RP_SYNC", "RP_TX", "RP_RX", "RP_NRST_L", "RP_SYNC_L"}
-# Dev USB-C (device, UFP)
+             "HUB_DN2_M", "HUB_DN2_P"}
 j = s.add("Connector:USB_C_Receptacle_USB2.0_16P", "J1001", "Dev USB-C", (38.1, 88.9),
           footprint="Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")
 s.connect(j, ["A4", "A9", "B4", "B9"], "VBUS_DEV")
@@ -558,24 +555,23 @@ s.connect(j, "B5", "DEV_CC2")
 s.connect(j, ["A1", "A12", "B1", "B12", "SH"], "GND")
 s.nc(j, "A8")
 s.nc(j, "B8")
-R(s, "R1001", "5.1k", (76.2, 152.4), "DEV_CC1", "GND")
-R(s, "R1002", "5.1k", (88.9, 152.4), "DEV_CC2", "GND")
-e = s.add("Power_Protection:USBLC6-2SC6", "U1001", "USBLC6-2SC6", (38.1, 190.5), footprint=SOT23_6)
+R(s, "R1001", "5.1k", (88.9, 139.7), "DEV_CC1", "GND")
+R(s, "R1002", "5.1k", (101.6, 139.7), "DEV_CC2", "GND")
+e = s.add("Power_Protection:USBLC6-2SC6", "U1001", "USBLC6-2SC6", (38.1, 165.1), footprint=SOT23_6)
 s.connect(e, ["1", "6"], "DEV_D_P")
 s.connect(e, ["3", "4"], "DEV_D_N")
 s.connect(e, "5", "VBUS_DEV")
 s.connect(e, "2", "GND")
-ld = s.add("Regulator_Linear:AP2112K-3.3", "U1002", "AP2112K-3.3", (38.1, 254.0), footprint=SOT23_5)
+ld = s.add("Regulator_Linear:AP2112K-3.3", "U1002", "AP2112K-3.3", (38.1, 215.9), footprint=SOT23_5)
 s.connect(ld, ["1", "3"], "VBUS_DEV")
 s.connect(ld, "2", "GND")
 s.connect(ld, "5", "3V3_DEV")
-C(s, "C1001", "1uF", (25.4, 279.4), "VBUS_DEV")
-C(s, "C1002", "10uF", (63.5, 279.4), "3V3_DEV", fp=C1206)
-s.pwr_flag("VBUS_DEV", (76.2, 241.3))    # arrives through the connector (passive)
-TP(s, "TP1001", "VBUS_DEV", (25.4, 330.2))
-TP(s, "TP1002", "3V3_DEV", (38.1, 330.2))
-# USB2514B hub
-hub = s.add("Interface_USB:USB2514B_Bi", "U1003", "USB2514B", (160.02, 114.3),
+C(s, "C1001", "1uF", (25.4, 241.3), "VBUS_DEV")
+C(s, "C1002", "10uF", (63.5, 241.3), "3V3_DEV", fp=C1206)
+s.pwr_flag("VBUS_DEV", (88.9, 190.5))     # arrives through the connector (passive)
+TP(s, "TP1001", "VBUS_DEV", (88.9, 228.6))
+TP(s, "TP1002", "3V3_DEV", (101.6, 228.6))
+hub = s.add("Interface_USB:USB2514B_Bi", "U1003", "USB2514B", (190.5, 114.3),
             footprint=HS + "QFN-36-1EP_6x6mm_P0.5mm_EP3.7x3.7mm_HandSolder",
             props={"Ports": "DN1 P4 USB-Serial/JTAG, DN2 disabled, DN3 FT2232H, DN4 RP2040"})
 s.connect(hub, "31", "DEV_D_P")
@@ -603,28 +599,39 @@ s.connect(hub, "28", "HUB_NONREM0")
 s.connect(hub, "22", "HUB_NONREM1")
 for p in ("12", "13", "16", "17", "18", "19", "20", "21"):
     s.nc(hub, p)
-R(s, "R1003", "10k", (127.0, 38.1), "3V3_DEV", "HUB_DN2_P")     # both D+/D- high = port 2 disabled
-R(s, "R1004", "10k", (139.7, 38.1), "3V3_DEV", "HUB_DN2_M")
+R(s, "R1003", "10k", (279.4, 38.1), "3V3_DEV", "HUB_DN2_P")     # both D+/D- high = port 2 disabled
+R(s, "R1004", "10k", (292.1, 38.1), "3V3_DEV", "HUB_DN2_M")
 for i, n in enumerate(("HUB_CFG0", "HUB_CFG1", "HUB_NONREM0", "HUB_NONREM1")):   # strap: default config, bus powered
-    R(s, f"R{1005 + i}", "10k", (215.9 + i * 12.7, 38.1), n, "GND")
-R(s, "R1009", "12k 1%", (215.9, 190.5), "HUB_RBIAS", "GND")
-C(s, "C1003", "1uF", (228.6, 190.5), "HUB_CRFILT")
-C(s, "C1004", "1uF", (241.3, 190.5), "HUB_PLLFILT")
-R(s, "R1010", "10k", (254.0, 165.1), "3V3_DEV", "HUB_RESET")
-C(s, "C1005", "100nF", (254.0, 190.5), "HUB_RESET")
-R(s, "R1011", "100k", (203.2, 165.1), "VBUS_DEV", "HUB_VBUS_DET")
-R(s, "R1012", "100k", (203.2, 190.5), "HUB_VBUS_DET", "GND")
-y = s.add("Device:Crystal", "Y1001", "24MHz", (101.6, 203.2), footprint=XTAL5032)
+    R(s, f"R{1005 + i}", "10k", (317.5 + i * 12.7, 38.1), n, "GND")
+R(s, "R1009", "12k 1%", (279.4, 101.6), "HUB_RBIAS", "GND")
+C(s, "C1003", "1uF", (292.1, 101.6), "HUB_CRFILT")
+C(s, "C1004", "1uF", (304.8, 101.6), "HUB_PLLFILT")
+R(s, "R1010", "10k", (330.2, 88.9), "3V3_DEV", "HUB_RESET")
+C(s, "C1005", "100nF", (330.2, 127.0), "HUB_RESET")
+R(s, "R1011", "100k", (355.6, 88.9), "VBUS_DEV", "HUB_VBUS_DET")
+R(s, "R1012", "100k", (355.6, 127.0), "HUB_VBUS_DET", "GND")
+y = s.add("Device:Crystal", "Y1001", "24MHz", (292.1, 165.1), footprint=XTAL5032)
 s.connect(y, "1", "HUB_XI")
 s.connect(y, "2", "HUB_XO")
-C(s, "C1006", "27pF", (88.9, 228.6), "HUB_XI")
-C(s, "C1007", "27pF", (114.3, 228.6), "HUB_XO")
-R(s, "R1013", "1M", (127.0, 203.2), "HUB_XI", "HUB_XO")
+C(s, "C1006", "27pF", (279.4, 190.5), "HUB_XI")
+C(s, "C1007", "27pF", (304.8, 190.5), "HUB_XO")
+R(s, "R1013", "1M", (330.2, 165.1), "HUB_XI", "HUB_XO")
 for i in range(4):
-    C(s, f"C{1008 + i}", "100nF", (127.0 + i * 12.7, 254.0), "3V3_DEV")
-C(s, "C1012", "4.7uF", (177.8, 254.0), "3V3_DEV")
-# FT2232HL: A = P4 UART0, B = C5 UART0, both with esptool auto-reset
-ft = s.add("Interface_USB:FT2232HL", "U1004", "FT2232HL", (330.2, 127.0),
+    C(s, f"C{1008 + i}", "100nF", (152.4 + i * 12.7, 203.2), "3V3_DEV")
+C(s, "C1012", "4.7uF", (203.2, 203.2), "3V3_DEV")
+s.text("DEV PORT, page 1 of 3: Dev USB-C -> USBLC6 -> USB2514B hub (strap defaults, bus powered). Own 3V3_DEV\n"
+       "domain from Dev VBUS (AP2112K), so the Dev port works with the target unpowered.\n"
+       "Downstream: DN1 P4 USB-Serial/JTAG | DN2 disabled (the C5 USB pins are its SDIO bus) |\n"
+       "DN3 FT2232H -> page 'Dev UARTs' | DN4 RP2040 -> page 'Dev m1421 Programmer'.",
+       (25.4, 266.7))
+done(s, "usb_dev.kicad_sch", "ADSB_Test - Dev USB Hub")
+
+# =================================================================== Dev UARTs (page 17)
+s = new("dev_uart.kicad_sch")
+s.locals |= {"FT_1V8", "FT_XI", "FT_XO", "FT_REF", "FT_RESET", "FT_EECS", "FT_EECLK", "FT_EEDATA", "FT_EEDO",
+             "FT_A_TXD", "FT_A_RXD", "FT_A_RTS", "FT_A_DTR", "FT_B_TXD", "FT_B_RXD", "FT_B_RTS", "FT_B_DTR",
+             "QA1_B", "QA2_B", "QB1_B", "QB2_B"}
+ft = s.add("Interface_USB:FT2232HL", "U1701", "FT2232HL", (114.3, 114.3),
            props={"Package": "LQFP-64 0.5 mm (leaded, iron-solderable)"})
 s.connect(ft, "8", "FT_D_P")
 s.connect(ft, "7", "FT_D_N")
@@ -646,17 +653,17 @@ for p, n in {"16": "FT_A_TXD", "17": "FT_A_RXD", "18": "FT_A_RTS", "21": "FT_A_D
 for p in ("19", "22", "23", "24", "26", "27", "28", "29", "30", "32", "33", "34", "36", "41", "44", "45", "46",
           "48", "52", "53", "54", "55", "57", "58", "59", "60"):
     s.nc(ft, p)
-R(s, "R1014", "12k 1%", (279.4, 215.9), "FT_REF", "GND")
-R(s, "R1015", "10k", (292.1, 215.9), "3V3_DEV", "FT_RESET")
-for i in range(4):
-    C(s, f"C{1013 + i}", "100nF", (279.4 + i * 12.7, 254.0), "FT_1V8" if i < 2 else "3V3_DEV")
-C(s, "C1017", "4.7uF", (330.2, 254.0), "FT_1V8")
-y = s.add("Device:Crystal", "Y1002", "12MHz", (279.4, 165.1), footprint=XTAL5032)
+y = s.add("Device:Crystal", "Y1701", "12MHz", (38.1, 38.1), footprint=XTAL5032)
 s.connect(y, "1", "FT_XI")
 s.connect(y, "2", "FT_XO")
-C(s, "C1018", "27pF", (266.7, 190.5), "FT_XI")
-C(s, "C1019", "27pF", (292.1, 190.5), "FT_XO")
-ee = s.add("Memory_EEPROM:93LCxxB", "U1005", "93LC56B", (406.4, 215.9), footprint="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+C(s, "C1706", "27pF", (25.4, 63.5), "FT_XI")
+C(s, "C1707", "27pF", (50.8, 63.5), "FT_XO")
+R(s, "R1701", "12k 1%", (25.4, 203.2), "FT_REF", "GND")
+R(s, "R1702", "10k", (38.1, 203.2), "3V3_DEV", "FT_RESET")
+for i in range(4):
+    C(s, f"C{1701 + i}", "100nF", (63.5 + i * 12.7, 203.2), "FT_1V8" if i < 2 else "3V3_DEV")
+C(s, "C1705", "4.7uF", (114.3, 203.2), "FT_1V8")
+ee = s.add("Memory_EEPROM:93LCxxB", "U1702", "93LC56B", (190.5, 203.2), footprint="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
            props={"Note": "FT2232H config EEPROM (optional: blank/absent = FTDI defaults)"})
 s.connect(ee, "1", "FT_EECS")
 s.connect(ee, "2", "FT_EECLK")
@@ -666,31 +673,48 @@ s.connect(ee, "5", "GND")
 s.connect(ee, "8", "3V3_DEV")
 s.nc(ee, "6")
 s.nc(ee, "7")
-R(s, "R1016", "2.2k", (431.8, 241.3), "FT_EEDO", "FT_EEDATA")
+R(s, "R1703", "2.2k", (228.6, 215.9), "FT_EEDO", "FT_EEDATA")
 for i, n in enumerate(("FT_EECS", "FT_EECLK", "FT_EEDATA")):
-    R(s, f"R{1017 + i}", "10k", (381.0 + i * 12.7, 254.0), "3V3_DEV", n)
+    R(s, f"R{1704 + i}", "10k", (139.7 + i * 12.7, 241.3), "3V3_DEV", n)
 # target-side buffers (Dev-powered, Ioff: no back-powering either way)
-gate(s, "07", "U1006", (431.8, 38.1), "FT_A_TXD", "P4_CON_RX", "3V3_DEV")
-gate(s, "125", "U1007", (431.8, 76.2), "P4_CON_TX", "FT_A_RXD", "3V3_DEV")
-gate(s, "07", "U1008", (431.8, 114.3), "FT_B_TXD", "C5_CON_RX", "3V3_DEV")
-gate(s, "125", "U1009", (431.8, 152.4), "C5_CON_TX", "FT_B_RXD", "3V3_DEV")
-R(s, "R1020", "10k", (482.6, 50.8), "3V3", "P4_CON_RX")       # target-side pull-ups for the open-drain buffers
-R(s, "R1021", "10k", (495.3, 50.8), "3V3", "C5_CON_RX")
+gate(s, "07", "U1703", (254.0, 38.1), "FT_A_TXD", "P4_CON_RX", "3V3_DEV")
+gate(s, "125", "U1704", (254.0, 76.2), "P4_CON_TX", "FT_A_RXD", "3V3_DEV")
+gate(s, "07", "U1705", (254.0, 114.3), "FT_B_TXD", "C5_CON_RX", "3V3_DEV")
+gate(s, "125", "U1706", (254.0, 152.4), "C5_CON_TX", "FT_B_RXD", "3V3_DEV")
+for i in range(4):     # one 100 nF per buffer
+    C(s, f"C{1708 + i}", "100nF", (292.1, 38.1 + i * 38.1), "3V3_DEV")
+R(s, "R1707", "10k", (241.3, 177.8), "3V3", "P4_CON_RX")      # target-side pull-ups for the open-drain buffers
+R(s, "R1708", "10k", (254.0, 177.8), "3V3", "C5_CON_RX")
 # esptool auto-reset (open collector into the target EN / BOOT nets)
-for k, (ch, en, boot, b1, b2, x0) in enumerate((("A", "P4_EN", "ETH_TXD1_BOOT", "QA1_B", "QA2_B", 482.6),
-                                                ("B", "C5_EN", "C5_BOOT", "QB1_B", "QB2_B", 533.4))):
-    q1 = s.add("Transistor_BJT:MMBT3904", f"Q{1001 + 2 * k}", "MMBT3904", (x0, 152.4), footprint=SOT23)
+for k, (ch, en, boot, b1, b2, x0) in enumerate((("A", "P4_EN", "ETH_TXD1_BOOT", "QA1_B", "QA2_B", 342.9),
+                                                ("B", "C5_EN", "C5_BOOT", "QB1_B", "QB2_B", 393.7))):
+    q1 = s.add("Transistor_BJT:MMBT3904", f"Q{1701 + 2 * k}", "MMBT3904", (x0, 38.1), footprint=SOT23)
     s.connect(q1, "1", b1)
     s.connect(q1, "2", f"FT_{ch}_RTS")
     s.connect(q1, "3", en)
-    R(s, f"R{1022 + 2 * k}", "10k", (x0 - 12.7, 177.8), f"FT_{ch}_DTR", b1)
-    q2 = s.add("Transistor_BJT:MMBT3904", f"Q{1002 + 2 * k}", "MMBT3904", (x0, 203.2), footprint=SOT23)
+    R(s, f"R{1709 + 2 * k}", "10k", (x0 - 12.7, 63.5), f"FT_{ch}_DTR", b1)
+    q2 = s.add("Transistor_BJT:MMBT3904", f"Q{1702 + 2 * k}", "MMBT3904", (x0, 101.6), footprint=SOT23)
     s.connect(q2, "1", b2)
     s.connect(q2, "2", f"FT_{ch}_DTR")
     s.connect(q2, "3", boot)
-    R(s, f"R{1023 + 2 * k}", "10k", (x0 - 12.7, 228.6), f"FT_{ch}_RTS", b2)
+    R(s, f"R{1710 + 2 * k}", "10k", (x0 - 12.7, 127.0), f"FT_{ch}_RTS", b2)
+for i, n in enumerate(("FT_A_DTR", "FT_A_RTS", "FT_B_DTR", "FT_B_RTS")):
+    TP(s, f"TP{1701 + i}", n, (330.2 + i * 15.24, 165.1))
+s.text("DEV PORT, page 2 of 3: FT2232HL on hub port DN3. Channel A = P4 UART0 (console), channel B = C5 UART0.\n"
+       "DTR/RTS -> MMBT3904 pairs = esptool auto-reset on P4_EN/BOOT (GPIO35) and C5_EN/C5_BOOT. C5_EN reaches the C5\n"
+       "CHIP_PU through R606 (330R) onto module pad 82 (P4 GPIO54 net): P4 firmware drives GPIO54 open-drain.\n"
+       "No back-powering: Dev->target TX through open-drain 74LVC1G07 (target pull-ups R1707/R1708),\n"
+       "target->Dev TX through 74LVC1G125 (Ioff inputs). 93LC56B: optional FTDI config EEPROM.",
+       (25.4, 266.7))
+done(s, "dev_uart.kicad_sch", "ADSB_Test - Dev UARTs")
+
+# =================================================================== Dev m1421 Programmer (page 18)
+s = new("dev_prog.kicad_sch")
+s.locals |= {"RP_D_N", "RP_D_P", "RP_1V1", "RP_XI", "RP_XO", "RP_XO_R", "RP_SWCLK", "RP_SWDIO", "RP_RUN", "RP_QSS",
+             "RP_QSCK", "RP_QD0", "RP_QD1", "RP_QD2", "RP_QD3", "RP_BOOTSEL", "RP_LED", "RP_LED_D", "LED_VDD",
+             "RP_NRST", "RP_SYNC", "RP_TX", "RP_RX", "RP_NRST_L", "RP_SYNC_L"}
 # RP2040 running the stock ADSBee 1421 Programmer (pins from its board.hh: 26 ~SRST, 27 SYNC, 28 TX, 29 RX)
-rp = s.add("MCU_RaspberryPi:RP2040", "U1010", "RP2040", (152.4, 330.2),
+rp = s.add("MCU_RaspberryPi:RP2040", "U1801", "RP2040", (114.3, 114.3),
            footprint=HS + "QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm_HandSolder",
            props={"Firmware": "Stock ADSBee 1421 Programmer (PantsForBirds/adsbee firmware/adsbee_1421/programmer)"})
 s.connect(rp, ["1", "10", "22", "33", "42", "49", "43", "44", "48"], "3V3_DEV")
@@ -707,7 +731,7 @@ s.connect(rp, "47", "RP_D_P")
 for p, n in {"56": "RP_QSS", "52": "RP_QSCK", "53": "RP_QD0", "55": "RP_QD1", "54": "RP_QD2", "51": "RP_QD3",
              "27": "RP_LED", "38": "RP_NRST", "39": "RP_SYNC", "40": "RP_TX", "41": "RP_RX"}.items():
     s.connect(rp, p, n)
-# Spare RP2040 GPIOs (not used by the stock Programmer) to a 2 x 14 header J1003 (pins not fitted: the holes are
+# Spare RP2040 GPIOs (not used by the stock Programmer) to a 2 x 14 header J1801 (pins not fitted: the holes are
 # test points). GPIO0/1 = RP2040 I2C0 SDA/SCL: DNP 0R links onto the board I2C bus so the P4 can talk to it if
 # custom RP2040 firmware is used. Fit them only when both domains are powered (the bus pull-ups are on 3V3).
 RP_SPARE = [(g, str(2 + g)) for g in range(0, 8)] + [(g, str(3 + g)) for g in range(8, 16)] + \
@@ -715,32 +739,32 @@ RP_SPARE = [(g, str(2 + g)) for g in range(0, 8)] + [(g, str(3 + g)) for g in ra
 for g, pin in RP_SPARE:
     s.locals.add(f"RP_GPIO{g}")
     s.connect(rp, pin, f"RP_GPIO{g}", kind="label")
-hdr = s.add("Connector_Generic:Conn_02x14_Odd_Even", "J1003", "RP2040 GPIO (pins DNP)", (342.9, 381.0), dnp=True,
+hdr = s.add("Connector_Generic:Conn_02x14_Odd_Even", "J1801", "RP2040 GPIO (pins DNP)", (355.6, 203.2), dnp=True,
             footprint="Connector_PinHeader_2.54mm:PinHeader_2x14_P2.54mm_Vertical",
             props={"Note": "Holes are test points; fit a 2x14 header only if needed"})
 s.connect(hdr, "1", "3V3_DEV")
 for i, (g, _) in enumerate(RP_SPARE):           # GPIOs on pins 2-26
     s.connect(hdr, str(2 + i), f"RP_GPIO{g}", kind="label")
 s.connect(hdr, ["27", "28"], "GND")             # grounds on the bottom row
-R(s, "R1041", "0R", (381.0, 368.3), "RP_GPIO0", "I2C_SDA", dnp=True,
+R(s, "R1812", "0R", (292.1, 165.1), "RP_GPIO0", "I2C_SDA", dnp=True,
   props={"Option": "RP2040 I2C0 SDA on the board I2C bus (custom RP2040 firmware)"})
-R(s, "R1042", "0R", (393.7, 368.3), "RP_GPIO1", "I2C_SCL", dnp=True,
+R(s, "R1813", "0R", (304.8, 165.1), "RP_GPIO1", "I2C_SCL", dnp=True,
   props={"Option": "RP2040 I2C0 SCL on the board I2C bus (custom RP2040 firmware)"})
-R(s, "R1030", "27R", (101.6, 381.0), "RP_HUB_D_P", "RP_D_P")
-R(s, "R1031", "27R", (114.3, 381.0), "RP_HUB_D_N", "RP_D_N")
-y = s.add("Device:Crystal", "Y1003", "12MHz", (63.5, 304.8), footprint=XTAL5032)
+R(s, "R1801", "27R", (190.5, 165.1), "RP_HUB_D_P", "RP_D_P")
+R(s, "R1802", "27R", (203.2, 165.1), "RP_HUB_D_N", "RP_D_N")
+y = s.add("Device:Crystal", "Y1801", "12MHz", (38.1, 38.1), footprint=XTAL5032)
 s.connect(y, "1", "RP_XI")
 s.connect(y, "2", "RP_XO_R")
-R(s, "R1032", "1k", (76.2, 330.2), "RP_XO_R", "RP_XO")
-C(s, "C1020", "27pF", (50.8, 330.2), "RP_XI")
-C(s, "C1021", "27pF", (88.9, 330.2), "RP_XO_R")
-C(s, "C1022", "1uF", (25.4, 381.0), "3V3_DEV")
-C(s, "C1023", "1uF", (38.1, 381.0), "RP_1V1")
+R(s, "R1803", "1k", (63.5, 38.1), "RP_XO_R", "RP_XO")
+C(s, "C1801", "27pF", (25.4, 63.5), "RP_XI")
+C(s, "C1802", "27pF", (50.8, 63.5), "RP_XO_R")
+C(s, "C1803", "1uF", (25.4, 215.9), "3V3_DEV")
+C(s, "C1804", "1uF", (38.1, 215.9), "RP_1V1")
 for i in range(3):
-    C(s, f"C{1024 + i}", "100nF", (50.8 + i * 12.7, 381.0), "3V3_DEV")
-C(s, "C1027", "100nF", (88.9, 381.0), "RP_1V1")
-R(s, "R1033", "10k", (25.4, 304.8), "3V3_DEV", "RP_RUN")
-fl = s.add("Memory_Flash:W25Q16JVSS", "U1011", "W25Q16JVSS", (241.3, 317.5))
+    C(s, f"C{1805 + i}", "100nF", (50.8 + i * 12.7, 215.9), "3V3_DEV")
+C(s, "C1808", "100nF", (88.9, 215.9), "RP_1V1")
+R(s, "R1804", "10k", (101.6, 215.9), "3V3_DEV", "RP_RUN")
+fl = s.add("Memory_Flash:W25Q16JVSS", "U1802", "W25Q16JVSS", (215.9, 63.5))
 s.connect(fl, "1", "RP_QSS")
 s.connect(fl, "2", "RP_QD1")
 s.connect(fl, "3", "RP_QD2")
@@ -749,45 +773,43 @@ s.connect(fl, "5", "RP_QD0")
 s.connect(fl, "6", "RP_QSCK")
 s.connect(fl, "7", "RP_QD3")
 s.connect(fl, "8", "3V3_DEV")
-C(s, "C1028", "100nF", (241.3, 355.6), "3V3_DEV")
-R(s, "R1034", "10k", (215.9, 292.1), "3V3_DEV", "RP_QSS")
-R(s, "R1035", "1k", (203.2, 355.6), "RP_QSS", "RP_BOOTSEL")
-bt = s.add("Switch:SW_Push", "SW1001", "BOOTSEL (programmer)", (215.9, 381.0), footprint="Button_Switch_THT:SW_PUSH_6mm")
+C(s, "C1809", "100nF", (254.0, 38.1), "3V3_DEV")
+R(s, "R1805", "10k", (177.8, 25.4), "3V3_DEV", "RP_QSS")
+R(s, "R1806", "1k", (177.8, 101.6), "RP_QSS", "RP_BOOTSEL")
+bt = s.add("Switch:SW_Push", "SW1801", "BOOTSEL (programmer)", (190.5, 127.0), footprint="Button_Switch_THT:SW_PUSH_6mm")
 s.connect(bt, "1", "RP_BOOTSEL")
 s.connect(bt, "2", "GND")
 # status LED (WS2812 on GPIO16 as the RP2040-Zero), from VBUS_DEV minus a diode so 3.3 V data is valid
-dl = s.add("Device:D", "D1001", "1N4148W", (279.4, 292.1), footprint=SOD123)
+dl = s.add("Device:D", "D1801", "1N4148W", (215.9, 203.2), footprint=SOD123)
 s.connect(dl, "2", "VBUS_DEV")
 s.connect(dl, "1", "LED_VDD")
-w = s.add("LED:WS2812B", "D1002", "WS2812B", (304.8, 317.5))
+w = s.add("LED:WS2812B", "D1802", "WS2812B", (254.0, 215.9))
 s.connect(w, "1", "LED_VDD")
 s.connect(w, "3", "GND")
 s.connect(w, "4", "RP_LED_D")
 s.nc(w, "2")
-R(s, "R1036", "330R", (266.7, 330.2), "RP_LED", "RP_LED_D")
-C(s, "C1029", "100nF", (330.2, 292.1), "LED_VDD")
-s.pwr_flag("LED_VDD", (279.4, 279.4))
+R(s, "R1807", "330R", (215.9, 241.3), "RP_LED", "RP_LED_D")
+C(s, "C1810", "100nF", (279.4, 203.2), "LED_VDD")
+s.pwr_flag("LED_VDD", (190.5, 190.5))
 # m1421 path: 0R escape-hatch links, then Dev-powered buffers (pins of the target logic are Ioff LVC inputs)
-R(s, "R1037", "0R", (355.6, 292.1), "RP_NRST", "RP_NRST_L", props={"Note": "Remove = console-only (no reset)"})
-R(s, "R1038", "0R", (368.3, 292.1), "RP_SYNC", "RP_SYNC_L", props={"Note": "Remove = console-only (no bootloader entry)"})
-R(s, "R1039", "10k", (381.0, 292.1), "3V3_DEV", "RP_NRST_L")    # RP2040 releases ~SRST as hi-Z
-R(s, "R1040", "100k", (393.7, 292.1), "RP_SYNC_L", "GND")
-gate(s, "125", "U1012", (431.8, 279.4), "RP_NRST_L", "DEV_M1421_NRST", "3V3_DEV")
-gate(s, "125", "U1013", (431.8, 317.5), "RP_SYNC_L", "DEV_M1421_SYNC", "3V3_DEV")
-gate(s, "125", "U1014", (431.8, 355.6), "RP_TX", "DEV_M1421_TX", "3V3_DEV")
-gate(s, "125", "U1015", (431.8, 393.7), "M1421_SUTX", "RP_RX", "3V3_DEV")
-for i, n in enumerate(("RP_SWCLK", "RP_SWDIO", "RP_RUN", "FT_A_DTR", "FT_A_RTS", "FT_B_DTR", "FT_B_RTS")):
-    TP(s, f"TP{1003 + i}", n, (482.6 + (i % 4) * 15.24, 304.8 + (i // 4) * 25.4))
-for i in range(8):     # one 100 nF per buffer / LDO near each part
-    C(s, f"C{1030 + i}", "100nF", (482.6 + i * 12.7, 266.7), "3V3_DEV")
-s.text("DEV PORT (own 3V3_DEV domain from Dev VBUS; works with the target unpowered):\n"
-       "USB-C -> USBLC6 -> USB2514B hub (strap defaults, bus powered). DN1 P4 USB-Serial/JTAG, DN2 disabled (C5 USB = SDIO pins),\n"
-       "DN3 FT2232HL: A = P4 UART0, B = C5 UART0, DTR/RTS -> MMBT3904 pairs (esptool auto-reset) on P4_EN/BOOT and C5_EN/BOOT.\n"
-       "DN4 RP2040 + W25Q16 running the STOCK ADSBee 1421 Programmer: GPIO26 ~SRST, 27 SYNC, 28 TX, 29 RX, 16 WS2812 status.\n"
-       "No back-powering: Dev->target UART via open-drain 74LVC1G07 (target pull-ups), target->Dev via 74LVC1G125 (Ioff),\n"
-       "m1421 lines via 74LVC1G125 into the target's LVC logic. Remove R1037/R1038 for a console-only Dev port.",
-       (25.4, 406.4))
-done(s, "usb_dev.kicad_sch", "ADSB_Test - USB Dev", paper="A2")
+R(s, "R1808", "0R", (266.7, 88.9), "RP_NRST", "RP_NRST_L", props={"Note": "Remove = console-only (no reset)"})
+R(s, "R1809", "0R", (279.4, 88.9), "RP_SYNC", "RP_SYNC_L", props={"Note": "Remove = console-only (no bootloader entry)"})
+R(s, "R1810", "10k", (292.1, 88.9), "3V3_DEV", "RP_NRST_L")    # RP2040 releases ~SRST as hi-Z
+R(s, "R1811", "100k", (304.8, 88.9), "RP_SYNC_L", "GND")
+gate(s, "125", "U1803", (342.9, 25.4), "RP_NRST_L", "DEV_M1421_NRST", "3V3_DEV")
+gate(s, "125", "U1804", (342.9, 63.5), "RP_SYNC_L", "DEV_M1421_SYNC", "3V3_DEV")
+gate(s, "125", "U1805", (342.9, 101.6), "RP_TX", "DEV_M1421_TX", "3V3_DEV")
+gate(s, "125", "U1806", (342.9, 139.7), "M1421_SUTX", "RP_RX", "3V3_DEV")
+for i in range(4):     # one 100 nF per buffer
+    C(s, f"C{1811 + i}", "100nF", (393.7, 25.4 + i * 38.1), "3V3_DEV")
+for i, n in enumerate(("RP_SWCLK", "RP_SWDIO", "RP_RUN")):
+    TP(s, f"TP{1801 + i}", n, (139.7 + i * 15.24, 228.6))
+s.text("DEV PORT, page 3 of 3: RP2040 + W25Q16 on hub port DN4, running the STOCK ADSBee 1421 Programmer\n"
+       "(RP2040-Zero pin-out: GPIO26 ~SRST, 27 SYNC, 28 TX, 29 RX, 16 WS2812 status). The m1421 lines go through\n"
+       "Dev-powered 74LVC1G125s into the target's LVC logic (no back-powering). Remove R1808/R1809 for a console-only\n"
+       "port. Spare GPIOs on J1801 (holes = test points); R1812/R1813 (DNP) put I2C0 on the board I2C bus.",
+       (25.4, 266.7))
+done(s, "dev_prog.kicad_sch", "ADSB_Test - Dev m1421 Programmer")
 
 if missing:
     print("  MISSING FOOTPRINTS:", missing)

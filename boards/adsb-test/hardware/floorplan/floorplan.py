@@ -71,7 +71,7 @@ def layout(w, h):
         "Bucks + switches + monitors": (24 + 0.52 * span, 0, rf0, top, ["Power Rails", "Power Monitor"]),
         "m1421 + RF (can 27.5)": (rf0, 0, W - 2, H / 2, ["M1421"]),
         "GNSS (can 17.8)": (rf0, H / 2, W - 2, H, ["GPS"]),
-        "Dev USB (hub, FT2232H, RP2040)": (24, top, la0, H - bot, ["USB Dev"]),
+        "Dev USB (hub, FT2232H, RP2040)": (24, top, la0, H - bot, ["Dev USB Hub", "Dev UARTs", "Dev m1421 Programmer"]),
         "LA header (vertical)": (la0, top, la1, H, ["Test Debug"]),
         "MCU module": (la1, top, rf0, H - bot, ["MCU Module"]),
         "Ethernet + USB host": (24, H - bot, 24 + 0.65 * (la0 - 24), H, ["Ethernet", "USB Host"]),

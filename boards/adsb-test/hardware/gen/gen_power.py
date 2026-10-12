@@ -62,7 +62,9 @@ def finish(s, notes, file, title):
                 k[1:3] = ["88.9", "248.92"]
             if isinstance(k, list) and k[0] == "effects":
                 k[1] = ["font", ["size", "1.27", "1.27"]]
-    s.write(KICAD / file, title, "Requirements: boards/adsb-test/docs/requirements.md", keep_notes=notes)
+    # The old placeholder DESIGN NOTES boxes (full-height, over the title block) are dropped; each sheet
+    # carries a short current note instead (s.text) and the details live in docs/architecture.md.
+    s.write(KICAD / file, title, "Requirements: boards/adsb-test/docs/requirements.md")
     missing = s.missing_footprints({"ADSB_Test": KICAD / "lib/ADSB_Test.pretty"})
     if missing:
         print("  MISSING FOOTPRINTS:", missing)
@@ -151,6 +153,11 @@ s.connect(ds, "1", "VBUS_CHG")
 
 s.pwr_flag("GND", (292.1, 25.4))
 # VBUS_USER_RAW: PWR_FLAG is on the User USB-C sheet, next to the connector
+s.text("POWER INPUT: User USB-C (on the User USB-C sheet) -> STUSB4500 PD sink (NVM: 5 V / 9 V / 15 V at 3 A, I2C 0x28).\n"
+       "VBUS_EN_SNK drives the FDS9435A P-FET (SO-8), so VBUS_USER only appears once a contract is in place.\n"
+       "RS201 (20 mR) -> PM1 CH1. JP201 (default open) lets the Dev USB VBUS feed the charger for bench work.\n"
+       "VSYS (pin 22) is tied to GND as DS12499 says when unused; ALERT is wired-OR with the charger INT (CHG_PD_INT).",
+       (25.4, 254.0))
 finish(s, notes, "power_input.kicad_sch", "ADSB_Test - Power Input")
 
 # =================================================================== Charger Battery (page 3)
@@ -254,6 +261,10 @@ testpoint(s, "TP302", "BAT_PACK", (241.3, 190.5))
 testpoint(s, "TP303", "VSYS", (254.0, 190.5))
 testpoint(s, "TP304", "VBUS_CHG", (266.7, 190.5))
 s.pwr_flag("VBUS_CHG", (304.8, 25.4))
+s.text("CHARGER: BQ25798 buck-boost 2S charger + power path (I2C 0x6B), PROG 8.2k = 2S / 750 kHz, TS divider 5.23k/30.1k (10k NTC).\n"
+       "Pack: 2 x 18650 with its own 2S protection + balancing on J301. RS301 VBAT (PM1 CH2, bidirectional), RS302 VSYS (PM1 CH3).\n"
+       "VBACKUP: MCP1703 3.0 V (2 uA) from VSYS -> BAT43W -> P4 RTC_VBAT and GPS V_BCKP; optional CR1220 BT301 (DNP).",
+       (25.4, 262.89))
 finish(s, notes, "charger_battery.kicad_sch", "ADSB_Test - Charger Battery")
 
 # =================================================================== Power Rails (page 4)
@@ -354,6 +365,12 @@ testpoint(s, "TP402", "3V3", (38.1, 254.0))
 testpoint(s, "TP403", "VSYS", (50.8, 254.0))
 s.pwr_flag("3V3", (182.88, 20.32))
 s.pwr_flag("VSYS", (198.12, 20.32))   # VSYS comes through shunt RS302 (passive)
+s.text("RAILS: two TPS62933 bucks from VSYS (5 V and 3V3, 3 A each),\n"
+       "shared PWR_EN with UVLO ~5.5 V. Every branch has a Kelvin shunt\n"
+       "(PAC1954 channel on its sense labels) that doubles as a bring-up link.\n"
+       "TPS22917 load switches on 5V_LCD, 3V3_ETH, 3V3_GPS, 3V3_M1421\n"
+       "(enabled from the TCA6408A). 3V3_MCU feeds the OSPTEK P4+C5 module.",
+       (25.4, 266.7))
 finish(s, notes, "power_rails.kicad_sch", "ADSB_Test - Power Rails")
 
 # =================================================================== Power Monitor (page 5)

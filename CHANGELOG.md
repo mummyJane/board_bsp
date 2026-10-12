@@ -8,6 +8,10 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Changed
+- ADSB_Test Dev port split from one A2 sheet into three A3 sheets: **Dev USB Hub** (page 10: Dev USB-C, USB2514B, 3V3_DEV), **Dev UARTs** (new page 17: FT2232H, EEPROM, auto-reset, UART buffers; refs 17xx) and **Dev m1421 Programmer** (new page 18: RP2040, flash, LED, BOOTSEL, m1421 buffers, GPIO header J1801, I2C option R1812/R1813; refs 18xx). Connectivity checked identical apart from the renumbering.
+- Old full-height placeholder "DESIGN NOTES" boxes removed from Power Input, Charger Battery, Power Rails, Power Monitor and M1421 (they ran into the title block and were partly out of date); each sheet now has a short current note at the bottom-left. Top-level overview text updated (OSPTEK module, LAN8720A, sheets generated).
+
 ### Added
 - ADSB_Test Dev port: RP2040 spare GPIO0–15 and 17–25 on a 2 × 14 header J1003 (pins not fitted; the holes are test points), and DNP 0 Ω links R1041/R1042 from RP2040 GPIO0/1 (I2C0 SDA/SCL) onto the board I2C bus, so the P4 can talk to the RP2040 with custom firmware.
 
