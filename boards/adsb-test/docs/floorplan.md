@@ -53,17 +53,17 @@ is 75 % overall but 100 % along the display strip.
 
 | Zone | Size (mm) | Fill |
 |------|-----------|------|
-| Power in + User UART | 27 × 36 | 56 % |
+| Power in + User USB-C | 27 × 36 | 56 % |
 | Charger + RTC | 36 × 36 | 68 % |
 | Bucks + load switches + monitors | 58 × 36 | 49 % |
 | m1421 + RF (can 27.5 mm) | 34 × 58 | 63 % |
 | GNSS (can 17.8 mm) | 34 × 58 | 25 % (keep it quiet) |
-| Dev USB (hub, FT2232H, RP2040) | 52 × 53 | 82 % |
+| Dev USB (hub, FT2232H, RP2040 + GPIO header) | 54 × 53 | 88 % |
 | LA header (vertical) | 16 × 80 | 74 % |
-| MCU module (OSPTEK 25 × 25 mm) | 52 × 53 | 51 % |
+| MCU module (OSPTEK 25 × 25 mm) | 50 × 53 | 54 % |
 | Ethernet + USB host | 34 × 28 | 78 % |
 | Storage + expander + touch FPC | 18 × 28 | 58 % |
-| Display supplies + LCD FPC | 52 × 28 | 83 % |
+| Display supplies + LCD FPC | 50 × 28 | 86 % |
 
 ## Findings
 

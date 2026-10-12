@@ -94,30 +94,9 @@ def shunt(s, ref, val, at, src, load, sense_p, sense_n):
 
 # =================================================================== Power Input (page 2)
 s, notes = new_sheet("power_input.kicad_sch")
-s.locals |= {"USER_CC1", "USER_CC2", "VBUS_USER_RAW", "PD_GATE", "PD_VREG12", "PD_VREG27", "PD_ATTACH",
-             "PD_DISCH", "PD_RESET", "DEV_VBUS_JP"}
-j = s.add("Connector:USB_C_Receptacle_USB2.0_16P", "J201", "User USB-C (PD sink)", (38.1, 88.9),
-          footprint="Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")
-s.connect(j, ["A4", "A9", "B4", "B9"], "VBUS_USER_RAW")
-s.connect(j, ["A1", "A12", "B1", "B12", "SH"], "GND")
-s.connect(j, "A5", "USER_CC1")
-s.connect(j, "B5", "USER_CC2")
-s.connect(j, ["A6", "B6"], "USER_D_P")
-s.connect(j, ["A7", "B7"], "USER_D_N")
-s.nc(j, "A8")
-s.nc(j, "B8")
-
-d = s.add("Device:D_Zener", "D201", "SMAJ20A", (78.74, 50.8), footprint="Diode_SMD:D_SMA",
-          props={"Check": "VBUS TVS for up to 15 V PD (20 V stand-off)"})
-s.connect(d, "1", "VBUS_USER_RAW")
-s.connect(d, "2", "GND")
-cap(s, "C201", "10uF 25V", (96.52, 50.8), "VBUS_USER_RAW", "GND", C0805)
-
-e = s.add("Power_Protection:USBLC6-2SC6", "U202", "USBLC6-2SC6", (78.74, 152.4), footprint="Package_TO_SOT_SMD:SOT-23-6_Handsoldering")
-s.connect(e, ["1", "6"], "USER_D_P")
-s.connect(e, ["3", "4"], "USER_D_N")
-s.connect(e, "5", "3V3_PERIPH")
-s.connect(e, "2", "GND")
+# The User USB-C connector, its VBUS TVS and the data-line ESD are on the User USB-C sheet (page 9);
+# VBUS_USER_RAW and USER_CC1/CC2 arrive here as global labels.
+s.locals |= {"PD_GATE", "PD_VREG12", "PD_VREG27", "PD_ATTACH", "PD_DISCH", "PD_RESET", "DEV_VBUS_JP"}
 
 u = s.add("ADSB_Test:STUSB4500QTR", "U201", "STUSB4500QTR", (152.4, 101.6),
           footprint="ADSB_Test:QFN-24-1EP_4x4mm_P0.5mm_EP2.7x2.7mm_HandSolder",
@@ -171,7 +150,7 @@ s.connect(ds, "2", "DEV_VBUS_JP")
 s.connect(ds, "1", "VBUS_CHG")
 
 s.pwr_flag("GND", (292.1, 25.4))
-s.pwr_flag("VBUS_USER_RAW", (304.8, 25.4))
+# VBUS_USER_RAW: PWR_FLAG is on the User USB-C sheet, next to the connector
 finish(s, notes, "power_input.kicad_sch", "ADSB_Test - Power Input")
 
 # =================================================================== Charger Battery (page 3)

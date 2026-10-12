@@ -2,7 +2,7 @@
 <g transform="translate(30,30)">
 <rect x="0" y="0" width="904.5" height="580.0" fill="#e8f3e8" stroke="#060" stroke-width="2"/>
 <rect x="40.0" y="40.0" width="824.5" height="500.0" fill="none" stroke="#999" stroke-dasharray="6,4"/>
-<rect x="502.25" y="100.0" width="199.99999999999994" height="365.0" fill="none" stroke="#c60" stroke-width="2" stroke-dasharray="10,5"/><text x="506.25" y="461.0" fill="#c60">2 x 18650 behind (parts here &lt;= 4 mm)</text>
+<rect x="512.74" y="100.0" width="200.0" height="365.0" fill="none" stroke="#c60" stroke-width="2" stroke-dasharray="10,5"/><text x="516.74" y="461.0" fill="#c60">2 x 18650 behind (parts here &lt;= 4 mm)</text>
 <rect x="120.0" y="0.0" width="132.99" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
 <text x="124.0" y="14.0" font-weight="bold">Power in + User UART</text><text x="124.0" y="28.0">56 % full</text>
 <rect x="252.99" y="0.0" width="181.34999999999997" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
@@ -13,18 +13,18 @@
 <text x="728.5" y="14.0" font-weight="bold">m1421 + RF (can 27.5)</text><text x="728.5" y="28.0">63 % full</text>
 <rect x="724.5" y="290.0" width="170.0" height="290.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
 <text x="728.5" y="304.0" font-weight="bold">GNSS (can 17.8)</text><text x="728.5" y="318.0">25 % full</text>
-<rect x="120.0" y="179.3814432989691" width="262.25" height="263.0927835051546" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
-<text x="124.0" y="193.3814432989691" font-weight="bold">Dev USB (hub, FT2232H, RP2040)</text><text x="124.0" y="207.3814432989691">82 % full</text>
-<rect x="382.25" y="179.3814432989691" width="80.0" height="400.6185567010309" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="386.25" y="193.3814432989691" font-weight="bold">LA header (vertical)</text><text x="386.25" y="207.3814432989691">74 % full</text>
-<rect x="462.25" y="179.3814432989691" width="262.25" height="263.0927835051546" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="466.25" y="193.3814432989691" font-weight="bold">MCU module</text><text x="466.25" y="207.3814432989691">51 % full</text>
-<rect x="120.0" y="442.4742268041237" width="170.4625" height="137.5257731958763" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
-<text x="124.0" y="456.4742268041237" font-weight="bold">Ethernet + USB host</text><text x="124.0" y="470.4742268041237">78 % full</text>
-<rect x="290.4625" y="442.4742268041237" width="91.78750000000001" height="137.5257731958763" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="294.4625" y="456.4742268041237" font-weight="bold">Storage + expander + touch FPC</text><text x="294.4625" y="470.4742268041237">58 % full</text>
-<rect x="462.25" y="442.4742268041237" width="262.25" height="137.5257731958763" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
-<text x="466.25" y="456.4742268041237" font-weight="bold">Display supplies + LCD FPC</text><text x="466.25" y="470.4742268041237">83 % full</text>
+<rect x="120.0" y="179.3814432989691" width="272.74" height="263.0927835051546" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
+<text x="124.0" y="193.3814432989691" font-weight="bold">Dev USB (hub, FT2232H, RP2040)</text><text x="124.0" y="207.3814432989691">88 % full</text>
+<rect x="392.74" y="179.3814432989691" width="80.0" height="400.6185567010309" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="396.74" y="193.3814432989691" font-weight="bold">LA header (vertical)</text><text x="396.74" y="207.3814432989691">74 % full</text>
+<rect x="472.74" y="179.3814432989691" width="251.76000000000002" height="263.0927835051546" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="476.74" y="193.3814432989691" font-weight="bold">MCU module</text><text x="476.74" y="207.3814432989691">54 % full</text>
+<rect x="120.0" y="442.4742268041237" width="177.281" height="137.5257731958763" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
+<text x="124.0" y="456.4742268041237" font-weight="bold">Ethernet + USB host</text><text x="124.0" y="470.4742268041237">75 % full</text>
+<rect x="297.281" y="442.4742268041237" width="95.459" height="137.5257731958763" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="301.281" y="456.4742268041237" font-weight="bold">Storage + expander + touch FPC</text><text x="301.281" y="470.4742268041237">56 % full</text>
+<rect x="472.74" y="442.4742268041237" width="251.76000000000002" height="137.5257731958763" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
+<text x="476.74" y="456.4742268041237" font-weight="bold">Display supplies + LCD FPC</text><text x="476.74" y="470.4742268041237">86 % full</text>
 <rect x="0.0" y="40.0" width="44.5" height="53.0" fill="#69c" stroke="#036"/><text x="3.0" y="70.5" fill="white" font-size="10">User USB-C</text>
 <rect x="0.0" y="110.5" width="44.5" height="53.0" fill="#69c" stroke="#036"/><text x="3.0" y="141.0" fill="white" font-size="10">Dev USB-C</text>
 <rect x="0.0" y="181.0" width="81.5" height="86.0" fill="#69c" stroke="#036"/><text x="3.0" y="228.00000000000003" fill="white" font-size="10">USB-A</text>

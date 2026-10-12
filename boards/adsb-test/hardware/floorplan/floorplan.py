@@ -27,7 +27,7 @@ BIG = 150.0                    # courtyard mm2 above which a part is "fixed"
 HOLE_KEEPOUT = 3.5             # mm radius (M2.5 screw head + clearance)
 
 # Edge connectors: (ref, edge, along-edge size, depth, label); spread evenly between the hole keep-outs
-EDGE_PARTS = [("J201", "L", 10.6, 8.9, "User USB-C"), ("J1001", "L", 10.6, 8.9, "Dev USB-C"),
+EDGE_PARTS = [("J901", "L", 10.6, 8.9, "User USB-C"), ("J1001", "L", 10.6, 8.9, "Dev USB-C"),
               ("J1101", "L", 17.2, 16.3, "USB-A"), ("J801", "L", 19.0, 22.3, "RJ45"),
               ("J1501", "L", 13.7, 13.1, "microSD"), ("SW401", "L", 11.4, 9.4, "POWER"),
               ("J1403", "R", 8.2, 14.9, "SMA 1090/978"),
@@ -59,14 +59,14 @@ def layout(w, h):
     bot = 23 * H / 97
     rf0 = W - 36
     span = rf0 - 24
-    la0 = 24 + 0.5 * (span - 16)
+    la0 = 24 + 0.52 * (span - 16)                          # Dev USB vs MCU split (both under 90 %)
     la1 = la0 + 16
     # panel cable tails (Waveshare drawing, back view, digital edge on the left) through slots at the
     # panel's bottom edge: LCD 30-pin and touch 6-pin
     FPC = [("LCD FPC", W - x0p - 36.2 - 9, 18, y0p + PANEL_H), ("Touch FPC", W - x0p - 113.2, 6, y0p + PANEL_H)]
     BATTERY = (la1 + 8, y0p + 12, la1 + 48, y0p + 85)     # 2 x 18650 across the board, over the MCU area
     return {
-        "Power in + User UART": (24, 0, 24 + 0.22 * span, top, ["Power Input", "USB User"]),
+        "Power in + User UART": (24, 0, 24 + 0.22 * span, top, ["Power Input", "User USB-C"]),
         "Charger + RTC": (24 + 0.22 * span, 0, 24 + 0.52 * span, top, ["Charger Battery", "RTC"]),
         "Bucks + switches + monitors": (24 + 0.52 * span, 0, rf0, top, ["Power Rails", "Power Monitor"]),
         "m1421 + RF (can 27.5)": (rf0, 0, W - 2, H / 2, ["M1421"]),

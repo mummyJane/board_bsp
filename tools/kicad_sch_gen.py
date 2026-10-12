@@ -272,12 +272,13 @@ class Sheet:
         horizontal_two_pin = len(pins) == 2 and all(int(p[2]) in (0, 180) for p in pins.values())
         if vertical_two_pin:            # R, C: text to the right
             return ((right + 1.27, y - 1.27), "left"), ((right + 1.27, y + 1.27), "left")
-        if horizontal_two_pin or (w < 7.62 and h < 7.62):   # LED, diode, test point: above / below
-            return ((x, top - 1.27), None), ((x, bottom + 2.54), None)
         has_left = any(int(p[2]) == 0 for p in pins.values())
         has_right = any(int(p[2]) == 180 for p in pins.values())
-        if has_right and not has_left:   # pins stick out to the right (e.g. Kelvin shunt): text on the left
-            return ((left - 1.27, top), "right"), ((left - 1.27, bottom), "right")
+        if has_right and not has_left and len(pins) > 2:   # e.g. Kelvin shunt: text on the left, level with the
+            # middle of the body so it clears the top/bottom pin numbers
+            return ((left - 5.08, y - 1.27), None), ((left - 5.08, y + 1.27), None)
+        if horizontal_two_pin or (w < 7.62 and h < 7.62):   # LED, diode, test point: above / below
+            return ((x, top - 1.27), None), ((x, bottom + 2.54), None)
         # ICs, connectors: outside the top-right and bottom-right corners
         return ((right + 1.27, top - 1.27), "left"), ((right + 1.27, bottom + 1.27), "left")
 
@@ -321,8 +322,10 @@ class Sheet:
         self.add("power:PWR_FLAG", f"#FLG{self._pwr:03d}", "PWR_FLAG", at)
         if net in ("GND", "+3V3", "+5V"):
             self.power(net, at)
-        else:
-            self.label(net, at, 90, kind="label" if net in self.locals else "global_label", shape="passive")
+        else:                       # flag points up; the net label hangs below it on a short wire
+            end = (at[0], at[1] + 7.62)
+            self.wire(at, end)
+            self.label(net, end, 270, kind="label" if net in self.locals else "global_label", shape="passive")
 
     def missing_footprints(self, project_libs=None):
         """Return {ref: footprint} whose footprint file can't be found."""

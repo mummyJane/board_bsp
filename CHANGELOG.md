@@ -9,6 +9,17 @@ project uses [Semantic Versioning](https://semver.org/) (see
 ## [Unreleased]
 
 ### Added
+- ADSB_Test Dev port: RP2040 spare GPIO0–15 and 17–25 on a 2 × 14 header J1003 (pins not fitted; the holes are test points), and DNP 0 Ω links R1041/R1042 from RP2040 GPIO0/1 (I2C0 SDA/SCL) onto the board I2C bus, so the P4 can talk to the RP2040 with custom firmware.
+
+### Changed
+- ADSB_Test: the User USB-C receptacle, its VBUS TVS, bulk cap and data-line ESD moved from the Power Input sheet to the USB User sheet, renamed **User USB-C** (J201→J901, D201→D903, C201→C903, U202→U902). VBUS_USER_RAW and CC1/CC2 reach the STUSB4500 as global labels.
+- Floorplan rebalanced for the GPIO header (Dev USB 88 %, display 86 %, all zones under 90 %).
+
+### Fixed
+- Kelvin shunts (all RS parts): reference/value text no longer covers the pin numbers (placed left of the body, mid-height).
+- PWR_FLAG net labels now hang below the flag instead of over it.
+
+### Added
 - ADSB_Test net classes (`gen_netclasses.py` → `ADSB_Test.kicad_pro` net settings): **USB_90R** (7 USB pairs), **MIPI_100R** (DSI clock + 2 lanes), **ETH_100R** (MDI TX/RX), **RF_50R** (m1421 and GNSS feeds), each with its own schematic wire colour and starting pair width/gap (to be recalculated for PCBWay's stack-up). Custom rules `ADSB_Test.kicad_dru`: in-pair skew (USB 0.15 mm, DSI 0.1 mm, Ethernet 0.5 mm), DSI lane-to-lane matching 1 mm, uncoupled-length limits, no vias on RF feeds.
 - `tools/kicad_sym_make.copy_symbol()`: copy a library symbol into the project library with pins moved (graphics only).
 

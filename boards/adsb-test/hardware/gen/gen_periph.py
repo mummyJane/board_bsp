@@ -2,7 +2,7 @@
 """Generate the ADSB_Test peripheral sheets:
 
   page 8  Ethernet      LAN8720A RMII PHY + HR911105A MagJack
-  page 9  USB User      CP2102N on the User USB-C data lines -> P4 UART1
+  page 9  User USB-C    User USB-C receptacle (PD sink + UART), TVS, ESD, CP2102N -> P4 UART1
   page 10 USB Dev       Dev USB-C -> USB2514B hub -> P4 USB-Serial/JTAG, FT2232H (P4 + C5 consoles,
                         auto-reset), RP2040 (stock ADSBee 1421 Programmer firmware)
   page 11 USB Host      USB-A on the P4 HS OTG port, TPS259621 eFuse
@@ -170,7 +170,29 @@ done(s, "ethernet.kicad_sch", "ADSB_Test - Ethernet")
 
 # =================================================================== USB User (page 9)
 s = new("usb_user.kicad_sch")
-s.locals |= {"CP_VBUS", "CP_RST", "CP_TXLED", "CP_RXLED"}
+s.locals |= {"CP_VBUS", "CP_RST", "CP_TXLED", "CP_RXLED", "USER_D_P", "USER_D_N"}
+# User USB-C receptacle (PD sink + user UART). VBUS/CC go to the STUSB4500 on the Power Input sheet.
+j = s.add("Connector:USB_C_Receptacle_USB2.0_16P", "J901", "User USB-C (PD sink + UART)", (50.8, 165.1),
+          footprint="Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")
+s.connect(j, ["A4", "A9", "B4", "B9"], "VBUS_USER_RAW")
+s.connect(j, ["A1", "A12", "B1", "B12", "SH"], "GND")
+s.connect(j, "A5", "USER_CC1")
+s.connect(j, "B5", "USER_CC2")
+s.connect(j, ["A6", "B6"], "USER_D_P")
+s.connect(j, ["A7", "B7"], "USER_D_N")
+s.nc(j, "A8")
+s.nc(j, "B8")
+d = s.add("Device:D_Zener", "D903", "SMAJ20A", (114.3, 190.5), footprint="Diode_SMD:D_SMA",
+          props={"Check": "VBUS TVS for up to 15 V PD (20 V stand-off)"})
+s.connect(d, "1", "VBUS_USER_RAW")
+s.connect(d, "2", "GND")
+C(s, "C903", "10uF 25V", (139.7, 190.5), "VBUS_USER_RAW")
+e = s.add("Power_Protection:USBLC6-2SC6", "U902", "USBLC6-2SC6", (127.0, 152.4), footprint=SOT23_6)
+s.connect(e, ["1", "6"], "USER_D_P")
+s.connect(e, ["3", "4"], "USER_D_N")
+s.connect(e, "5", "3V3_PERIPH")
+s.connect(e, "2", "GND")
+s.pwr_flag("VBUS_USER_RAW", (157.48, 177.8))          # arrives through the connector (passive)
 u = s.add("Interface_USB:CP2102N-Axx-xQFN24", "U901", "CP2102N-A02-GQFN24", (165.1, 114.3),
           footprint=HS + "QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm_HandSolder")
 s.connect(u, "3", "USER_D_P")
@@ -197,11 +219,12 @@ for i, (net, col) in enumerate((("CP_TXLED", "TX green"), ("CP_RXLED", "RX yello
     d = s.add("Device:LED", f"D{901 + i}", col, (x, 109.22), footprint=LED0805)
     s.connect(d, "2", f"{net}_A")
     s.connect(d, "1", net)
-s.text("USER UART: CP2102N (self-powered from 3V3_PERIPH) on the User USB-C data lines (ESD on the Power Input\n"
-       "sheet). VBUS sense from VBUS_USER through 22.1k/47.5k. TXD/RXD to P4 UART1 (GPIO22/21).\n"
+s.text("USER USB-C: receptacle J901 (16-pin USB 2.0), VBUS TVS D903, data-line ESD U902. VBUS_USER_RAW and CC1/CC2\n"
+       "go to the STUSB4500 PD sink on the Power Input sheet. D+/D- (USB_90R pair) -> CP2102N (self-powered from\n"
+       "3V3_PERIPH), VBUS sense from VBUS_USER through 22.1k/47.5k. TXD/RXD to P4 UART1 (GPIO22/21).\n"
        "GPIO.0/GPIO.1 = TX/RX activity LEDs (default CP2102N configuration). The UART is only live when the board is on.",
-       (25.4, 233.68))
-done(s, "usb_user.kicad_sch", "ADSB_Test - USB User")
+       (177.8, 233.68))
+done(s, "usb_user.kicad_sch", "ADSB_Test - User USB-C")
 
 # =================================================================== USB Host (page 11)
 s = new("usb_host.kicad_sch")
@@ -684,9 +707,25 @@ s.connect(rp, "47", "RP_D_P")
 for p, n in {"56": "RP_QSS", "52": "RP_QSCK", "53": "RP_QD0", "55": "RP_QD1", "54": "RP_QD2", "51": "RP_QD3",
              "27": "RP_LED", "38": "RP_NRST", "39": "RP_SYNC", "40": "RP_TX", "41": "RP_RX"}.items():
     s.connect(rp, p, n)
-for p in [str(n) for n in range(2, 10)] + [str(n) for n in range(11, 19)] + ["28", "29", "30", "31", "32", "34",
-                                                                           "35", "36", "37"]:
-    s.nc(rp, p)
+# Spare RP2040 GPIOs (not used by the stock Programmer) to a 2 x 14 header J1003 (pins not fitted: the holes are
+# test points). GPIO0/1 = RP2040 I2C0 SDA/SCL: DNP 0R links onto the board I2C bus so the P4 can talk to it if
+# custom RP2040 firmware is used. Fit them only when both domains are powered (the bus pull-ups are on 3V3).
+RP_SPARE = [(g, str(2 + g)) for g in range(0, 8)] + [(g, str(3 + g)) for g in range(8, 16)] + \
+           [(g, str(11 + g)) for g in range(17, 22)] + [(g, str(12 + g)) for g in range(22, 26)]
+for g, pin in RP_SPARE:
+    s.locals.add(f"RP_GPIO{g}")
+    s.connect(rp, pin, f"RP_GPIO{g}", kind="label")
+hdr = s.add("Connector_Generic:Conn_02x14_Odd_Even", "J1003", "RP2040 GPIO (pins DNP)", (342.9, 381.0), dnp=True,
+            footprint="Connector_PinHeader_2.54mm:PinHeader_2x14_P2.54mm_Vertical",
+            props={"Note": "Holes are test points; fit a 2x14 header only if needed"})
+s.connect(hdr, "1", "3V3_DEV")
+for i, (g, _) in enumerate(RP_SPARE):           # GPIOs on pins 2-26
+    s.connect(hdr, str(2 + i), f"RP_GPIO{g}", kind="label")
+s.connect(hdr, ["27", "28"], "GND")             # grounds on the bottom row
+R(s, "R1041", "0R", (381.0, 368.3), "RP_GPIO0", "I2C_SDA", dnp=True,
+  props={"Option": "RP2040 I2C0 SDA on the board I2C bus (custom RP2040 firmware)"})
+R(s, "R1042", "0R", (393.7, 368.3), "RP_GPIO1", "I2C_SCL", dnp=True,
+  props={"Option": "RP2040 I2C0 SCL on the board I2C bus (custom RP2040 firmware)"})
 R(s, "R1030", "27R", (101.6, 381.0), "RP_HUB_D_P", "RP_D_P")
 R(s, "R1031", "27R", (114.3, 381.0), "RP_HUB_D_N", "RP_D_N")
 y = s.add("Device:Crystal", "Y1003", "12MHz", (63.5, 304.8), footprint=XTAL5032)
