@@ -8,6 +8,27 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-12
+
+### Fixed
+- **Chip revision:** the reference unit is ESP32-P4 **rev v1.3**, but the builds required rev ≥ v3.0
+  (copied from Waveshare's examples), so the bootloader was rejected. The reference test app now
+  selects rev < 3 (`ESP32P4_SELECTS_REV_LESS_V3`, min v1.0) with a `sdkconfig.rev3` overlay for
+  newer boards. ADSB_Test keeps rev ≥ 3 for new parts, with a `sdkconfig.rev1` overlay to run on the
+  reference unit.
+- Reference test app console back on UART0 / CH343 (COM4, reliable auto-reset); USB-Serial/JTAG
+  (COM3) mirrors the output.
+
+### Added
+- `tools/unity_run.py`: runs Unity tests over a serial port unattended (reset, menu, selectors,
+  summary, optional log). Used for the first remote hardware run.
+- First hardware results on the reference board (bring-up log): `[bsp]`, `[i2c]`, `[wifi]` and
+  `[display]` (init) PASS; microSD detected but exFAT mount fails; USB-A saw no devices; GPS not wired.
+
+### Notes
+- esptool matches port names case-sensitively on Windows: `com3` fails on the USB-Serial/JTAG port,
+  `COM3` works.
+
 ## [0.11.0] - 2026-10-10
 
 ### Added
@@ -219,7 +240,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/mummyJane/board_bsp/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/mummyJane/board_bsp/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/mummyJane/board_bsp/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/mummyJane/board_bsp/compare/v0.8.0...v0.9.0

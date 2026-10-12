@@ -91,3 +91,7 @@ build_log.txt
 
 # Downloaded vendor datasheets (see docs/datasheets.json, tools/fetch_datasheets.py)
 /datasheets/
+
+# Alternate build dirs / sdkconfigs (e.g. per chip revision)
+build_*/
+sdkconfig.*build

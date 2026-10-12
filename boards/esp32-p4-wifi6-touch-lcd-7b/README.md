@@ -64,34 +64,54 @@ BSP API: [`bsp/include/bsp/bsp.h`](bsp/include/bsp/bsp.h). Shared driver code is
 
 | Feature | BSP | Test (Unity tag) | Hardware result |
 |---------|-----|------------------|-----------------|
-| Boot / chip info | ✅ | `[bsp]` | not run yet |
+| Boot / chip info | ✅ | `[bsp]` | ✅ PASS 2026-10-12 (silicon **rev v1.3**) |
 | Pin map | ✅ from schematic | — | |
-| I2C bus scan | ✅ `bsp_i2c_init()` | `[i2c]` | not run yet |
-| Display (EK79007, MIPI-DSI) | ✅ `bsp_display_new()` | `[display]` colour bars | not run yet |
-| Backlight (inverted PWM) | ✅ `bsp_display_backlight_set()` | `[display]` sweep | not run yet |
-| Touch (GT911) | ✅ `bsp_touch_new()` | `[touch]` | not run yet |
-| microSD | ✅ `bsp_sdcard_mount()`, `bsp_sdcard_format()` | `[sdcard]`; `[sdcard_format]` (erases, not in `*`) | not run yet |
-| Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | not run yet |
-| USB host on USB-A (hub, RTL-SDR) | `espressif/usb` | `[usb]` lists devices, flags RTL-SDRs | not run yet |
-| GPS (eval module on P3) | UART2 + PPS | `[gps]` baud detect, NMEA, PPS jitter | not run yet |
+| I2C bus scan | ✅ `bsp_i2c_init()` | `[i2c]` | ✅ PASS: 0x18, 0x36 (?), 0x40, 0x5D |
+| Display (EK79007, MIPI-DSI) | ✅ `bsp_display_new()` | `[display]` colour bars | ✅ init PASS, picture not yet checked by eye |
+| Backlight (inverted PWM) | ✅ `bsp_display_backlight_set()` | `[display]` sweep | ✅ runs, direction not yet checked by eye |
+| Touch (GT911) | ✅ `bsp_touch_new()` | `[touch]` | GT911 seen at 0x5D; touch not yet tried |
+| microSD | ✅ `bsp_sdcard_mount()`, `bsp_sdcard_format()` | `[sdcard]`; `[sdcard_format]` (erases, not in `*`) | ❌ card detected, FAT mount fails (likely exFAT) |
+| Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | ✅ PASS: 11 APs (C6 fw old, upgrade recommended) |
+| USB host on USB-A (hub, RTL-SDR) | `espressif/usb` | `[usb]` lists devices, flags RTL-SDRs | ❌ 0 devices: check what's plugged in |
+| GPS (eval module on P3) | UART2 + PPS | `[gps]` baud detect, NMEA, PPS jitter | not wired yet |
 | Audio / CAN / RS485 | ☐ (not needed for ADSB_Test) | | |
+
+Details: [docs/bringup-log.md](docs/bringup-log.md).
+
+### Chip revision
+
+This unit is **ESP32-P4 rev v1.3**. Builds for rev < 3 and rev ≥ 3 aren't
+interchangeable, so `sdkconfig.defaults` selects rev < 3
+(`CONFIG_ESP32P4_SELECTS_REV_LESS_V3`). For a newer rev v3.x board, build with
+`idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.rev3" ...`.
 
 ### Running the tests
 
-The console is on the P4's **USB-Serial/JTAG**: the USB-C port labelled
-"USB1.1" (H2). On the dev PC it shows up as **COM3**, "USB Serial Device",
-VID 303A / PID 1001. The CH343P "UART" port isn't used.
+| Port on the dev PC | Board USB-C | What it is |
+|--------------------|-------------|------------|
+| **COM4** | upper, "UART" (H1) | CH343P on UART0: **primary console**, reliable auto-reset for flashing |
+| COM3 | lower, "USB1.1" (H2) | P4 USB-Serial/JTAG: mirrors the console output |
 
 ```powershell
 . .\tools\idf_env.ps1
 cd boards\esp32-p4-wifi6-touch-lcd-7b\test
-idf.py -p COM3 flash monitor
+idf.py -p COM4 flash monitor
 ```
+
+Write port names in **capitals** (`COM3`, not `com3`). esptool matches them
+case-sensitively. With lower case it can't recognise the Espressif USB port,
+falls back to the wrong reset method, and reports "Wrong boot mode detected".
 
 The Unity menu appears on the console. Enter a test number, `[tag]` (e.g.
 `[display]`), or `*` for everything. `*` skips `[ignore]` tests, which
 includes the SD format. Tests marked CHECK need you to look at the screen or
 touch it. Record results in [docs/bringup-log.md](docs/bringup-log.md).
+
+To run tests unattended over the serial port:
+
+```powershell
+python tools\unity_run.py -p COM4 "[bsp]" "[i2c]" "[wifi]"
+```
 
 ### microSD cards over 32 GB
 
