@@ -548,11 +548,11 @@ come from the part datasheets where we have them.
 
 | Block | Implementation | Source of values |
 |-------|----------------|------------------|
-| PD sink | STUSB4500 + DMP3013SFV P-FET power path (gate pulled up 100k, VBUS_EN_SNK pulls it on), SMAJ20A TVS, USBLC6-2 on D+/D- | Typical application. **TBC vs ST datasheet:** VSYS (tied to GND), VBUS_VS_DISCH (to connector VBUS), DISCH (1k to the sink side) |
+| PD sink | STUSB4500 + **FDS9435A (SO-8)** P-FET power path (gate pulled up 100k, VBUS_EN_SNK pulls it on), SMAJ20A TVS, USBLC6-2 on D+/D- | Confirmed from ST DS12499: VSYS to GND when unused, VBUS_VS_DISCH from the receptacle VBUS, DISCH needs a series resistor (internal discharge, max 500 mA) |
 | Charger | BQ25798, PROG 8.2k = **2S, 750 kHz**; L 2.2 µH; VBUS 2×10 µF, PMID 3×10 µF + 100 nF, SYS 5×10 µF + 100 nF, BAT 2×10 µF; REGN 4.7 µF; BTST1/2 47 nF; VAC1/VAC2 to VBUS, ACDRV1/2 to GND (single input); ILIM_HIZ to REGN; CE pulled low; SDRV 1 nF (no ship FET); BATP 100 Ω; TS 5.23k / 30.1k + 103AT NTC; D+/D- unused | BQ25798 datasheet (pin table, Table 7-1, §7.3.5.2) |
 | Bucks | 2 × TPS62933: RT open = 500 kHz, L 4.7 µH, SS 33 nF, BST 100 nF, EN UVLO 100k/28k (~5.5 V), FB 52.3k/10k (5 V) and 31.6k/10k (3.33 V), 2×22 µF out | TPS62933 datasheet (Table 9-1, Typical Application) |
 | Branches | Kelvin shunts per rail (20 mΩ … 1 Ω by current); TPS22917 switches for 5V_LCD, 3V3_ETH, 3V3_GPS, 3V3_M1421 (QOD via 100 Ω, CT 1 nF), enables from the TCA6408A | Shunts sized for ~50 mV at the expected current. Each shunt doubles as a removable bring-up link |
-| Monitors | 3 × PAC1954; SLOW = GND, PWRDN = high, GPIO = PM_ALERT (open drain, 10k pull-up) | **TBC vs Microchip datasheet:** ADDRSEL resistor values (site blocks scripts) |
+| Monitors | 3 × PAC1954; SLOW = GND, PWRDN = high, GPIO = PM_ALERT (open drain, 10k pull-up). ADDRSEL: PM1 0 Ω → 0x10, PM2 499 Ω → 0x11, PM3 806 Ω → 0x12 | Microchip DS20006539 Table 6-1. EP is not connected inside (tied to GND, harmless) |
 | Battery | 3-pin JST-XH (BAT+, GND, NTC). The pack must have its own 2S protection + balancing (the BQ25798 doesn't balance) | Connector current rating to confirm vs. pack |
 
 ## Proposed parts (to review)

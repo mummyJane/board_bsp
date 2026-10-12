@@ -7,7 +7,6 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
-| Q24 | Assembly: full PCBWay PCBA, or partial PCBA (fine-pitch parts, see docs/pcb-manufacturing.md) + hand assembly of the rest? | Partial PCBA for the fine-pitch ICs and modules; hand-fit passives (0805 HandSolder), connectors and through-hole parts |
 | Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
 
 ## Answered
@@ -38,4 +37,5 @@ the CHANGELOG.
 | Q22 | m1421 fit for Rev A? | **Both supported**: footprint U1401 (solder later) + Dev Kit header J1402 (default for first boards). Pogo pins not recommended on the board (RF/ground; would need a separate jig) |
 | Q23 | RTC / GPS backup when off | **VBACKUP 3.0 V always-on LDO from VSYS** (MCP1703, ~2 µA) feeds the P4 VDD_BAT and GPS V_BCKP. Optional CR1220 holder (DNP), diode-OR'd, for battery-removed backup |
 | Q25 | On/off switch? | **Yes**: slide switch SW401 disables both bucks. The charger keeps charging from USB while off |
+| Q24 | Assembly | **Rev 1: all hand-soldered; PCBWay makes the PCB only** (+ stencil). Rev 2 may be PCBWay-assembled depending on Rev 1 errors. Hand-solder footprints everywhere (docs/pcb-manufacturing.md) |
 | Q11 | LA5016 header | **2×20 keyed header (40-way cable)**. The key-side row is CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is for the LA5032 (future) |

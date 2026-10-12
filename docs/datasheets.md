@@ -52,10 +52,10 @@ get them. "Local" shows whether the last run saved a copy.
 | MP1605GTF-Z | [MP1605 2 A buck (product page)](https://www.monolithicpower.com/en/mp1605.html) | Waveshare 7B, ADSB_Test | link only |
 | AO3401A | [AO3401A P-MOSFET (SD power, VBUS OR)](https://www.aosmd.com/res/datasheets/AO3401A.pdf) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | ETA6098 | [ETA6098 1S Li-ion charger](https://www.lcsc.com/search?q=ETA6098) | Waveshare 7B | link only |
-| STUSB4500 | [STUSB4500 USB-PD sink controller](https://www.st.com/resource/en/datasheet/stusb4500.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
-| BQ25792 | [BQ25792 charger: TI product/datasheet pages return 404 (2026-10-10), see BQ25798](https://ti.com/document-viewer/lit/html/slusdg1) | ADSB_Test | link only |
+| STUSB4500 | [STUSB4500 USB-PD sink controller](https://www.st.com/resource/en/datasheet/stusb4500.pdf) | ADSB_Test | yes (manual) |
+| BQ25792 | [BQ25792 charger datasheet (saved by hand; TI pages 404 from scripts). BQ25798 is the part used](https://www.ti.com/lit/ds/symlink/bq25792.pdf) | ADSB_Test | yes (manual) |
 | BQ25798 | [BQ25798 1-4S buck-boost charger with MPPT (proposed replacement for BQ25792)](https://www.ti.com/lit/ds/symlink/bq25798.pdf) | ADSB_Test | yes (2026-10-10) |
-| PAC1954 | [PAC195x power monitor (Microchip product page; site blocks scripts)](https://www.microchip.com/en-us/product/PAC1954) | ADSB_Test | link only (open in a browser) |
+| PAC1954 | [PAC195x family datasheet DS20006539 (power monitor; saved by hand, Microchip blocks scripts)](https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/PAC1951-2-3-4-Single-Multi-Channel-Power-Monitor-with-Accumulator-32V-Full-Scale-Range-DS20006539.pdf) | ADSB_Test | yes (manual) |
 | TPS62933 | [TPS62933 3 A buck (3V3)](https://www.ti.com/lit/ds/symlink/tps62933.pdf) | ADSB_Test | yes (2026-10-10) |
 | TPS25200 | [TPS25200 eFuse (USB-A VBUS)](https://www.ti.com/lit/ds/symlink/tps25200.pdf) | ADSB_Test | yes (2026-10-10) |
 | TPS2596 | [TPS2596 2.7-19 V eFuse (USB-A VBUS; replaces TPS25200, no KiCad symbol)](https://www.ti.com/lit/ds/symlink/tps2596.pdf) | ADSB_Test | yes (2026-10-12) |
@@ -67,11 +67,11 @@ get them. "Local" shows whether the last run saved a copy.
 
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
-| USBLC6-2SC6 | [USBLC6-2 USB ESD protection](https://www.st.com/resource/en/datasheet/usblc6-2.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
+| USBLC6-2SC6 | [USBLC6-2 USB ESD protection](https://www.st.com/resource/en/datasheet/usblc6-2.pdf) | ADSB_Test | yes (manual) |
 | IP101GRI | [IP101G family datasheet IP101G-DS-R01 (unofficial distributor mirror; IC Plus has no public link)](https://dfsimg2.hqewimg.com/group1/M00/1E/7E/wKhk72GgdAWACBnTACa6J2TDLkI754.pdf) | ADSB_Test | yes (2026-10-10) |
 | USB2514B | [USB2514B 4-port USB 2.0 hub (Microchip product page; site blocks scripts)](https://www.microchip.com/en-us/product/USB2514B) | ADSB_Test | link only (open in a browser) |
 | FT2232H | [FT2232H dual USB-UART (FTDI product page; site blocks scripts)](https://ftdichip.com/products/ft2232hq/) | ADSB_Test | link only (open in a browser) |
-| CP2102N | [CP2102N USB-UART](https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
+| CP2102N | [CP2102N USB-UART](https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf) | ADSB_Test | yes (manual) |
 | CH343P | [CH343 USB-UART (reference board)](https://www.wch-ic.com/products/CH343.html) | Waveshare 7B | link only |
 | RP2040 | [RP2040 datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | ADSB_Test | yes (2026-10-10) |
 | RP2040 | [Hardware design with RP2040](https://datasheets.raspberrypi.com/rp2040/hardware-design-with-rp2040.pdf) | ADSB_Test | yes (2026-10-10) |

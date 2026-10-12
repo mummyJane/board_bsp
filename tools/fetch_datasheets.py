@@ -117,6 +117,17 @@ def main():
         for d in docs:
             if d["type"] != "file" or (args.only and d["id"] not in args.only):
                 continue
+            local = OUT / d["category"] / f"{d['id']}.{d.get('ext', 'pdf')}"
+            if d.get("manual") and local.exists() and local.read_bytes()[:2] in (b"%P", b"PK"):
+                data = local.read_bytes()   # saved by hand: don't hammer a site that blocks scripts
+                manifest[d["id"]] = {
+                    "path": str(local.relative_to(ROOT)).replace("\\", "/"),
+                    "bytes": len(data),
+                    "sha256": hashlib.sha256(data).hexdigest(),
+                    "fetched": "manual",
+                }
+                print(f"ok    {d['id']}  (saved by hand)")
+                continue
             try:
                 manifest[d["id"]] = fetch(d)
                 print(f"ok    {d['id']}  ({manifest[d['id']]['bytes'] // 1024} KiB)")

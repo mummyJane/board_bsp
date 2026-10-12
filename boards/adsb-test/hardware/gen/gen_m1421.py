@@ -29,13 +29,13 @@ s.locals |= {"M1421_TMSC", "M1421_TCKC", "M1421_TDO", "M1421_TDI", "M1421_RF_978
 
 R0402 = "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"   # hand-solder size everywhere
 C0402 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-SC70_5 = "Package_TO_SOT_SMD:SOT-353_SC-70-5"
-SC70_6 = "Package_TO_SOT_SMD:SOT-363_SC-70-6"
+SC70_5 = "Package_TO_SOT_SMD:SOT-23-5_HandSoldering"   # SOT-23 (DBV) parts for hand soldering
+SC70_6 = "Package_TO_SOT_SMD:SOT-23-6_Handsoldering"
 VCC = "3V3_M1421"
 
 # ------------------------------------------------------------------ module
 u = s.add("ADSB_Test:PantsForBirds_ADSBee_m1421", "U1401", "ADSBee m1421", (101.6, 111.76),
-          footprint="ADSB_Test:PantsForBirds_ADSBee_m1421_Module",
+          footprint="ADSB_Test:PantsForBirds_ADSBee_m1421_Module_HandSolder",
           props={"Fit": "Fit EITHER U1401 OR use J1402 with the ADSBee 1421 Dev Kit"})
 s.connect(u, ["1", "4", "19", "22"], VCC)
 s.connect(u, ["6", "18", "23", "25", "27", "34", "36", "MP"], "GND")

@@ -99,15 +99,15 @@ s.connect(d, "1", "VBUS_USER_RAW")
 s.connect(d, "2", "GND")
 cap(s, "C201", "10uF 25V", (96.52, 50.8), "VBUS_USER_RAW", "GND", C0805)
 
-e = s.add("Power_Protection:USBLC6-2SC6", "U202", "USBLC6-2SC6", (78.74, 152.4), footprint="Package_TO_SOT_SMD:SOT-23-6")
+e = s.add("Power_Protection:USBLC6-2SC6", "U202", "USBLC6-2SC6", (78.74, 152.4), footprint="Package_TO_SOT_SMD:SOT-23-6_Handsoldering")
 s.connect(e, ["1", "6"], "USER_DP")
 s.connect(e, ["3", "4"], "USER_DM")
 s.connect(e, "5", "3V3_PERIPH")
 s.connect(e, "2", "GND")
 
 u = s.add("Interface_USB:STUSB4500QTR", "U201", "STUSB4500QTR", (152.4, 101.6),
-          footprint="",
-          props={"Check": "VSYS/VBUS_VS_DISCH/DISCH wiring TBC vs ST datasheet (site blocks scripts)",
+          footprint="ADSB_Test:QFN-24-1EP_4x4mm_P0.5mm_EP2.7x2.7mm_HandSolder",
+          props={"Check": "VSYS to GND (unused), VBUS_VS_DISCH to receptacle VBUS, DISCH via series R: per DS12499 pin table",
                  "NVM": "PDO1 5V/3A, PDO2 9V/3A, PDO3 15V/3A"})
 s.connect(u, ["2", "1"], "USER_CC1")       # CC1 + CC1DB (dead-battery Rd)
 s.connect(u, ["4", "5"], "USER_CC2")
@@ -135,10 +135,10 @@ cap(s, "C203", "1uF", (137.16, 152.4), "PD_VREG27", "GND")
 cap(s, "C204", "1uF 25V", (149.86, 152.4), "VBUS_USER_RAW", "GND", C0603)
 testpoint(s, "TP201", "PD_ATTACH", (175.26, 152.4))
 
-q = s.add("Transistor_FET:DMP3013SFV", "Q201", "DMP3013SFV", (254.0, 101.6),
-          footprint="")
+q = s.add("Transistor_FET:FDS9435A", "Q201", "FDS9435A", (254.0, 101.6),
+          footprint="", props={"Why": "SO-8 for hand soldering; -30 V, 5.3 A, 50 mOhm"})
 s.connect(q, ["1", "2", "3"], "VBUS_USER_RAW")
-s.connect(q, "5", "VBUS_USER")
+s.connect(q, ["5", "6", "7", "8"], "VBUS_USER")
 s.connect(q, "4", "PD_GATE")
 res(s, "R203", "100k", (231.14, 132.08), "VBUS_USER_RAW", "PD_GATE")
 cap(s, "C205", "10uF 25V", (279.4, 132.08), "VBUS_USER", "GND", C0805)
@@ -233,7 +233,8 @@ s.connect(bat, "3", "CHG_TS")
 # Fed from VSYS, which is up whenever a battery or USB is present, regardless of the
 # POWER switch. Optional CR1220 holder (not fitted) keeps it alive with the battery removed.
 s.locals |= {"VBACKUP_LDO", "BKP_CELL"}
-ldo = s.add("Regulator_Linear:MCP1703Ax-300xxTT", "U302", "MCP1703 3.0V (2 uA Iq)", (152.4, 226.06))
+ldo = s.add("Regulator_Linear:MCP1703Ax-300xxTT", "U302", "MCP1703 3.0V (2 uA Iq)", (152.4, 226.06),
+            footprint="Package_TO_SOT_SMD:SOT-23_Handsoldering")
 s.connect(ldo, "3", "VSYS")
 s.connect(ldo, "2", "VBACKUP_LDO")
 s.connect(ldo, "1", "GND")
@@ -272,7 +273,7 @@ def buck(s, n, name, out_net, rfbt, at):
     loc = {f"{name}_SW", f"{name}_BST", f"{name}_FB", f"{name}_SS", "PWR_EN"}
     s.locals |= loc
     u = s.add("Regulator_Switching:TPS62933", f"U4{n}1", "TPS62933", (x, y),
-              footprint="Package_TO_SOT_SMD:SOT-583-8", props={"Out": out_net})
+              footprint="ADSB_Test:SOT-583-8_HandSolder", props={"Out": out_net})
     s.connect(u, "3", "VSYS")
     s.connect(u, "4", "GND")
     s.connect(u, "5", f"{name}_SW")
@@ -318,7 +319,7 @@ s.text("POWER: SW401 OFF = PWR_EN low = both bucks off.\nVSYS, charger and VBACK
 def switch(s, ref, at, vin, vout, en):
     ct, qd = f"CT{ref[2:]}", f"QD{ref[2:]}"
     s.locals |= {ct, qd}
-    u = s.add("Power_Management:TPS22917DBV", ref, "TPS22917", at, footprint="Package_TO_SOT_SMD:SOT-23-6")
+    u = s.add("Power_Management:TPS22917DBV", ref, "TPS22917", at, footprint="Package_TO_SOT_SMD:SOT-23-6_Handsoldering")
     s.connect(u, "1", vin)
     s.connect(u, "6", vout)
     s.connect(u, "5", qd)    # QOD via 100R to VOUT: quick output discharge when off
@@ -364,13 +365,13 @@ finish(s, notes, "power_rails.kicad_sch", "ADSB_Test - Power Rails")
 
 # =================================================================== Power Monitor (page 5)
 s, notes = new_sheet("power_monitor.kicad_sch")
-addr = {"1": "TBC (PM1)", "2": "TBC (PM2)", "3": "TBC (PM3)"}
+addr = {"1": "0R (0x10)", "2": "499R 1% (0x11)", "3": "806R 1% (0x12)"}
 for n in ("1", "2", "3"):
     x = 76.2 + (int(n) - 1) * 88.9
     y = 101.6
     u = s.add("Sensor_Energy:PAC1954x-x4MX", f"U50{n}", f"PAC1954 (PM{n})", (x, y),
-              footprint="",
-              props={"Check": "ADDRSEL resistor value sets the I2C address: TBC vs Microchip datasheet"})
+              footprint="ADSB_Test:VQFN-16-1EP_3x3mm_P0.5mm_EP1.1x1.1mm_HandSolder",
+              props={"I2C": {"1": "0x10", "2": "0x11", "3": "0x12"}[n] + " (ADDRSEL, DS20006539 Table 6-1)"})
     for ch in range(1, 5):
         s.connect(u, f"SENSE{ch}+", f"PM{n}_CH{ch}_P")
         s.connect(u, f"SENSE{ch}-", f"PM{n}_CH{ch}_N")

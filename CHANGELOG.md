@@ -8,6 +8,23 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-10-12
+
+### Added
+- `tools/kicad_fp_handsolder.py` + `hardware/gen/gen_footprints.py`: hand-solder footprint copies
+  (edge pads lengthened, plated holes in bottom/exposed pads). Made for the ADSBee m1421 (+1.5 mm,
+  holes in the MP ground pads), STUSB4500 QFN-24, PAC1954 VQFN-16 and TPS62933 SOT-583.
+- Hand-saved datasheets registered (STUSB4500, USBLC6-2, PAC195x, CP2102N, BQ25792); the fetch script
+  now uses a hand-saved copy for `manual` entries without retrying the blocked site.
+
+### Changed
+- **Rev 1 is fully hand-assembled; PCBWay makes the PCB only** (Q24). docs/pcb-manufacturing.md has
+  the footprint rules and the parts needing hot air / a hot plate.
+- Generated sheets use the hand-solder footprints; logic gates SC-70 → SOT-23; PD power-path FET
+  DMP3013SFV (PowerDI) → **FDS9435A (SO-8)**.
+- PAC1954 addresses fixed from the datasheet: 0x10 / 0x11 / 0x12 (ADDRSEL 0 Ω / 499 Ω / 806 Ω);
+  STUSB4500 VSYS / VBUS_VS_DISCH / DISCH wiring confirmed from DS12499.
+
 ## [0.18.0] - 2026-10-12
 
 ### Added
@@ -342,7 +359,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/mummyJane/board_bsp/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/mummyJane/board_bsp/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/mummyJane/board_bsp/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/mummyJane/board_bsp/compare/v0.15.0...v0.16.0

@@ -32,29 +32,34 @@ and recheck them against PCBWay's page at that point.
 | Silkscreen | 0.15 mm line, 1.0 mm text |
 | Board edge to copper | 0.3 mm |
 
-## Hand soldering vs. PCBWay assembly
+## Build plan: Rev 1 hand-assembled, PCBWay makes the bare PCB
 
-The owner hand-solders and wants larger parts where there's a choice. So:
+**Rev 1:** PCBWay fabricates the **PCB only** (plus a solder-paste **stencil**,
+recommended). Everything is assembled by hand, block by block, so each block can
+be checked as it goes on (see the ADSB_Test test plan). **Rev 2** may be PCBWay
+assembled, depending on how many fixes Rev 1 needs.
 
-- **Passives:** resistors, capacitors and LEDs are **0805 with KiCad
-  "HandSolder" pads** (bigger caps and shunts are 1206 HandSolder). Test points
-  are 1.5 mm pads. The schematic generators apply this automatically.
-- **Through-hole** where it helps: the power switch, the coin-cell holder and
-  the headers.
-- **Fine-pitch parts can't be hand-soldered by eye.** Have PCBWay assemble at
-  least these (partial PCBA), then hand-fit the rest:
+### Footprint rules for hand assembly
 
-| Part | Package | Pitch |
-|------|---------|-------|
-| ESP32-P4NRW32 | QFN-104 | 0.35 mm |
-| RP2040 | QFN-56 | 0.4 mm |
-| BQ25798 | VQFN-29 (RQM) | 0.4 mm |
-| STUSB4500 | QFN-24 | 0.5 mm |
-| PAC1954 ×3 | VQFN-16 | 0.5 mm |
-| TPS62933 ×2 | SOT-583 | 0.5 mm |
-| USB2514B, FT2232H, CP2102N, IP101GRI | QFN | 0.4–0.5 mm |
-| 74LVC1G gates | SC-70 | 0.65 mm |
-| ESD7351 (m1421 RF ESD) | SOD-523 | only made in this size |
-| ESP32-C5-WROOM-1, ADSBee m1421, MAX-M10S | modules with bottom/edge pads | reflow recommended |
+| Part type | Footprint choice |
+|-----------|------------------|
+| Resistors, capacitors, LEDs | **0805 HandSolder** (1206 HandSolder for bulk caps and shunts) |
+| Test points | 1.5 mm pads |
+| SOT-23 parts | KiCad `*_HandSoldering` variants; logic gates in SOT-23 (DBV), not SC-70 |
+| QFN / short-lead ICs | `_HandSolder` copies in the board's project library (made by `tools/kicad_fp_handsolder.py` via `hardware/gen/gen_footprints.py`): edge pads lengthened 0.4–0.5 mm past the body; exposed pads get a plated hole so they can be soldered or heated from the back |
+| Modules with bottom (LGA-style) pads (ADSBee m1421, newer ESP32 modules) | `_HandSolder` copy with edge pads lengthened **1.5 mm** (≈ 1.1 mm visible past the body for the iron) and plated holes in the large bottom ground pads (solder from the back). Slightly worse RF ground than filled vias, accepted for Rev 1 |
+| Power FETs | Leaded packages (SO-8) instead of PowerDI / DFN |
+| Switch, coin-cell holder, headers | Through-hole where possible |
 
-(Open question Q24 on ADSB_Test: full PCBA, or partial PCBA plus hand assembly.)
+### Parts that still need hot air or a hot plate + stencil
+
+| Part | Why |
+|------|-----|
+| BQ25798 (VQFN-HR-29, 0.4 mm) | Power pads under the chip, not just around the edge: an iron can't reach them |
+| ESP32-P4NRW32 (QFN-104, 0.35 mm) | Very fine pitch + large exposed pad |
+| RP2040 (QFN-56, 0.4 mm), USB2514B, FT2232H, CP2102N, IP101GRI | Fine-pitch QFNs; `_HandSolder` variants will be made when their sheets are generated |
+| MiniCircuits SCN-2-11+ (RF combiner), ESD7351 (SOD-523) | Small parts only made in these packages |
+
+Suggested kit: stencil from PCBWay, solder paste, a small hot plate or hot-air
+station, flux, and a microscope/magnifier for inspection.
+

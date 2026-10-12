@@ -306,13 +306,14 @@
     {
       "id": "bq25792_datasheet",
       "part": "BQ25792",
-      "title": "BQ25792 charger: TI product/datasheet pages return 404 (2026-10-10), see BQ25798",
+      "title": "BQ25792 charger datasheet (saved by hand; TI pages 404 from scripts). BQ25798 is the part used",
       "category": "power",
       "boards": [
         "adsb"
       ],
-      "type": "link",
-      "url": "https://ti.com/document-viewer/lit/html/slusdg1"
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/bq25792.pdf",
+      "manual": true
     },
     {
       "id": "bq25798_datasheet",
@@ -328,13 +329,13 @@
     {
       "id": "pac1954_datasheet",
       "part": "PAC1954",
-      "title": "PAC195x power monitor (Microchip product page; site blocks scripts)",
+      "title": "PAC195x family datasheet DS20006539 (power monitor; saved by hand, Microchip blocks scripts)",
       "category": "power",
       "boards": [
         "adsb"
       ],
-      "type": "link",
-      "url": "https://www.microchip.com/en-us/product/PAC1954",
+      "type": "file",
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/PAC1951-2-3-4-Single-Multi-Channel-Power-Monitor-with-Accumulator-32V-Full-Scale-Range-DS20006539.pdf",
       "manual": true
     },
     {

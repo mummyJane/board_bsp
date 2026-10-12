@@ -126,6 +126,6 @@
 #define BSP_I2C_ADDR_PD         0x28    /* STUSB4500 default */
 #define BSP_I2C_ADDR_CHG        0x6B    /* BQ25798 */
 #define BSP_I2C_ADDR_EXP        0x20    /* TCA6408A, ADDR = GND */
-#define BSP_I2C_ADDR_PM1        (-1)    /* PAC1954, set by ADDRSEL resistor */
-#define BSP_I2C_ADDR_PM2        (-1)
-#define BSP_I2C_ADDR_PM3        (-1)
+#define BSP_I2C_ADDR_PM1        0x10    /* PAC1954, ADDRSEL 0R  */
+#define BSP_I2C_ADDR_PM2        0x11    /* ADDRSEL 499R */
+#define BSP_I2C_ADDR_PM3        0x12    /* ADDRSEL 806R */
