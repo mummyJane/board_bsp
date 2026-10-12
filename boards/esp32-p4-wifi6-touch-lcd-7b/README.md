@@ -67,13 +67,13 @@ BSP API: [`bsp/include/bsp/bsp.h`](bsp/include/bsp/bsp.h). Shared driver code is
 | Boot / chip info | ✅ | `[bsp]` | ✅ PASS 2026-10-12 (silicon **rev v1.3**) |
 | Pin map | ✅ from schematic | — | |
 | I2C bus scan | ✅ `bsp_i2c_init()` | `[i2c]` | ✅ PASS: 0x18, 0x36 (?), 0x40, 0x5D |
-| Display (EK79007, MIPI-DSI) | ✅ `bsp_display_new()` | `[display]` colour bars | ✅ init PASS, picture not yet checked by eye |
-| Backlight (inverted PWM) | ✅ `bsp_display_backlight_set()` | `[display]` sweep | ✅ runs, direction not yet checked by eye |
-| Touch (GT911) | ✅ `bsp_touch_new()` | `[touch]` | GT911 seen at 0x5D; touch not yet tried |
-| microSD | ✅ `bsp_sdcard_mount()`, `bsp_sdcard_format()` | `[sdcard]`; `[sdcard_format]` (erases, not in `*`) | ✅ PASS after FAT32 format (128 GB LX128) |
-| Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | ✅ PASS: 11 APs (C6 fw old, upgrade recommended) |
-| USB host on USB-A (hub, RTL-SDR) | `espressif/usb` | `[usb]` lists devices, flags RTL-SDRs | ❌ 0 devices: check what's plugged in |
-| GPS (eval module on P3) | UART2 + PPS | `[gps]` UBX comms (version, antenna, fix); `[gps_pps]` NMEA + PPS jitter (30 s) | not wired yet |
+| Display (EK79007, MIPI-DSI) | ✅ `bsp_display_new()` | `[display]` colour bars | ✅ PASS, colour bars confirmed by eye |
+| Backlight (inverted PWM) | ✅ `bsp_display_backlight_set()` | `[display]` sweep | ✅ runs (fade direction to confirm) |
+| Touch (GT911) | ✅ `bsp_touch_new()` | `[touch]` | ✅ PASS, confirmed by eye |
+| microSD | ✅ `bsp_sdcard_mount()`, `bsp_sdcard_format()` | `[sdcard]`; `[sdcard_format]` (erases, not in `*`) | ✅ PASS: 4 MiB verify, ≈ 9.8 MB/s write / 13 MB/s read, FAT32 128 GB |
+| Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | ✅ PASS, repeatable (C6 fw old, upgrade recommended) |
+| USB host on USB-A (hub, RTL-SDR) | `espressif/usb` | `[usb]` lists devices, flags RTL-SDRs | ✅ PASS: hub + RTL-SDR (both high speed), repeatable |
+| GPS (eval module on P3) | UART2 + PPS | `[gps]` UBX comms (version, antenna, fix); `[gps_pps]` NMEA + PPS jitter (30 s) | ✅ `[gps]` PASS (MAX-M10S, SPG 5.10); PPS waits for antenna |
 | Audio / CAN / RS485 | ☐ (not needed for ADSB_Test) | | |
 
 Details: [docs/bringup-log.md](docs/bringup-log.md).

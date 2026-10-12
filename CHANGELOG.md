@@ -8,6 +8,22 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-10-12
+
+### Added
+- microSD tests: 4 MiB patterned write + read-back verify with speed and free space, and a
+  persistence counter for a power-cycle check (both in `[sdcard]`).
+
+### Fixed
+- `[wifi]` crashed when run a second time in the same boot (duplicate default STA netif assert);
+  the Wi-Fi stack is now initialised once.
+- `[usb]` failed when run a second time (`usb_host_install` → ESP_ERR_INVALID_STATE): the library
+  daemon now keeps handling events until all devices are freed, then uninstalls (Espressif pattern).
+
+### Verified on hardware (reference board, rev v1.3)
+- Full suite run twice in one boot: 14 tests, 0 failures. USB hub + RTL-SDR enumerate at high
+  speed; GPS MAX-M10S answers UBX (SPG 5.10); SD 4 MiB verify OK; display and touch confirmed by eye.
+
 ## [0.13.0] - 2026-10-12
 
 ### Added
@@ -253,7 +269,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/mummyJane/board_bsp/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/mummyJane/board_bsp/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/mummyJane/board_bsp/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/mummyJane/board_bsp/compare/v0.10.0...v0.11.0

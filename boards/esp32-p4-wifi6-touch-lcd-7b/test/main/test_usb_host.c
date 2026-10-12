@@ -7,17 +7,35 @@
 #include "usb/usb_host.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/semphr.h"
 
 #define SCAN_SECONDS    8
 
-static volatile bool s_lib_running;
+static volatile bool s_stop;
+static volatile esp_err_t s_uninstall_err;
+static SemaphoreHandle_t s_lib_done;
 
+/* USB Host Library daemon. Like Espressif's examples, it keeps handling library
+ * events until every device has been freed and only then uninstalls; uninstalling
+ * earlier leaves the stack half-up and the next usb_host_install() fails. */
 static void usb_lib_task(void *arg)
 {
-    while (s_lib_running) {
+    while (true) {
         uint32_t flags = 0;
-        usb_host_lib_handle_events(pdMS_TO_TICKS(100), &flags);
+        usb_host_lib_handle_events(pdMS_TO_TICKS(50), &flags);
+        if (flags & USB_HOST_LIB_EVENT_FLAGS_NO_CLIENTS) {
+            usb_host_device_free_all();
+        }
+        if (s_stop) {
+            usb_host_lib_info_t info;
+            if ((flags & USB_HOST_LIB_EVENT_FLAGS_ALL_FREE) ||
+                    (usb_host_lib_info(&info) == ESP_OK && info.num_devices == 0)) {
+                break;
+            }
+        }
     }
+    s_uninstall_err = usb_host_uninstall();
+    xSemaphoreGive(s_lib_done);
     vTaskDelete(NULL);
 }
 
@@ -50,7 +68,10 @@ TEST_CASE("USB host: list devices on USB-A (hub, RTL-SDR)", "[usb]")
         .peripheral_map = 0,    /* default = high-speed OTG on the P4 */
     };
     TEST_ASSERT_EQUAL(ESP_OK, usb_host_install(&host_cfg));
-    s_lib_running = true;
+    s_stop = false;
+    if (!s_lib_done) {
+        s_lib_done = xSemaphoreCreateBinary();
+    }
     xTaskCreate(usb_lib_task, "usb_lib", 4096, NULL, 5, NULL);
 
     usb_host_client_handle_t client = NULL;
@@ -94,13 +115,12 @@ TEST_CASE("USB host: list devices on USB-A (hub, RTL-SDR)", "[usb]")
     }
     printf("RTL-SDR dongles found: %d\n", sdrs);
 
-    usb_host_client_deregister(client);
-    s_lib_running = false;
+    TEST_ASSERT_EQUAL(ESP_OK, usb_host_client_deregister(client));
+    s_stop = true;
     usb_host_lib_unblock();
-    vTaskDelay(pdMS_TO_TICKS(200));
-    usb_host_device_free_all();
-    vTaskDelay(pdMS_TO_TICKS(200));
-    usb_host_uninstall();
+    TEST_ASSERT_TRUE_MESSAGE(xSemaphoreTake(s_lib_done, pdMS_TO_TICKS(5000)) == pdTRUE,
+                             "USB host library did not shut down");
+    TEST_ASSERT_EQUAL_MESSAGE(ESP_OK, s_uninstall_err, "usb_host_uninstall failed");
 
     TEST_ASSERT_GREATER_THAN_MESSAGE(0, n, "nothing enumerated on USB-A");
 }

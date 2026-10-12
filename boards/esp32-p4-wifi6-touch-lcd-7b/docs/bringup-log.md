@@ -17,3 +17,10 @@ Record each test session: date, BSP version, what was tested, result, notes.
 | 2026-10-12 | 0.13.0 | `[sdcard_format]` | PASS | Run by the owner: 128 GB card (LX128, 119850 MB, 4-bit, 40 MHz) reformatted FAT32. Old code formatted twice (fixed) |
 | 2026-10-12 | 0.13.0 | `[sdcard]` ×2 | PASS | Mount/write/read/unmount repeatable. GPIO45 (card power) conflict fixed. Remaining log noise: "host controller with slot registered" (esp_hosted holds SDMMC slot 1, expected) and a GPIO42 (D3) re-config warning from the IDF driver on later mounts |
 | 2026-10-12 | 0.13.0 | `[gps]` | FAIL (expected) | New UBX comms test: no bytes received; GPS not connected yet |
+| 2026-10-12 | 0.14.0 | `[display]` / `[touch]` | PASS | Owner confirmed by eye: colour bars correct, touch OK (25 touch reports in a 10 s run) |
+| 2026-10-12 | 0.14.0 | `[wifi]` ×2 | PASS | Second run used to crash (duplicate default STA netif assert); fixed. 14 APs each run |
+| 2026-10-12 | 0.14.0 | `[sdcard]` ×2 | PASS | New 4 MiB write + read-back verify: 0 bad words, write ≈ 9.8 MB/s, read+verify ≈ 13 MB/s; FAT32 volume 119820 MB. Persistence counter 0 → 1 across runs (power-cycle check still to do) |
+| 2026-10-12 | 0.14.0 | `[usb]` ×3 | PASS | Hub 05e3:0610 (Genesys, HS) + RTL-SDR 0bda:2838 (HS) enumerated. Repeat runs used to fail (install returned 0x103: previous uninstall incomplete); teardown fixed |
+| 2026-10-12 | 0.14.0 | `[gps]` ×2 | PASS | u-blox MAX-M10S: ROM SPG 5.10, PROTVER 34.10, GPS/GLO/GAL/BDS + SBAS/QZSS, 38400 baud. Antenna status DONTKNOW (breakout has no antenna supervision), no fix (no antenna fitted) |
+| 2026-10-12 | 0.14.0 | `[gps_pps]` | PASS (no PPS) | ~360 NMEA sentences in 30 s; 0 PPS pulses (no fix without an antenna) |
+| 2026-10-12 | 0.14.0 | `*` ×2 | PASS | Full suite twice in one boot: 14 tests, 0 failures each time |

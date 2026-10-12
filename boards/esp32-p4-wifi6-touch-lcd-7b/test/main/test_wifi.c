@@ -9,8 +9,14 @@
 #include "esp_wifi.h"
 #include "nvs_flash.h"
 
-TEST_CASE("Wi-Fi via C6: scan access points", "[wifi]")
+/* NVS, netif, the event loop and the default STA netif can only be created once
+ * per boot (a second esp_netif_create_default_wifi_sta() asserts), so do it once. */
+static void wifi_stack_init_once(void)
 {
+    static esp_netif_t *s_sta;
+    if (s_sta) {
+        return;
+    }
     esp_err_t err = nvs_flash_init();
     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         TEST_ASSERT_EQUAL(ESP_OK, nvs_flash_erase());
@@ -20,7 +26,13 @@ TEST_CASE("Wi-Fi via C6: scan access points", "[wifi]")
     TEST_ASSERT_EQUAL(ESP_OK, esp_netif_init());
     err = esp_event_loop_create_default();
     TEST_ASSERT_TRUE(err == ESP_OK || err == ESP_ERR_INVALID_STATE);
-    esp_netif_create_default_wifi_sta();
+    s_sta = esp_netif_create_default_wifi_sta();
+    TEST_ASSERT_NOT_NULL(s_sta);
+}
+
+TEST_CASE("Wi-Fi via C6: scan access points", "[wifi]")
+{
+    wifi_stack_init_once();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     TEST_ASSERT_EQUAL(ESP_OK, esp_wifi_init(&cfg));
