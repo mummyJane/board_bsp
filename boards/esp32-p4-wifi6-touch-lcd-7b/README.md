@@ -70,10 +70,10 @@ BSP API: [`bsp/include/bsp/bsp.h`](bsp/include/bsp/bsp.h). Shared driver code is
 | Display (EK79007, MIPI-DSI) | ✅ `bsp_display_new()` | `[display]` colour bars | ✅ init PASS, picture not yet checked by eye |
 | Backlight (inverted PWM) | ✅ `bsp_display_backlight_set()` | `[display]` sweep | ✅ runs, direction not yet checked by eye |
 | Touch (GT911) | ✅ `bsp_touch_new()` | `[touch]` | GT911 seen at 0x5D; touch not yet tried |
-| microSD | ✅ `bsp_sdcard_mount()`, `bsp_sdcard_format()` | `[sdcard]`; `[sdcard_format]` (erases, not in `*`) | ❌ card detected, FAT mount fails (likely exFAT) |
+| microSD | ✅ `bsp_sdcard_mount()`, `bsp_sdcard_format()` | `[sdcard]`; `[sdcard_format]` (erases, not in `*`) | ✅ PASS after FAT32 format (128 GB LX128) |
 | Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | ✅ PASS: 11 APs (C6 fw old, upgrade recommended) |
 | USB host on USB-A (hub, RTL-SDR) | `espressif/usb` | `[usb]` lists devices, flags RTL-SDRs | ❌ 0 devices: check what's plugged in |
-| GPS (eval module on P3) | UART2 + PPS | `[gps]` baud detect, NMEA, PPS jitter | not wired yet |
+| GPS (eval module on P3) | UART2 + PPS | `[gps]` UBX comms (version, antenna, fix); `[gps_pps]` NMEA + PPS jitter (30 s) | not wired yet |
 | Audio / CAN / RS485 | ☐ (not needed for ADSB_Test) | | |
 
 Details: [docs/bringup-log.md](docs/bringup-log.md).
@@ -136,6 +136,8 @@ uses:
 | VCC | 12 (ESP_3V3, 3.3 V) | — |
 
 Check the module's supply first: some MAX-M10S breakouts are 5 V boards with
-a regulator, and P3 only provides 3.3 V. The test detects the baud rate
-(38400, 9600, 115200, ...). PPS only starts pulsing once the receiver has a
+a regulator, and P3 only provides 3.3 V. `[gps]` checks the wiring and module over UBX: firmware/hardware version,
+antenna status (OK / OPEN / SHORT), satellites and fix. No fix or PPS is
+needed. `[gps_pps]` counts NMEA and measures PPS timing over 30 s. Both
+detect the baud rate (38400, 9600, 115200, ...). PPS only starts pulsing once the receiver has a
 time fix, so put the antenna where it can see the sky.

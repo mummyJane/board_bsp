@@ -45,7 +45,7 @@ static bool saw_nmea(int baud)
     return n > 0 && (strstr(buf, "$GP") || strstr(buf, "$GN") || strstr(buf, "$GL") || strstr(buf, "$GA"));
 }
 
-TEST_CASE("GPS: detect baud, read NMEA, measure PPS for 30 s", "[gps]")
+TEST_CASE("GPS: detect baud, read NMEA, measure PPS for 30 s", "[gps_pps]")
 {
     printf("GPS UART%d TX(P4)=GPIO%d RX(P4)=GPIO%d PPS=GPIO%d\n",
            BSP_GPS_UART_NUM, BSP_GPS_TX, BSP_GPS_RX, BSP_GPS_PPS);

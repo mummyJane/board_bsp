@@ -14,3 +14,6 @@ Record each test session: date, BSP version, what was tested, result, notes.
 | 2026-10-12 | 0.12.0 | `[sdcard]` | FAIL (expected) | Card detected and initialised; FAT mount failed (ESP_FAIL), consistent with an exFAT (>32 GB) card. Not formatted; needs FAT32 or `[sdcard_format]` with the owner's OK |
 | 2026-10-12 | 0.12.0 | `[usb]` | FAIL | 0 devices enumerated, no connection event. USB-A J1 confirmed on P4 HS DP/DM (schematic). Check what is plugged into USB-A / hub power |
 | 2026-10-12 | 0.12.0 | `[gps]` | FAIL (expected) | No NMEA: GPS not wired yet |
+| 2026-10-12 | 0.13.0 | `[sdcard_format]` | PASS | Run by the owner: 128 GB card (LX128, 119850 MB, 4-bit, 40 MHz) reformatted FAT32. Old code formatted twice (fixed) |
+| 2026-10-12 | 0.13.0 | `[sdcard]` ×2 | PASS | Mount/write/read/unmount repeatable. GPIO45 (card power) conflict fixed. Remaining log noise: "host controller with slot registered" (esp_hosted holds SDMMC slot 1, expected) and a GPIO42 (D3) re-config warning from the IDF driver on later mounts |
+| 2026-10-12 | 0.13.0 | `[gps]` | FAIL (expected) | New UBX comms test: no bytes received; GPS not connected yet |

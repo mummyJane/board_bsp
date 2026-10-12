@@ -24,7 +24,7 @@ uses a **C6**, not a C5. Those items use add-on boards.
 | 1.6b | M14-04 | As 1.5 | SYNC sleep/wake: current drops on sleep, the aircraft table survives, and a reset with SYNC low always boots the app |
 | 1.7 | USB-05 | Reference board **USB-A (J1, P4 HS OTG)** + external hub + 1 RTL-SDR, then 2 | Enumeration; sustained bulk rate at 2.0 / 2.4 MS/s with no drops |
 | 1.8 | USB-05 | As 1.7 | AIS decode from one SDR: CPU % on the P4 |
-| 1.9 | GPS-01/02 | MAX-M10S breakout on a UART + PPS GPIO | NMEA/UBX parsed, PPS interrupt jitter measured |
+| 1.9 | GPS-01/02 | MAX-M10S breakout on a UART + PPS GPIO | `[gps]`: UBX MON-VER/MON-RF/NAV-PVT answered (wiring + module OK). `[gps_pps]`: NMEA parsed, PPS interrupt jitter measured |
 | 1.10 | PWR-03 | PAC1954 (or INA3221) breakout on I2C | Channels read, energy accumulator works, values match a multimeter |
 | 1.11 | NET-01 | IP101 / LAN8720 RMII breakout | Link up, DHCP, iperf |
 | 1.12 | USB-01/02, PWR-01 | STUSB4500 + BQ25798 eval boards, 2S pack | PD contract at 15 V, charge/discharge, input-current limit set from the PDO, I2C status read |

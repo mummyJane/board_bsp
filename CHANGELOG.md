@@ -8,6 +8,19 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-10-12
+
+### Added
+- `[gps]` GPS comms test over UBX (both test apps): auto-baud, UBX-MON-VER (firmware/hardware/module),
+  UBX-MON-RF (antenna status/power, noise, jamming) and UBX-NAV-PVT (fix, satellites, UTC). Tells "no
+  data at all" apart from "data but no UBX reply". The NMEA + PPS test is now `[gps_pps]`.
+
+### Fixed
+- microSD: the SD driver claimed GPIO45 (slot-0 D4 default), which is the card power enable. D4-D7
+  are now set unused for 4-bit mode, and the power GPIO is configured once.
+- `[sdcard_format]` formatted the card twice (mount-with-format plus an explicit format). Now formats once.
+- Documented the expected "host controller with slot registered" log (esp_hosted holds SDMMC slot 1).
+
 ## [0.12.0] - 2026-10-12
 
 ### Fixed
@@ -240,7 +253,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/mummyJane/board_bsp/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/mummyJane/board_bsp/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/mummyJane/board_bsp/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/mummyJane/board_bsp/compare/v0.9.0...v0.10.0
