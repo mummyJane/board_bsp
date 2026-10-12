@@ -775,7 +775,7 @@
       "title": "Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5 module) datasheet v1.3",
       "category": "espressif",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://img03.71360.com/w3/77q677/20260127/9a1f9a9cd53575eaf50a76b38847ef97.pdf?dl=1&dlf=WT01P4C5-S1_datasheet_V1.3.pdf"
@@ -786,7 +786,7 @@
       "title": "Wireless-Tag WT01P4C5-S1 product page",
       "category": "espressif",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "link",
       "url": "http://en.wireless-tag.com/product-item-73.html"
@@ -794,10 +794,10 @@
     {
       "id": "waveshare-esp32-p4-module_schematic",
       "part": "Waveshare ESP32-P4-Module",
-      "title": "Waveshare ESP32-P4-Module schematic (fallback to WT01P4C5-S1)",
+      "title": "Waveshare ESP32-P4-Module schematic (considered for ADSB_Test)",
       "category": "waveshare",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://files.waveshare.com/wiki/ESP32-P4-Module/ESP32-P4-Module-datasheet.pdf"
@@ -808,7 +808,7 @@
       "title": "Waveshare ESP32-P4-Module wiki (pinout, land pattern, STEP)",
       "category": "waveshare",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "link",
       "url": "https://www.waveshare.com/wiki/ESP32-P4-Module"
@@ -1039,6 +1039,28 @@
       ],
       "type": "link",
       "url": "https://www.diodes.com/part/view/1N4148W"
+    },
+    {
+      "id": "osptek_p4c5_core_repo",
+      "part": "OSPTEK ESP32-P4C5 Core",
+      "title": "OSPTEK ESP32-P4C5 Core module: pin table, dimensions, SchLib/PcbLib, STEP (GitHub)",
+      "category": "espressif",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://github.com/osptek/esp32-p4c5-core-board"
+    },
+    {
+      "id": "osptek_p4c5_core_buy",
+      "part": "OSPTEK ESP32-P4C5 Core",
+      "title": "OSPTEK ESP32-P4C5 Core on AliExpress",
+      "category": "espressif",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.aliexpress.com/item/1005012626312933.html"
     }
   ]
 }

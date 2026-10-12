@@ -1,7 +1,7 @@
 # ADSB_Test block floorplan (fit check, 2026-10-12)
 
 A quick check, before layout, that every block still fits now the MCU is the
-WT01P4C5-S1 module, the Dev port has the hub + FT2232H + RP2040, and the RF cans,
+OSPTEK ESP32-P4C5 module, the Dev port has the hub + FT2232H + RP2040, and the RF cans,
 RTC, test pads and LA header are in. It is **not** a placement: it sizes zones
 from the real footprints and checks them against the board, the edge
 connectors, the mounting holes, the panel cables and the battery.
@@ -42,7 +42,7 @@ sides** gives an even border in the case. The panel cables then fold through
 |---------------------|-------|---------|--------------|
 | 4 mm | 172.9 × 108 | 75 % | 96 % (too tight) |
 | 6 mm | 176.9 × 112 | 70 % | 89 % (borderline) |
-| **8 mm** | **180.9 × 116** | **66 %** | **83 %** |
+| **8 mm** | **180.9 × 116** | **61 %** | **83 %** |
 | 10 mm | 184.9 × 120 | 62 % | 77 % |
 | 12 mm | 188.9 × 124 | 59 % | 72 % |
 
@@ -60,7 +60,7 @@ is 75 % overall but 100 % along the display strip.
 | GNSS (can 17.8 mm) | 34 × 58 | 25 % (keep it quiet) |
 | Dev USB (hub, FT2232H, RP2040) | 52 × 53 | 82 % |
 | LA header (vertical) | 16 × 80 | 74 % |
-| MCU module | 52 × 53 | 82 % |
+| MCU module (OSPTEK 25 × 25 mm) | 52 × 53 | 51 % |
 | Ethernet + USB host | 34 × 28 | 78 % |
 | Storage + expander + touch FPC | 18 × 28 | 58 % |
 | Display supplies + LCD FPC | 52 × 28 | 83 % |

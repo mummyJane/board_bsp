@@ -16,8 +16,8 @@ How it works:
 |-------|--------|--------|
 | M1421 (page 14) | [gen_m1421.py](gen_m1421.py) | Generated (incl. optional RF can SH1401) |
 | Power Input, Charger Battery, Power Rails, Power Monitor (pages 2–5) | [gen_power.py](gen_power.py) | Generated |
-| MCU Module (page 6), RTC (page 7) | [gen_mcu.py](gen_mcu.py) | Generated (WT01P4C5-S1 + DS3231M) |
-| WT01P4C5-S1 symbol + `_HandSolder` footprint (library) | [gen_wt01p4c5.py](gen_wt01p4c5.py) | Generated from the datasheet v1.3 pin table and drawing |
+| MCU Module (page 6), RTC (page 7) | [gen_mcu.py](gen_mcu.py) | Generated (OSPTEK ESP32-P4C5 Core + optional DS3231M) |
+| OSPTEK ESP32-P4C5 Core symbol + `_HandSolder` footprint (library) | [gen_osptek_p4c5.py](gen_osptek_p4c5.py) | Generated from OSPTEK's pin table and dimension drawing |
 | Ethernet, USB User, USB Dev (A2), USB Host, GPS, Display Touch, Storage Misc, Test Debug (pages 8-13, 15, 16) | [gen_periph.py](gen_periph.py) | Generated |
 | AP3032 symbol (library) | [gen_symbols.py](gen_symbols.py) | Generated (uses `tools/kicad_sym_make.py`) |
 | `_HandSolder` copies of vendor footprints (library) | [gen_footprints.py](gen_footprints.py) | Generated |

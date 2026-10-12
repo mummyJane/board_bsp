@@ -1,11 +1,10 @@
-# ADSB_Test: Wireless-Tag WT01P4C5-S1 module (ESP32-P4 + ESP32-C5, 16 MB flash, 32 MB PSRAM)
+# ADSB_Test: OSPTEK ESP32-P4C5 Core module (ESP32-P4 rev v3.x + ESP32-C5, 16 MB flash, 32 MB PSRAM)
 CONFIG_IDF_TARGET="esp32p4"
-# The module is rated 360 MHz, i.e. P4 silicon below v3 (as the rev v1.3 reference unit), so
-# the default build targets v0.x/v1.x. Read the module's revision with `esptool chip_id`;
-# for rev v3.x silicon build with
-#   idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.rev3" ...
-CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
-CONFIG_ESP32P4_REV_MIN_100=y
+# The module uses P4 silicon rev v3.x (OSPTEK README). To run this app on the rev v1.3
+# Waveshare reference unit build with
+#   idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.rev1" ...
+# CONFIG_ESP32P4_SELECTS_REV_LESS_V3 is not set
+CONFIG_ESP32P4_REV_MIN_300=y
 # 16 MB on the module (also fine on the reference unit's 32 MB flash)
 CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 CONFIG_ESPTOOLPY_FLASHMODE_QIO=y

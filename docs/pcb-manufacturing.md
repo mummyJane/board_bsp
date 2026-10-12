@@ -50,7 +50,7 @@ assembled, depending on how many fixes Rev 1 needs.
 | Modules with bottom (LGA-style) pads (ADSBee m1421, newer ESP32 modules) | `_HandSolder` copy with edge pads lengthened **1.5 mm** (≈ 1.1 mm visible past the body for the iron) and plated holes in the large bottom ground pads (solder from the back). Slightly worse RF ground than filled vias, accepted for Rev 1 |
 | Power FETs | Leaded packages (SO-8) instead of PowerDI / DFN |
 | Switch, coin-cell holder, headers | Through-hole where possible |
-| Castellated modules (WT01P4C5-S1) | Pads run 1.2 mm under the module and **1.3 mm past its edge** for the iron (`Wireless-Tag_WT01P4C5-S1_HandSolder`). No exposed copper or untented vias under the module (it has RF test pads underneath) |
+| Castellated / stamp-hole modules (OSPTEK ESP32-P4C5 Core, 1.0 mm) | 0.7 mm pads run 1.0 mm under the module and **1.3 mm past its edge** for the iron (`OSPTEK_ESP32-P4C5_Core_HandSolder`). Flux + fine tip; check for bridges. No exposed copper or untented vias under the module (it has RF test pads underneath) |
 | RF can frames (optional, DNP) | Laird BMI-S-2xx-F two-piece frames; fit after the parts underneath are soldered and tested |
 
 ### Parts that still need hot air or a hot plate + stencil
@@ -58,7 +58,7 @@ assembled, depending on how many fixes Rev 1 needs.
 | Part | Why |
 |------|-----|
 | BQ25798 (VQFN-HR-29, 0.4 mm) | Power pads under the chip, not just around the edge: an iron can't reach them |
-| ESP32-P4NRW32 (QFN-104, 0.35 mm) | Very fine pitch + large exposed pad. **Not used on ADSB_Test**: replaced by the WT01P4C5-S1 module (Q26), 1.4 mm castellated pads, iron-solderable |
+| ESP32-P4NRW32 (QFN-104, 0.35 mm) | Very fine pitch + large exposed pad. **Not used on ADSB_Test**: replaced by the OSPTEK ESP32-P4C5 module (Q26), 1.0 mm stamp holes, iron-solderable |
 | RP2040 (QFN-56, 0.4 mm), USB2514B (QFN-36), CP2102N (QFN-24), LAN8720A (VQFN-24) | Fine-pitch QFNs: `_HandSolder` variants (longer pads, hole in the EP) help, but use paste + hot air. FT2232H**L** is LQFP-64 (leads: iron + drag soldering) |
 | FPC connectors (Hirose FH12, 0.5 mm) | Drag-solder with flux; check for bridges under magnification |
 | MiniCircuits SCN-2-11+ (RF combiner), ESD7351 (SOD-523) | Small parts only made in these packages |

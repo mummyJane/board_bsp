@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Generate the ADSB_Test 'MCU Module' (page 6) and 'RTC' (page 7) sheets.
 
-MCU: Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5 over SDIO, inside the module), Q26.
-RTC: DS3231M on VBACKUP, because the module has no P4 VBAT pin (Q27).
+MCU: OSPTEK ESP32-P4C5 Core (ESP32-P4 rev v3.x + ESP32-C5HF4 over SDIO inside the module), Q26.
+     Inside the module: SDIO on P4 GPIO14-19, C5 CHIP_PU on P4 GPIO54, C5 GPIO2 on P4 GPIO6 -
+     the same wiring as the Waveshare reference board's C6.
+RTC: DS3231M on VBACKUP, now optional (DNP): the module has RTC_VBAT, so the P4 RTC keeps time (Q27).
 
 Run from the repo root:  python boards/adsb-test/hardware/gen/gen_mcu.py
-Needs the module symbol/footprint from gen_wt01p4c5.py. Pins: bsp/include/bsp/board_pins.h.
+Needs the module symbol/footprint from gen_osptek_p4c5.py. Pins: bsp/include/bsp/board_pins.h.
 """
 import sys
 from pathlib import Path
@@ -31,42 +33,42 @@ def tp(s, ref, net, at, local=True):
 
 # =================================================================== MCU Module (page 6)
 s = Sheet(libs, "ADSB_Test", root_uuid, sheets["mcu_module.kicad_sch"], pwr_base=6000)
-s.locals |= {"XTAL32_P", "XTAL32_N", "C5_TMS", "C5_TDI", "C5_TCK", "C5_TDO", "C5_IO26", "MCU_PWR_CTRL",
-             "C5_IO1", "C5_IO6", "C5_IO23", "C5_IO24", "C5_IO25", "C5_IO27", "P4_GPIO36", "P4_GPIO54"}
-u = s.add("ADSB_Test:Wireless-Tag_WT01P4C5-S1", "U601", "WT01P4C5-S1-N16R32", (203.2, 142.24),
-          footprint="ADSB_Test:Wireless-Tag_WT01P4C5-S1_HandSolder",
-          props={"Check": "Land pattern derived from datasheet v1.3 drawing: measure a real module before ordering PCBs",
-                 "Antenna": "IPEX (U.FL) on the module: pigtail to a 2.4/5 GHz antenna at the digital edge"})
-s.connect(u, ["68", "69"], "5V_MCU")
-s.connect(u, ["10", "29", "36", "43", "46", "47", "70", "71", "92"], "GND")
-for p in ("17", "23", "72", "37", "38", "39", "40", "41", "42"):   # NC1/NC2, VBAT (no internal connection), CSI unused
+s.locals |= {"XTAL32_P", "XTAL32_N", "C5_IO26", "C5_IO27", "C5_IO25", "C5_IO24", "C5_IO23", "C5_IO6",
+             "C5_IO5", "C5_IO4", "P4_GPIO12", "P4_GPIO20", "P4_GPIO36", "C5_PU"}
+u = s.add("ADSB_Test:OSPTEK_ESP32-P4C5_Core", "U601", "ESP32-P4C5 Core (OSPTEK)", (203.2, 142.24),
+          footprint="ADSB_Test:OSPTEK_ESP32-P4C5_Core_HandSolder",
+          props={"Source": "OSPTEK AliExpress 1005012626312933; docs github.com/osptek/esp32-p4c5-core-board",
+                 "Antenna": "IPEX (U.FL) on the module: pigtail to a 2.4/5 GHz antenna"})
+s.connect(u, ["85", "86"], "3V3_MCU")
+s.connect(u, ["1", "3", "15", "33", "40", "47", "52", "83"], "GND")
+for p in ("2", "21", "41", "42", "43", "44", "45", "46"):   # LAN_OUT (use the IPEX), GPIO6 = C5 IO2 inside, CSI unused
     s.nc(u, p)
 nets = {
-    # P4 side (module pad: net). GPIO numbers in board_pins.h.
-    "11": "P4_EN", "12": "XTAL32_N", "13": "XTAL32_P", "14": "P4_GPS_TX", "15": "GPS_TX", "16": "GPS_PPS",
-    "18": "RTC_INT", "19": "I2C_SDA", "20": "I2C_SCL", "21": "CHG_PD_INT", "22": "DBG_A", "24": "DBG_B",
-    "25": "PM_ALERT", "26": "P4_USER_TX", "27": "P4_USER_RX", "28": "TOUCH_RST",
-    "30": "DSI_D1_P", "31": "DSI_D1_N", "32": "DSI_CLK_N", "33": "DSI_CLK_P", "34": "DSI_D0_P", "35": "DSI_D0_N",
-    "44": "USB_HS_DM", "45": "USB_HS_DP", "48": "P4_USJ_DM", "49": "P4_USJ_DP", "50": "TOUCH_INT",
-    "51": "USBA_FAULT", "52": "ETH_CRS_DV", "53": "ETH_RXD0", "54": "ETH_RXD1", "55": "ETH_MDC",
-    "56": "LCD_BL_PWM", "57": "LCD_RST", "58": "ETH_TXD0", "59": "ETH_TXD1_BOOT", "60": "P4_GPIO36",
-    "61": "P4_CON_TX", "62": "P4_CON_RX", "63": "SD_VIO", "64": "SD_D0", "65": "SD_D1", "66": "SD_D2",
-    "67": "MCU_PWR_CTRL", "73": "SD_D3", "74": "SD_CLK", "75": "SD_CMD", "76": "SD_PWR_EN",
-    "77": "P4_M1421_TX", "78": "M1421_SUTX", "79": "P4_M1421_SYNC", "80": "ETH_TX_EN", "81": "ETH_REF_CLK",
-    "82": "ETH_PHY_RST", "83": "ETH_MDIO", "84": "EXP_INT", "85": "P4_GPIO54",
+    # P4 side (module pad: net). GPIO numbers in board_pins.h (same as the reference board where reused).
+    "87": "P4_EN", "88": "XTAL32_N", "16": "XTAL32_P", "17": "P4_GPS_TX", "18": "GPS_TX", "19": "GPS_PPS",
+    "20": "PM_ALERT", "22": "I2C_SDA", "23": "I2C_SCL", "24": "CHG_PD_INT", "25": "DBG_A", "26": "DBG_B",
+    "27": "P4_GPIO12", "28": "RTC_INT", "29": "P4_GPIO20", "30": "P4_USER_TX", "31": "P4_USER_RX", "32": "TOUCH_RST",
+    "34": "DSI_D1_P", "35": "DSI_D1_N", "36": "DSI_CLK_N", "37": "DSI_CLK_P", "38": "DSI_D0_P", "39": "DSI_D0_N",
+    "48": "USB_HS_DM", "49": "USB_HS_DP", "50": "P4_USJ_DM", "51": "P4_USJ_DP", "53": "TOUCH_INT",
+    "54": "USBA_FAULT", "55": "ETH_CRS_DV", "56": "ETH_RXD0", "57": "ETH_RXD1", "58": "ETH_MDC",
+    "59": "LCD_BL_PWM", "60": "LCD_RST", "61": "ETH_TXD0", "62": "ETH_TXD1_BOOT", "63": "P4_GPIO36",
+    "64": "P4_CON_TX", "65": "P4_CON_RX", "66": "SD_VIO", "67": "SD_D0", "68": "SD_D1", "69": "SD_D2",
+    "70": "SD_D3", "71": "SD_CLK", "72": "SD_CMD", "73": "SD_PWR_EN",
+    "74": "P4_M1421_TX", "75": "M1421_SUTX", "76": "P4_M1421_SYNC", "77": "ETH_TX_EN", "78": "ETH_REF_CLK",
+    "79": "ETH_PHY_RST", "80": "ETH_MDIO", "81": "EXP_INT", "82": "C5_PU", "84": "VBACKUP",
     # C5 side
-    "1": "C5_EN", "2": "C5_IO1", "3": "C5_TMS", "4": "C5_TDI", "5": "C5_TCK", "6": "C5_TDO", "7": "C5_IO6",
-    "8": "C5_CON_TX", "9": "C5_CON_RX", "86": "C5_IO23", "87": "C5_IO24", "88": "C5_IO25", "89": "C5_IO26",
-    "90": "C5_IO27", "91": "C5_BOOT",
+    "4": "C5_CON_RX", "5": "C5_CON_TX", "6": "C5_BOOT", "7": "C5_IO27", "8": "C5_IO26", "9": "C5_IO25",
+    "10": "C5_IO24", "11": "C5_IO23", "12": "C5_IO6", "13": "C5_IO5", "14": "C5_IO4",
 }
 for pin, net in nets.items():
     s.connect(u, pin, net)
 
-# 5 V supply decoupling (module regulates internally; up to 1.5 A)
-s.two_pin("Device:C", "C601", "22uF 10V", (38.1, 33.02), "5V_MCU", "GND", C1206)
-s.two_pin("Device:C", "C602", "22uF 10V", (50.8, 33.02), "5V_MCU", "GND", C1206)
-s.two_pin("Device:C", "C603", "100nF", (63.5, 33.02), "5V_MCU", "GND", C0805)
+# 3.3 V supply decoupling (module: 3.0-3.6 V, about 1 A)
+s.two_pin("Device:C", "C601", "22uF 10V", (38.1, 33.02), "3V3_MCU", "GND", C1206)
+s.two_pin("Device:C", "C602", "22uF 10V", (50.8, 33.02), "3V3_MCU", "GND", C1206)
+s.two_pin("Device:C", "C603", "100nF", (63.5, 33.02), "3V3_MCU", "GND", C0805)
 s.two_pin("Device:C", "C604", "1uF", (76.2, 33.02), "SD_VIO", "GND", C0805)     # ESP_LDO_VO4 output (SD I/O)
+s.two_pin("Device:C", "C608", "100nF", (88.9, 33.02), "VBACKUP", "GND", C0805)  # RTC_VBAT (must not float)
 
 # 32.768 kHz crystal on GPIO0/1 (as the reference board)
 y = s.add("Device:Crystal", "Y601", "32.768kHz", (50.8, 68.58),
@@ -81,7 +83,9 @@ s.two_pin("Device:R", "R601", "10M", (76.2, 68.58), "XTAL32_P", "XTAL32_N", R080
 s.two_pin("Device:R", "R602", "2.2k", (38.1, 116.84), "3V3", "I2C_SDA", R0805)
 s.two_pin("Device:R", "R603", "2.2k", (50.8, 116.84), "3V3", "I2C_SCL", R0805)
 
-# Reset / BOOT (Dev FT2232H ch A drives the same nets for auto-reset)
+# Reset / BOOT. The module has no reset RC on CHIP_PU, so 10k + 1uF here. Dev FT2232H ch A drives the
+# same nets for auto-reset. GPIO35 has no pull-up inside the module: 4.7k here.
+s.two_pin("Device:R", "R607", "10k", (25.4, 157.48), "3V3_MCU", "P4_EN", R0805)
 s.two_pin("Device:R", "R604", "4.7k", (38.1, 157.48), "3V3", "ETH_TXD1_BOOT", R0805)
 s.two_pin("Device:C", "C607", "1uF", (50.8, 157.48), "P4_EN", "GND", C0805)
 for ref, name, net, x in (("SW601", "BOOT", "ETH_TXD1_BOOT", 38.1), ("SW602", "RESET", "P4_EN", 63.5)):
@@ -89,32 +93,24 @@ for ref, name, net, x in (("SW601", "BOOT", "ETH_TXD1_BOOT", 38.1), ("SW602", "R
     s.connect(b, "1", net)
     s.connect(b, "2", "GND")
 
+# C5 reset from the Dev port: C5 CHIP_PU is the P4 GPIO54 net inside the module (pad 82). 330R limits the
+# current if the P4 is driving it high; firmware drives GPIO54 open-drain so the Dev port can pull it low.
+s.two_pin("Device:R", "R606", "330R", (330.2, 76.2), "C5_PU", "C5_EN", R0805)
 # C5 straps: GPIO26 floats by default and 26 = 27 = 28 = 0 selects SDIO download, so pull it up
 s.two_pin("Device:R", "R605", "10k", (330.2, 50.8), "3V3", "C5_IO26", R0805)
 
-# C5 JTAG (not fitted by default; the C5 is normally flashed over UART0 from the Dev port)
-j = s.add("Connector:Conn_ARM_JTAG_SWD_10", "J601", "C5 JTAG (DNP)", (350.52, 101.6), dnp=True,
-          footprint="Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD")
-s.connect(j, "1", "3V3")
-s.connect(j, ["3", "5", "9"], "GND")
-s.connect(j, "2", "C5_TMS")
-s.connect(j, "4", "C5_TCK")
-s.connect(j, "6", "C5_TDO")
-s.connect(j, "8", "C5_TDI")
-s.connect(j, "10", "C5_EN")
-s.nc(j, "7")
-
 # spare pins to test pads
-for i, net in enumerate(("C5_IO1", "C5_IO6", "C5_IO23", "C5_IO24", "C5_IO25", "C5_IO27",
-                         "P4_GPIO36", "P4_GPIO54", "MCU_PWR_CTRL")):
-    tp(s, f"TP{601 + i}", net, (309.88 + (i % 3) * 15.24, 167.64 + (i // 3) * 25.4))
+for i, net in enumerate(("C5_IO27", "C5_IO25", "C5_IO24", "C5_IO23", "C5_IO6", "C5_IO5", "C5_IO4",
+                         "P4_GPIO12", "P4_GPIO20", "P4_GPIO36", "C5_PU")):
+    tp(s, f"TP{601 + i}", net, (309.88 + (i % 4) * 15.24, 152.4 + (i // 4) * 25.4))
 
-s.text("MCU MODULE: Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5, SDIO inside: P4 GPIO14-19,\n"
-       "C5 CHIP_PU = P4 GPIO13, C5 GPIO0 = P4 GPIO12). Pins: bsp/include/bsp/board_pins.h.\n"
-       "5 V supply only (5V_MCU, shunt RS404 / PM2 CH2); PWR_CTRL left to its internal pull-up (TP).\n"
-       "No P4 VBAT on this module: wall-clock time is kept by the DS3231M (RTC sheet).\n"
-       "Wi-Fi: IPEX on the module -> U.FL pigtail -> antenna at the digital edge (case must be plastic there).\n"
-       "Hand solder: 1.4 mm castellated pads; no exposed copper/untented vias under the module.\n"
+s.text("MCU MODULE: OSPTEK ESP32-P4C5 Core (ESP32-P4 rev v3.x + ESP32-C5HF4, 16 MB flash, 32 MB PSRAM).\n"
+       "Inside the module: SDIO on P4 GPIO14-19, C5 CHIP_PU = P4 GPIO54 (pad 82), C5 GPIO2 = P4 GPIO6 (pad 21, NC here)\n"
+       "- the same wiring as the Waveshare reference board. Pins: bsp/include/bsp/board_pins.h.\n"
+       "3.3 V supply (3V3_MCU, shunt RS404 / PM2 CH2). RTC_VBAT from VBACKUP (always on): P4 RTC keeps time when off.\n"
+       "CHIP_PU has no RC inside the module: R607/C607 here. C5 reset from the Dev port via R606 onto the GPIO54 net.\n"
+       "Wi-Fi: IPEX on the module -> U.FL pigtail -> antenna (case must be plastic there). LAN_OUT pad unused.\n"
+       "Hand solder: 1.0 mm stamp holes; no exposed copper/untented vias under the module.\n"
        "GPIO35 = BOOT strap + RMII TXD1 (4.7k pull-up, PHY must not pull it low at reset).",
        (25.4, 233.68))
 s.write(KICAD / "mcu_module.kicad_sch", "ADSB_Test - MCU Module", "Requirements: boards/adsb-test/docs/requirements.md")
@@ -124,7 +120,8 @@ missing = s.missing_footprints({"ADSB_Test": KICAD / "lib/ADSB_Test.pretty"})
 # =================================================================== RTC (page 7)
 r = Sheet(libs, "ADSB_Test", root_uuid, sheets["rtc.kicad_sch"], pwr_base=7000)
 rtc = r.add("Timer_RTC:DS3231MZ", "U701", "DS3231M", (127.0, 101.6),
-            footprint="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", props={"I2C": "0x68", "MPN": "DS3231MZ+"})
+            footprint="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", dnp=True,
+            props={"I2C": "0x68", "MPN": "DS3231MZ+", "DNP": "Optional: fit for +/-5 ppm time keeping"})
 r.connect(rtc, "2", "3V3")
 r.connect(rtc, "6", "VBACKUP")
 r.connect(rtc, "5", "GND")
@@ -133,14 +130,15 @@ r.connect(rtc, "8", "I2C_SCL")
 r.connect(rtc, "3", "RTC_INT")
 r.nc(rtc, "1")       # 32KHZ not used
 r.nc(rtc, "4")       # ~RST: internal pull-up, not used
-r.two_pin("Device:C", "C701", "100nF", (76.2, 76.2), "3V3", "GND", C0805)
-r.two_pin("Device:C", "C702", "100nF", (88.9, 76.2), "VBACKUP", "GND", C0805)
+r.two_pin("Device:C", "C701", "100nF", (76.2, 76.2), "3V3", "GND", C0805, dnp=True)
+r.two_pin("Device:C", "C702", "100nF", (88.9, 76.2), "VBACKUP", "GND", C0805, dnp=True)
 r.two_pin("Device:R", "R701", "10k", (177.8, 76.2), "3V3", "RTC_INT", R0805)
 tp(r, "TP701", "RTC_INT", (190.5, 101.6), local=False)
 r.text("RTC: DS3231M (+/-5 ppm, MEMS resonator, no crystal) at I2C 0x68.\n"
        "VCC from 3V3 when on; VBAT from VBACKUP (always-on 3.0 V LDO, optional CR1220) when off.\n"
-       "INT/SQW (open drain) -> P4 GPIO6 (LP GPIO: alarm wake-up from deep sleep).\n"
-       "Replaces the P4's own RTC backup: the WT01P4C5-S1 has no VBAT pin (Q27).",
+       "INT/SQW (open drain) -> P4 GPIO13 (LP GPIO: alarm wake-up from deep sleep).\n"
+       "OPTIONAL (DNP): the OSPTEK module has RTC_VBAT on VBACKUP, so the P4 RTC keeps time. Fit U701/C701/C702\n"
+       "for a +/-5 ppm clock (Q27). R701 stays fitted (RTC_INT pull-up).",
        (25.4, 165.1))
 r.write(KICAD / "rtc.kicad_sch", "ADSB_Test - RTC", "Requirements: boards/adsb-test/docs/requirements.md")
 print("wrote rtc.kicad_sch")

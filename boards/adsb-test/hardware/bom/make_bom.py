@@ -148,7 +148,7 @@ def main():
           "Supplier codes, prices (USD, qty 1, cut tape) and stock were checked on DigiKey / LCSC on **2026-10-12**; "
           "check stock again before ordering. Test points, mounting holes and solder jumpers are copper on the PCB "
           "and are not listed. Order links open the supplier's page for that part number.", "",
-          f"**Fitted parts, 1 board: about ${total:.0f}** (excluding the WT01P4C5-S1 module, the m1421 and the PCB).", "",
+          f"**Fitted parts, 1 board: about ${total:.0f}** (including the OSPTEK module at about $16.50; excluding the m1421 and the PCB).", "",
           "Upload [`digikey_bom_upload.csv`](digikey_bom_upload.csv) to DigiKey's BOM Manager (or *Add to cart → "
           f"upload*). It covers {args.boards} board(s) plus spares for the cheap parts, and leaves out the DNP parts.", "",
           "| # | Qty | Refs | Value | Manufacturer | MPN | Supplier | Code | $ each | Stock | Notes |",
@@ -166,10 +166,10 @@ def main():
            "| PCB + stencil | PCBWay, 4 layers, 1.6 mm, ENIG, impedance control (see docs/pcb-manufacturing.md) |",
            "| 7\" panel + touch | Same panel as the Waveshare ESP32-P4-WIFI6-Touch-LCD-7B (EK79007 + GT911) |",
            "| 2 × 18650 + 2S BMS pack with NTC | JST-XH 3-pin lead to J301 (XHP-3 housing + SXH-001T-P0.6 crimps) |",
-           "| Wi-Fi antenna | U.FL (IPEX MHF1) pigtail + 2.4/5 GHz antenna for the WT01P4C5-S1 |",
+           "| Wi-Fi antenna | U.FL (IPEX MHF1) pigtail + 2.4/5 GHz antenna for the OSPTEK module |",
            "| GNSS active antenna | SMA, 3.3 V |",
            "| 1090/978 MHz antenna | SMA |",
-           "| Optional: Wireless-Tag WTDKP4C5-S1 dev board, ADSBee 1421 Dev Kit, DS3231M and LAN8720A breakouts | Phase 1 testing |"]
+           "| Optional: OSPTEK module dev board, ADSBee 1421 Dev Kit, DS3231M and LAN8720A breakouts | Phase 1 testing |"]
     if unmatched:
         md += ["", "## Lines without a part number yet", ""] + [f"- {l} {v} ({f}): {' '.join(r)}" for l, v, f, r in unmatched]
     (HERE / "ADSB_Test_BOM.md").write_text("\n".join(md) + "\n", encoding="utf-8", newline="\n")

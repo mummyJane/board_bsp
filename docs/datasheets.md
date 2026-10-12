@@ -23,8 +23,10 @@ get them. "Local" shows whether the last run saved a copy.
 | ESP32-C6-MINI-1 | [ESP32-C6-MINI-1 / MINI-1U datasheet](https://documentation.espressif.com/esp32-c6-mini-1_mini-1u_datasheet_en.pdf) | Waveshare 7B | yes (2026-10-10) |
 | ESP-IDF | [ESP-IDF programming guide (ESP32-P4)](https://docs.espressif.com/projects/esp-idf/en/latest/esp32p4/) | Waveshare 7B, ADSB_Test | link only |
 | esp_hosted | [ESP-Hosted-MCU (Wi-Fi co-processor) repository and docs](https://github.com/espressif/esp-hosted-mcu) | Waveshare 7B, ADSB_Test | link only |
-| WT01P4C5-S1 | [Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5 module) datasheet v1.3](https://img03.71360.com/w3/77q677/20260127/9a1f9a9cd53575eaf50a76b38847ef97.pdf?dl=1&dlf=WT01P4C5-S1_datasheet_V1.3.pdf) | ADSB_Test | yes (2026-10-12) |
-| WT01P4C5-S1 | [Wireless-Tag WT01P4C5-S1 product page](http://en.wireless-tag.com/product-item-73.html) | ADSB_Test | link only |
+| WT01P4C5-S1 | [Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5 module) datasheet v1.3](https://img03.71360.com/w3/77q677/20260127/9a1f9a9cd53575eaf50a76b38847ef97.pdf?dl=1&dlf=WT01P4C5-S1_datasheet_V1.3.pdf) | no longer used | yes (2026-10-12) |
+| WT01P4C5-S1 | [Wireless-Tag WT01P4C5-S1 product page](http://en.wireless-tag.com/product-item-73.html) | no longer used | link only |
+| OSPTEK ESP32-P4C5 Core | [OSPTEK ESP32-P4C5 Core module: pin table, dimensions, SchLib/PcbLib, STEP (GitHub)](https://github.com/osptek/esp32-p4c5-core-board) | ADSB_Test | link only |
+| OSPTEK ESP32-P4C5 Core | [OSPTEK ESP32-P4C5 Core on AliExpress](https://www.aliexpress.com/item/1005012626312933.html) | ADSB_Test | link only |
 
 ## waveshare
 
@@ -34,8 +36,8 @@ get them. "Local" shows whether the last run saved a copy.
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare dimension drawing + STEP (ZIP)](https://files.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-7B/ESP32-P4-WIFI6-Touch-LCD-7B-3D.zip) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare product docs](https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B) | Waveshare 7B | link only |
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare example code](https://github.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-7B) | Waveshare 7B | link only |
-| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module schematic (fallback to WT01P4C5-S1)](https://files.waveshare.com/wiki/ESP32-P4-Module/ESP32-P4-Module-datasheet.pdf) | ADSB_Test | yes (2026-10-12) |
-| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module wiki (pinout, land pattern, STEP)](https://www.waveshare.com/wiki/ESP32-P4-Module) | ADSB_Test | link only |
+| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module schematic (considered for ADSB_Test)](https://files.waveshare.com/wiki/ESP32-P4-Module/ESP32-P4-Module-datasheet.pdf) | no longer used | yes (2026-10-12) |
+| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module wiki (pinout, land pattern, STEP)](https://www.waveshare.com/wiki/ESP32-P4-Module) | no longer used | link only |
 
 ## display
 

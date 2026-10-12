@@ -9,8 +9,8 @@ reference board while ADSB_Test is designed.
 
 ## Features
 
-- **Wireless-Tag WT01P4C5-S1** module: ESP32-P4 + ESP32-C5 (dual-band Wi-Fi 6 backup link over SDIO, esp_hosted), 16 MB flash, 32 MB PSRAM, IPEX antenna; 1.4 mm castellated pads for hand soldering
-- DS3231M RTC on the always-on backup supply
+- **OSPTEK ESP32-P4C5 Core** module: ESP32-P4 (rev v3) + ESP32-C5 (dual-band Wi-Fi 6 backup link over SDIO, esp_hosted, same wiring as the reference board's C6), 16 MB flash, 32 MB PSRAM, IPEX antenna; 1.0 mm stamp holes
+- P4 RTC on the always-on backup supply (optional DS3231M, not fitted by default)
 - **ADSBee m1421** dual-band ADS-B receiver (1090 MHz Mode S + 978 MHz UAT), RF front end copied from the ADSBee 1421 carrier
 - 10/100 Ethernet (LAN8720A RMII PHY, HR911105A RJ45 MagJack)
 - **User USB-C:** USB-PD sink (main power + charging) and a USB-UART to the P4 user UART
@@ -51,8 +51,8 @@ reference board while ADSB_Test is designed.
 | 3 | Charger Battery | BQ25798 2S charger, pack connector, VBACKUP |
 | 4 | Power Rails | 5 V / 3V3 bucks, POWER switch, shunts, load switches |
 | 5 | Power Monitor | 3 x PAC1954 |
-| 6 | MCU Module | Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5) |
-| 7 | RTC | DS3231M on VBACKUP |
+| 6 | MCU Module | OSPTEK ESP32-P4C5 Core (ESP32-P4 + ESP32-C5) |
+| 7 | RTC | DS3231M on VBACKUP (optional, DNP) |
 | 8 | Ethernet | LAN8720A + HR911105A |
 | 9 | USB User | CP2102N -> P4 UART1 |
 | 10 | USB Dev | USB2514B hub, FT2232H, RP2040 (ADSBee Programmer) |

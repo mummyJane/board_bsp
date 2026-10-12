@@ -8,6 +8,17 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-10-12
+
+### Changed
+- ADSB_Test MCU: **OSPTEK ESP32-P4C5 Core** module replaces the Wireless-Tag WT01P4C5-S1 (Q26). ESP32-P4 rev v3.x + ESP32-C5HF4, 16 MB flash, 32 MB PSRAM, 25 × 25 mm, 88 stamp holes at 1.0 mm, 3.3 V, IPEX antenna, about GBP 13. Inside the module the P4↔C5 wiring is the reference board's (SDIO GPIO14–19, C5 reset GPIO54, C5 IO GPIO6).
+- New symbol + hand-solder footprint (`gen_osptek_p4c5.py`, from OSPTEK's pin table and dimension drawing); WT01P4C5-S1 symbol, footprint and generator removed.
+- MCU sheet: 3V3_MCU supply (RS404 now 50 mΩ on the 3V3 branch, PM2 CH2; 5V_MCU removed), RTC_VBAT from VBACKUP, CHIP_PU 10k + 1 µF (no reset RC in the module), C5 reset from the Dev port through R606 (330 Ω) onto pad 82 (GPIO54 net), C5 JTAG header removed (pins not on the module).
+- RTC: the DS3231M is now optional (DNP; INT on GPIO13) since the P4 RTC has its VBAT back (Q27).
+- `board_pins.h` back to the reference-board values: C5 reset GPIO54, C5 IO GPIO6, PM_ALERT GPIO5; spares GPIO12/20/36.
+- Test app builds for P4 rev v3 by default again (`sdkconfig.rev1` overlay for the Waveshare boards).
+- BOM, floorplan (MCU zone 82 % → 51 %, overall 61 % at 180.9 × 116 mm), architecture, requirements, open questions, test plan and READMEs updated.
+
 ### Added
 - ADSB_Test block floorplan check (`hardware/floorplan/`: `areas.py` courtyards from the footprints, `floorplan.py` zones, edge budget, mounting holes, panel cable landings, battery shadow; `floorplan.svg/png`) and `docs/floorplan.md`. Result: 188 × 97 mm is too tight (display strip 100 %). With the panel (164.9 × 100 mm) centred and an even 8 mm gap all round, **180.9 × 116 mm** puts every zone at 83 % or less; panel cables through PCB slots, corner mounting holes, POWER switch back on the digital edge. Open question Q28.
 - ADSB_Test display: resistor options on LCD FPC pins 5/6 (R1322 DNP, R1323 fitted, R1324 DNP) so panels that use them as UPDN/SHLR scan-direction straps (e.g. the AliExpress 1024x600 MIPI panel the user found) can be set either way; default stays as the Waveshare panel (pin 5 high, pin 6 low).
@@ -435,7 +446,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.24.0...HEAD
+[0.24.0]: https://github.com/mummyJane/board_bsp/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/mummyJane/board_bsp/compare/v0.22.1...v0.23.0
 [0.22.1]: https://github.com/mummyJane/board_bsp/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/mummyJane/board_bsp/compare/v0.21.0...v0.22.0

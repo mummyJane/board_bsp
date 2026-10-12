@@ -30,7 +30,7 @@ uses a **C6**, not a C5. Those items use add-on boards.
 | 1.12 | USB-01/02, PWR-01 | STUSB4500 + BQ25798 eval boards, 2S pack | PD contract at 15 V, charge/discharge, input-current limit set from the PDO, I2C status read |
 | 1.13 | PWR-02 | Reference board + all eval boards, USB power meter on each | Measured power budget replaces the estimate in architecture.md |
 | 1.14 | KEEP-01 | Reference board microSD | Write/read throughput, logging while decoding |
-| 1.15 | CORE-01/02 (Q26) | Wireless-Tag **WTDKP4C5-S1** dev board (the WT01P4C5-S1 module on a carrier) | `esptool chip_id`: P4 revision (pick `sdkconfig.defaults` or `sdkconfig.rev3`), 16 MB flash, PSRAM size. Test app runs. esp_hosted with the C5 (reset GPIO13) joins 2.4 and 5 GHz APs. **Measure the module's pads** against `Wireless-Tag_WT01P4C5-S1_HandSolder` |
+| 1.15 | CORE-01/02 (Q26) | OSPTEK ESP32-P4C5 Core (on its dev board if bought, else a breakout) | `esptool chip_id`: P4 rev v3.x, 16 MB flash, 32 MB PSRAM. Test app runs (default build). esp_hosted with the C5 (reset GPIO54, IO GPIO6, as the reference board) joins 2.4 and 5 GHz APs. C5 flashed from a USB-UART via pads 4/5/6/82. **Measure the module's pads** against `OSPTEK_ESP32-P4C5_Core_HandSolder` and OSPTEK's PcbLib |
 | 1.16 | Q27 | DS3231M breakout on the reference board I2C (GPIO7/8, 3V3) with a coin cell | `[rtc_ext]`: time read/set, temperature, 2 s step. Power off, wait, power on: time kept |
 
 ## Phase 2 — on ADSB_Test Rev A

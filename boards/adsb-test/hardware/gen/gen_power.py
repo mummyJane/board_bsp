@@ -43,7 +43,12 @@ STALE = [("5V buck 3A (part TBC)", "5V buck TPS62933 3A"), ("TPS25200 eFuse", "T
          ("- P4 core supplies (VDD_HP buck etc.): COPY FROM REFERENCE BOARD (MP1605/MP1658/RT9193 circuit).",
           "- No P4 core supplies: they are inside the WT01P4C5-S1 module."),
          ("5V_LCD, 3V3_P4, 3V3_C5, 3V3_ETH", "5V_LCD, 5V_MCU, 3V3_SD, 3V3_ETH"),
-         ("5V total", "3V3 total"), ("addresses set by ADDRSEL resistor (TBC)", "addresses 0x10/0x11/0x12 by ADDRSEL resistor")]
+         ("5V total", "3V3 total"), ("addresses set by ADDRSEL resistor (TBC)", "addresses 0x10/0x11/0x12 by ADDRSEL resistor"),
+         # OSPTEK ESP32-P4C5 module (Q26, 2026-10-12): 3.3 V module, fed from the 3V3 bucks
+         (", -> 5V_MCU (WT01P4C5-S1 module, shunt only).", "."),
+         ("3V3_SD, 3V3_ETH (sw)", "3V3_MCU (OSPTEK P4+C5 module), 3V3_SD, 3V3_ETH (sw)"),
+         ("inside the WT01P4C5-S1 module.", "inside the OSPTEK ESP32-P4C5 module."),
+         ("5V_LCD, 5V_MCU, 3V3_SD, 3V3_ETH", "5V_LCD, 3V3_MCU, 3V3_SD, 3V3_ETH")]
 
 
 def finish(s, notes, file, title):
@@ -345,7 +350,7 @@ shunt(s, "RS401", "10m", (152.4, 30.48), "3V3_BUCK", "3V3", "PM3_CH4_P", "PM3_CH
 rails = [  # ref, value, src, mid/load, pm channel, switch enable or None, final rail
     ("RS402", "20m", "5V", "5V_SDR", "PM1_CH4", None, None),
     ("RS403", "50m", "5V", "5V_LCD_SH", "PM2_CH1", "EXP_EN_LCD", "5V_LCD"),
-    ("RS404", "20m", "5V", "5V_MCU", "PM2_CH2", None, None),        # WT01P4C5-S1 module (5 V in, <= 1.5 A)
+    ("RS404", "50m", "3V3", "3V3_MCU", "PM2_CH2", None, None),      # OSPTEK ESP32-P4C5 module (3.3 V, ~1 A)
     ("RS405", "100m", "3V3", "3V3_SD", "PM2_CH3", None, None),      # microSD card supply
     ("RS406", "100m", "3V3", "3V3_ETH_SH", "PM2_CH4", "EXP_EN_ETH", "3V3_ETH"),
     ("RS407", "1R", "3V3", "3V3_GPS_SH", "PM3_CH1", "EXP_EN_GPS", "3V3_GPS"),
@@ -397,7 +402,7 @@ for n in ("1", "2", "3"):
     cap(s, f"C50{n}", "100nF", (x, y - 50.8), "3V3_PERIPH", "GND")
 res(s, "R504", "10k", (304.8, 50.8), "3V3_PERIPH", "PM_ALERT")
 s.text("PM1: CH1 VBUS_USER, CH2 VBAT (bidirectional), CH3 VSYS, CH4 5V_SDR\n"
-       "PM2: CH1 5V_LCD, CH2 5V_MCU (P4+C5 module), CH3 3V3_SD, CH4 3V3_ETH\n"
+       "PM2: CH1 5V_LCD, CH2 3V3_MCU (P4+C5 module), CH3 3V3_SD, CH4 3V3_ETH\n"
        "PM3: CH1 3V3_GPS, CH2 3V3_M1421, CH3 3V3_PERIPH, CH4 3V3 total\n"
        "Sense lines: Kelvin from each shunt (pins 2/3), routed as pairs.", (25.4, 190.5))
 finish(s, notes, "power_monitor.kicad_sch", "ADSB_Test - Power Monitor")

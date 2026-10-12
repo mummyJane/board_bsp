@@ -27,7 +27,7 @@ flowchart LR
   CHG -->|VSYS| RAILS[5V / 3V3 bucks<br/>+ load switches]
   RAILS -.->|shunts| PM[Power monitors<br/>3x PAC1954]
 
-  P4[ESP32-P4<br/>WT01P4C5-S1 module]
+  P4[ESP32-P4<br/>OSPTEK P4C5 module]
   C5[ESP32-C5<br/>inside the module]
   P4 <-->|SDIO esp_hosted| C5
   P4 <-->|RMII| PHY[LAN8720A + RJ45]
@@ -57,7 +57,7 @@ Facts below are from the Waveshare schematic
 
 | Block | Reference board | ADSB_Test |
 |-------|-----------------|-----------|
-| SoC | ESP32-P4NRW32 (32 MB in-package PSRAM) | **WT01P4C5-S1-N16R32 module** (P4 + 32 MB PSRAM, Q26) |
+| SoC | ESP32-P4NRW32 (32 MB in-package PSRAM) | **OSPTEK ESP32-P4C5 Core module** (P4 rev v3 + 32 MB PSRAM, Q26) |
 | Flash | GD25Q256EYIGR (32 MB) | 16 MB inside the module |
 | Core supplies | MP1605 / MP1658 bucks, RT9193 LDOs | **Inside the module** (5 V in) |
 | Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5 inside the module** (dual-band Wi-Fi 6, IPEX antenna). Same SDIO wiring and esp_hosted host side |
@@ -88,7 +88,7 @@ Facts below are from the Waveshare schematic
   the C5 slave firmware. OTA is a nice-to-have: the P4 can push new C5 firmware
   over SDIO (esp_hosted host-driven slave OTA) or the C5 can be reflashed over
   the Dev port. 8 MB PSRAM gives headroom for larger Wi-Fi buffers.
-- **Antenna (since Q26):** IPEX on the WT01P4C5-S1 → U.FL pigtail → small
+- **Antenna (since Q26):** IPEX on the OSPTEK module → U.FL pigtail → small
   2.4/5 GHz antenna at the digital edge (or a stick antenna through the case).
   Wi-Fi is a backup and the unit normally runs offline.
 - _This section was written for the C5-WROOM; the module's C5 has its own
@@ -120,54 +120,48 @@ GPIO28), and Dev hub port 2 is spare. Field updates still go over SDIO
   P4's GPIO2–5 (an alternative JTAG pad set) are free for GPS/PM. **Never burn
   `EFUSE_JTAG_SEL_ENABLE`** on this board.
 
-## P4 + C5 module (WT01P4C5-S1) _(adopted 2026-10-12, Q26)_
+## P4 + C5 module (OSPTEK ESP32-P4C5 Core) _(adopted 2026-10-12, Q26)_
 
-Hand-soldering the bare ESP32-P4 (QFN-104, 0.35 mm pitch, big exposed pad) is the
-hardest job on Rev 1. A module with the P4 **and** the Wi-Fi chip on it removes
-that job, the flash, the P4 core supplies and the separate C5-WROOM.
+Hand-soldering the bare ESP32-P4 (QFN-104, 0.35 mm pitch) is the hardest job on
+Rev 1. A module with the P4 **and** the Wi-Fi chip removes that job, the flash,
+the P4 core supplies and the separate C5-WROOM. The Wireless-Tag WT01P4C5-S1 was
+chosen first, then replaced the same day by the OSPTEK module (similar price,
+about GBP 13, [AliExpress](https://www.aliexpress.com/item/1005012626312933.html)).
 
-| | **Wireless-Tag WT01P4C5-S1** (chosen) | Waveshare ESP32-P4-Module (fallback) | Bare P4 + C5-WROOM (previous plan) |
-|---|---|---|---|
-| Chips | ESP32-P4 + **ESP32-C5** (2.4 + 5 GHz Wi-Fi 6) | ESP32-P4NRW32 + ESP32-C6 (2.4 GHz) | P4NRW32 + C5-WROOM-1-N16R8 |
-| Memory | 16 MB flash, 16 or 32 MB PSRAM (N16R16 / N16R32) | 16 or 32 MB flash, 32 MB PSRAM | 32 MB flash, 32 MB PSRAM |
-| Package | 35 × 35 × 3.7 mm, **92 castellated pads, 1.4 mm pitch** (23 per side) | 25 × 25 mm, 88 castellated pads, 1.0 mm pitch | QFN-104 0.35 mm + LGA module |
-| Wi-Fi antenna | **IPEX (U.FL) only**: needs a small external antenna / pigtail | Castellated ANT pad (PCB antenna on our board) or IPEX | On-module PCB antenna |
-| Supply | **5 V in** (4.8–5.5 V, up to 1.5 A), regulators inside; PWR_CTRL pin (low = off) | 3.3 V | Our 3V3 + P4 core rails |
-| P4 VBAT (RTC) | **Not connected** (Q27) | Yes | Yes |
-| Firmware vs reference board | P4↔C5 SDIO on P4 GPIO14–19 (same as reference), C5 CHIP_PU on P4 **GPIO13**, C5 GPIO0 wake on **GPIO12** | Identical to the reference board (SDIO 14–19, reset 54, IO 6) | As planned |
-| C5/C6 debug pins | C5_EN, U0TXD/RXD, GPIO28 (BOOT), JTAG GPIO2–5 all on pads | C6 UART, BOOT, JTAG on pads | As planned |
-| Hand soldering | **Easy**: 1.4 mm castellated edge, iron on each pad | Fair: 1.0 mm castellated | Hard (P4 needs stencil + hot air) |
-| Docs | 22-page datasheet v1.3 (no schematic yet, no power figures) | Full schematic + land pattern + STEP | Espressif datasheets |
+| | **OSPTEK ESP32-P4C5 Core** (chosen) | Wireless-Tag WT01P4C5-S1 (first choice) |
+|---|---|---|
+| Chips | ESP32-P4 **rev v3.x** + ESP32-C5HF4 (2.4 + 5 GHz Wi-Fi 6) | ESP32-P4 + ESP32-C5 |
+| Memory | 16 MB flash, 32 MB PSRAM | 16 MB flash, 16/32 MB PSRAM |
+| Package | **25 × 25 mm, 88 stamp holes, 1.0 mm pitch** (pads 0.7 × 1.3 mm) | 35 × 35 mm, 92 pads, 1.4 mm |
+| Supply | **3.3 V** (3.0–3.6 V, about 1 A) | 5 V |
+| P4 VBAT (RTC) | **RTC_VBAT pad 84** (must not float) | none |
+| P4 ↔ C5 inside | SDIO GPIO14–19, C5 CHIP_PU = **GPIO54**, C5 GPIO2 = **GPIO6**: **same as the reference board's C6** | SDIO 14–19, reset GPIO13, wake GPIO12 |
+| C5 pads | U0RXD/TXD, IO28 (BOOT), IO27/26 straps, IO23–25, IO4–6. **No C5_EN pad, no full C5 JTAG** | EN, UART, BOOT, JTAG |
+| Docs | Pin table, connection diagram, dimension drawing, Altium SchLib/PcbLib, STEP (CC BY 4.0) | Datasheet only, no land pattern |
 
-Why WT01P4C5-S1: it keeps the **C5** chosen in Q2 (dual-band) with the same SDIO
-pins as the reference board, and its 1.4 mm castellated edge is the easiest to
-hand-solder. The Waveshare module is the fallback: the same circuit as the
-reference board (no firmware change at all), but 2.4 GHz only and 1.0 mm pitch.
+Why OSPTEK: the firmware wiring is the reference board's (no pin moves), the P4
+RTC has its VBAT back, the module is smaller (the MCU floorplan zone drops from
+82 % to 51 % full), it runs from the existing 3V3 rail, and there is a published
+footprint. Costs: 1.0 mm pitch (iron-solderable, but finer) and no C5_EN pad.
 
-Exposed P4 GPIOs on the WT01P4C5-S1: 0–4, 6–11, 20–54 (**GPIO5 is not brought out**;
-12–19 are used inside for the C5). Changes made to `board_pins.h`:
+**Programming the C5 without a C5_EN pad:** the C5 CHIP_PU is the P4 GPIO54 net,
+which is also brought out on pad 82. The Dev port's FT2232H channel B pulls it low
+through **R606 (330 Ω)**, and drives C5 BOOT (C5 IO28, pad 6), so esptool's
+auto-reset still works. The P4 firmware must drive GPIO54 **open-drain** (or leave
+it as an input) when the Dev port is used; R606 limits the current if it doesn't.
+Field updates of the C5 still go over SDIO from the P4 (esp_hosted OTA).
 
-| Signal | Now | With the module |
-|--------|-----|-----------------|
-| PM_ALERT | GPIO5 | **GPIO20** (was spare) |
-| C5 reset (CHIP_PU) | GPIO54 | **GPIO13** (inside the module) |
-| C5 wake (C5 GPIO0) | GPIO6 | **GPIO12** (inside the module) |
-| Spares | 12, 13, 20, 36 | **6, 36, 54** |
+`board_pins.h` is back to the reference-board values: C5 reset GPIO54, C5 IO
+GPIO6, PM_ALERT GPIO5; the optional DS3231M INT is on GPIO13; spares 12, 20, 36.
+The module uses **P4 rev v3.x**, so the test app builds for v3 by default;
+`sdkconfig.rev1` is the overlay for the rev v1.3 Waveshare boards.
 
-Everything else (MIPI-DSI, USB HS, USB-Serial-JTAG on 24/25, SD on 39–45 with
-ESP_LDO_VO4, Ethernet RMII, UARTs, GPS, m1421, straps 34–38) is on pads with the
-same GPIO numbers. Board changes: the P4 + C5 sheets become one module sheet; a
-switched, monitored **5V_MCU** rail feeds the module; P4 VBAT/RTC goes to an
-external RTC (Q27); the Wi-Fi antenna is a U.FL pigtail to a small antenna on the
-digital edge (or a stick antenna through the case). The 360 MHz rating suggests
-P4 silicon below v3 (as on the reference board), so the test app now builds for
-v0.x/v1.x by default; `sdkconfig.rev3` is the overlay for v3 silicon. Read the
-module's revision with esptool at bring-up.
-
-Schematic: sheet 6 **MCU Module** (U601 + 5 V decoupling, 32.768 kHz crystal,
-I2C pull-ups, BOOT/RESET buttons, C5 GPIO26 pull-up, DNP C5 JTAG header, test
-pads on the spare pins) and sheet 7 **RTC** (DS3231M U701). Both generated by
-`hardware/gen/gen_mcu.py`; the symbol/footprint by `hardware/gen/gen_wt01p4c5.py`.
+Schematic: sheet 6 **MCU Module** (U601, 3V3_MCU decoupling, RTC_VBAT from
+VBACKUP, CHIP_PU 10k + 1 µF (the module has no reset RC), 32.768 kHz crystal, I2C
+pull-ups, BOOT/RESET buttons, R606 C5 reset path, C5 IO26 pull-up, test pads on
+the spare pins) and sheet 7 **RTC** (DS3231M, now **DNP**: fit for ±5 ppm time).
+Generated by `hardware/gen/gen_mcu.py`; symbol/footprint by
+`hardware/gen/gen_osptek_p4c5.py` (cross-check the footprint against OSPTEK's PcbLib).
 
 ## ADSBee m1421 integration
 
@@ -345,7 +339,8 @@ User USB-C ──► STUSB4500 (PD sink: 15 V pref, 9 V, 5 V fallback)
   5V buck 3 A                 3V3 buck 3 A (TPS62933)
      ├► USB-A eFuse 1.5 A (TPS2596) [PM1 ch4 5V_SDR]
      ├► LCD + backlight (switch)     [PM2 ch1 5V_LCD]
-     └► WT01P4C5-S1 module (P4 + C5) [PM2 ch2 5V_MCU]
+                                 ├► 3V3_MCU    [PM2 ch2]  (OSPTEK P4+C5 module)
+
                                  ├► 3V3_SD     [PM2 ch3]  (microSD)
                                  ├► 3V3_ETH    [PM2 ch4]  (switch)
                                  ├► 3V3_GPS    [PM3 ch1]  (switch)
@@ -363,7 +358,7 @@ The USB-A eFuse limit drops to 1.5 A (1–2 SDRs + hub). Use a powered hub for
 | Device (I2C addr TBC) | Ch1 | Ch2 | Ch3 | Ch4 |
 |-----------------------|-----|-----|-----|-----|
 | PM1 — input/battery | VBUS_USER | VBAT (bidirectional) | VSYS | 5V_SDR (USB-A) |
-| PM2 — main loads | 5V_LCD | 5V_MCU | 3V3_SD | 3V3_ETH |
+| PM2 — main loads | 5V_LCD | 3V3_MCU | 3V3_SD | 3V3_ETH |
 | PM3 — peripherals | 3V3_GPS | 3V3_M1421 | 3V3_PERIPH | spare (5V rail total) |
 
 The BQ25798's built-in ADC also reports VBUS/VBAT/IBAT/IBUS, which gives a
@@ -532,7 +527,7 @@ Consequences:
 | Board zoning | RF zone (m1421 + combiner + SMA, GNSS + bias-T + SMA) along the RF edge. Digital zone (P4, PSRAM/flash, MIPI-DSI, USB, Ethernet) and power zone (bucks, charger) away from it. Continuous ground plane, stitched along the zone boundary |
 | RF cans _(optional)_ | Two-piece shields (frame soldered, lid snaps on and off for probing), **frames DNP by default**: (1) **SH1401** Laird BMI-S-203-F frame (26.21 mm, 5.08 mm high) + BMI-S-203-C lid over the m1421 + SCN-2-11 combiner + ESD (on the M1421 sheet); (2) GNSS module + bias-T/LNA, size chosen with the GPS sheet (BMI-S-202-F 16.5 mm or BMI-S-209-F 29.4 × 18.5 mm); (3, optional) the switching regulators. Fit the frames, decide on lids after the first RF tests (Wi-Fi, screen, Ethernet noise). Stitch each frame's pad ring to GND; RF traces leave the can on an inner layer. Fit a frame only after the module under it is soldered and checked (the m1421 hand-solder pads need iron access) |
 | RF feeds | 50 Ω CPW from each module to its edge SMA, as short as possible, ground-via fenced. m1421 RF routing copied from the ADSBee 1421 carrier |
-| Wi-Fi antenna | **IPEX on the WT01P4C5-S1** (Q26; replaces the WROOM PCB antenna of Q18) → U.FL pigtail → small 2.4/5 GHz antenna (adhesive flex or stick) at the **digital edge**, away from the RF SMAs and the metal panel frame; or an RP-SMA bulkhead through the case. Plastic case over the antenna. Leave room for the IPEX plug at the module's top-right corner. Wi-Fi is a backup and the unit normally runs offline |
+| Wi-Fi antenna | **IPEX on the OSPTEK module** (Q26; replaces the WROOM PCB antenna of Q18) → U.FL pigtail → small 2.4/5 GHz antenna (adhesive flex or stick) at the **digital edge**, away from the RF SMAs and the metal panel frame; or an RP-SMA bulkhead through the case. Plastic case over the antenna. Leave room for the IPEX plug at the module's top-right corner. Wi-Fi is a backup and the unit normally runs offline |
 | Noise | MIPI-DSI and the bucks are the main digital noise sources near the 1090/978 and GNSS L1 inputs. Keep the switch-node copper small. The buck frequencies must not have harmonics landing on 978/1090/1575 MHz (check during part selection) |
 
 ### 7" panel: what we know (Q19)
@@ -616,7 +611,7 @@ come from the part datasheets where we have them.
 |----------|----------|--------------|--------|
 | ADS-B receiver | ADSBee m1421 | — | User choice. Dual-band, < 60 mW, UART |
 | ADS-B RF combiner | MiniCircuits SCN-2-11+ | — | As on the ADSBee 1421 carrier |
-| MCU + Wi-Fi | Wireless-Tag WT01P4C5-S1-N16R32 | Waveshare ESP32-P4-Module (C6, 2.4 GHz) | P4 + C5 on one hand-solderable module, no P4 core supplies. IPEX antenna. Q26 |
+| MCU + Wi-Fi | OSPTEK ESP32-P4C5 Core | Wireless-Tag WT01P4C5-S1; Waveshare ESP32-P4-Module (C6) | P4 + C5 on one module, reference-board wiring, RTC_VBAT, published footprint. Q26 |
 | RTC | DS3231M (SO-8) | RV-3028-C7, PCF8563T + crystal | No crystal, ±5 ppm, on VBACKUP. Q27 |
 | PD sink | STUSB4500 | AP33772S, CH224K | Standalone (NVM), I2C status |
 | Charger | BQ25798 | BQ25792 (TI pages 404 since 2026-10-10), MP2762A | 1–4 cell buck-boost, power path, ADC, MPPT. Same family as BQ25792: check pin compatibility (Q21) |

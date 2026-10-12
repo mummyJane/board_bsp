@@ -39,6 +39,6 @@ the CHANGELOG.
 | Q23 | RTC / GPS backup when off | **VBACKUP 3.0 V always-on LDO from VSYS** (MCP1703, ~2 µA) feeds the P4 VDD_BAT and GPS V_BCKP. Optional CR1220 holder (DNP), diode-OR'd, for battery-removed backup |
 | Q25 | On/off switch? | **Yes**: slide switch SW401 disables both bucks. The charger keeps charging from USB while off |
 | Q24 | Assembly | **Rev 1: all hand-soldered; PCBWay makes the PCB only** (+ stencil). Rev 2 may be PCBWay-assembled depending on Rev 1 errors. Hand-solder footprints everywhere (docs/pcb-manufacturing.md) |
-| Q26 | P4 + C5 module instead of the bare P4 + C5-WROOM? | **Yes (2026-10-12): Wireless-Tag WT01P4C5-S1-N16R32.** 1.4 mm castellated pads (hand-solderable), C5 dual-band kept, IPEX antenna accepted. 5 V supply (5V_MCU). Land pattern derived from the datasheet drawing: measure a real module before ordering PCBs |
-| Q27 | RTC with no P4 VBAT on the module | **DS3231M** (SO-8, I2C 0x68) on VBACKUP, INT → GPIO6. `bsp_rtc_*` + test `[rtc_ext]` |
+| Q26 | P4 + C5 module instead of the bare P4 + C5-WROOM? | **Yes: OSPTEK ESP32-P4C5 Core** (2026-10-12; replaced the Wireless-Tag WT01P4C5-S1 chosen earlier the same day). Same P4/C5 wiring as the reference board, RTC_VBAT, 3.3 V, published footprint, about GBP 13. C5 reset from the Dev port through pad 82 (GPIO54 net) + R606 |
+| Q27 | RTC | **P4 RTC on RTC_VBAT from VBACKUP** (OSPTEK module). DS3231M kept as a **DNP option** (INT on GPIO13) for ±5 ppm time; `bsp_rtc_*` and `[rtc_ext]` stay |
 | Q11 | LA5016 header | **2×20 keyed header (40-way cable)**. The key-side row is CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is for the LA5032 (future) |
