@@ -9,6 +9,7 @@ project uses [Semantic Versioning](https://semver.org/) (see
 ## [Unreleased]
 
 ### Fixed
+- Generated sheets: stacked pins (several pins at one point, e.g. the m1421's 4 x VCC / 7 x GND, the SCN-2-11's 3 x GND) printed their numbers on top of each other. `kicad_sch_gen.py` now keeps the lowest-numbered pin of each stack visible and hides the rest as passive pins (KiCad's stacked-pin convention), and draws one stub per stack. Pin-to-net map checked identical before/after (1,641 pins); ERC 0.
 - ADSB_Test display sheet: LCD strap resistors (R1317/R1318/R1322-R1324) moved off the 30-pin FPC connector into a row beside it; reset parts below re-spaced.
 
 ## [0.24.0] - 2026-10-12

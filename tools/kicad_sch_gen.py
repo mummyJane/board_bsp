@@ -112,6 +112,24 @@ class SymbolLibs:
         for sub in find(sym, "symbol"):
             for pin in find(sub, "pin"):
                 pin[:] = [x for x in pin if x != "hide" and not (isinstance(x, list) and x[:2] == ["hide", "yes"])]
+        # Stacked pins (several pins at one point, e.g. 4 x VCC): keep the lowest-numbered one visible and
+        # hide the others as PASSIVE pins. Hidden passive pins don't make implicit nets, they still connect
+        # at that point, and their numbers no longer print on top of each other.
+        stacks = {}
+        for sub in find(sym, "symbol"):
+            unit = unq(sub[1]).rsplit("_", 2)[-2] if re.search(r"_\d+_\d+$", unq(sub[1])) else "0"
+            for pin in find(sub, "pin"):
+                at = find(pin, "at")[0]
+                stacks.setdefault((unit, at[1], at[2]), []).append(pin)
+        for pins in stacks.values():
+            if len(pins) < 2:
+                continue
+            pins.sort(key=lambda p: (not unq(find(p, "number")[0][1]).isdigit(),
+                                     int(unq(find(p, "number")[0][1])) if unq(find(p, "number")[0][1]).isdigit() else 0,
+                                     unq(find(p, "number")[0][1])))
+            for pin in pins[1:]:
+                pin[1] = "passive"
+                pin.insert(5, ["hide", "yes"])
         return sym
 
     def body_bbox(self, lib_id):
@@ -201,6 +219,7 @@ class Sheet:
         self.items = []
         self.placed = {}
         self._pwr = pwr_base    # #PWR/#FLG numbering; give each sheet its own range (page x 1000)
+        self._stubbed = set()   # (ref, pin point, net) already wired
         self.locals = set()     # nets that only exist on this sheet -> local labels
         self.footprints = {}    # ref -> footprint, for missing_footprints()
 
@@ -333,6 +352,10 @@ class Sheet:
         elif kind == "label":
             self.locals.add(net)
         for p in ([pin] if not isinstance(pin, (list, tuple)) else pin):
+            key = (part.ref, part.pin_xy(p)[:2], net)
+            if key in self._stubbed:          # stacked pins share one stub
+                continue
+            self._stubbed.add(key)
             end, ang = self._stub(part, p)
             if net in ("GND", "+3V3", "+5V"):
                 self.power(net, end)
