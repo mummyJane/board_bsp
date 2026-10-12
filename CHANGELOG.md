@@ -8,6 +8,18 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-10-12
+
+### Added
+- ADSB_Test bill of materials (`hardware/bom/`): `parts.csv` (manufacturer part numbers with DigiKey/LCSC codes, prices and stock checked 2026-10-12), `make_bom.py` (netlist → `ADSB_Test_BOM.csv`, `ADSB_Test_BOM.md` with order links, and `digikey_bom_upload.csv` for DigiKey's BOM upload, with `--boards N` and spares for cheap parts). 155 lines, about $173 of fitted parts per board excluding the MCU module, m1421 and PCB.
+
+### Fixed
+- ADSB_Test crystal load capacitors: the ABM3 crystals (12/24/25 MHz) are CL 18 pF, so all their load caps are now 27 pF (Ethernet and hub were 18 pF, RP2040 15 pF).
+
+### Changed
+- Out-of-stock parts swapped in the BOM for in-stock equivalents: SN74LVC1G125DBVT, BZT52C18-E3-08 (SOD-123), B340A for SS34, TDK/Murata/KEMET capacitors where Samsung parts are obsolete or on 61-week lead times. Still out of stock: FT2232HL (DigiKey due Jan/Feb 2027), ESD7351XV2T1G, Molex USB-A (Marketplace only), FH12-6S (due 2026-10-20).
+- ADSB_Test README: sheet table updated for the generated sheets, link to the BOM.
+
 ## [0.22.1] - 2026-10-12
 
 ### Fixed
@@ -419,7 +431,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.22.1...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.23.0...HEAD
+[0.23.0]: https://github.com/mummyJane/board_bsp/compare/v0.22.1...v0.23.0
 [0.22.1]: https://github.com/mummyJane/board_bsp/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/mummyJane/board_bsp/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/mummyJane/board_bsp/compare/v0.20.0...v0.21.0
