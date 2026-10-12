@@ -58,18 +58,16 @@ get them. "Local" shows whether the last run saved a copy.
 | PAC1954 | [PAC195x power monitor (Microchip product page; site blocks scripts)](https://www.microchip.com/en-us/product/PAC1954) | ADSB_Test | link only (open in a browser) |
 | TPS62933 | [TPS62933 3 A buck (3V3)](https://www.ti.com/lit/ds/symlink/tps62933.pdf) | ADSB_Test | yes (2026-10-10) |
 | TPS25200 | [TPS25200 eFuse (USB-A VBUS)](https://www.ti.com/lit/ds/symlink/tps25200.pdf) | ADSB_Test | yes (2026-10-10) |
+| TPS2596 | [TPS2596 2.7-19 V eFuse (USB-A VBUS; replaces TPS25200, no KiCad symbol)](https://www.ti.com/lit/ds/symlink/tps2596.pdf) | ADSB_Test | yes (2026-10-12) |
+| TPS22917 | [TPS22917 load switch (switched rails)](https://www.ti.com/lit/ds/symlink/tps22917.pdf) | ADSB_Test | yes (2026-10-12) |
+| DMP3013SFV | [DMP3013SFV -30 V P-MOSFET (USB-PD sink power path)](https://www.diodes.com/assets/Datasheets/DMP3013SFV.pdf) | ADSB_Test | yes (2026-10-12) |
 | AP2112K-3.3 | [AP2112 600 mA LDO (ADSBee carrier)](https://www.diodes.com/assets/Datasheets/AP2112.pdf) | ADSB_Test | yes (2026-10-10) |
-
-## memory
-
-| Part | Document | Boards | Local |
-|------|----------|--------|-------|
-| GD25Q256EYIGR | [GD25Q256E 32 MB QSPI flash](https://www.gigadevice.com/product/flash/spi-nor-flash/gd25q256e) | Waveshare 7B, ADSB_Test | link only |
 
 ## interface
 
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
+| USBLC6-2SC6 | [USBLC6-2 USB ESD protection](https://www.st.com/resource/en/datasheet/usblc6-2.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
 | IP101GRI | [IP101G family datasheet IP101G-DS-R01 (unofficial distributor mirror; IC Plus has no public link)](https://dfsimg2.hqewimg.com/group1/M00/1E/7E/wKhk72GgdAWACBnTACa6J2TDLkI754.pdf) | ADSB_Test | yes (2026-10-10) |
 | USB2514B | [USB2514B 4-port USB 2.0 hub (Microchip product page; site blocks scripts)](https://www.microchip.com/en-us/product/USB2514B) | ADSB_Test | link only (open in a browser) |
 | FT2232H | [FT2232H dual USB-UART (FTDI product page; site blocks scripts)](https://ftdichip.com/products/ft2232hq/) | ADSB_Test | link only (open in a browser) |
@@ -77,6 +75,12 @@ get them. "Local" shows whether the last run saved a copy.
 | CH343P | [CH343 USB-UART (reference board)](https://www.wch-ic.com/products/CH343.html) | Waveshare 7B | link only |
 | RP2040 | [RP2040 datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | ADSB_Test | yes (2026-10-10) |
 | RP2040 | [Hardware design with RP2040](https://datasheets.raspberrypi.com/rp2040/hardware-design-with-rp2040.pdf) | ADSB_Test | yes (2026-10-10) |
+
+## memory
+
+| Part | Document | Boards | Local |
+|------|----------|--------|-------|
+| GD25Q256EYIGR | [GD25Q256E 32 MB QSPI flash](https://www.gigadevice.com/product/flash/spi-nor-flash/gd25q256e) | Waveshare 7B, ADSB_Test | link only |
 
 ## logic
 

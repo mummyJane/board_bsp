@@ -360,6 +360,51 @@
       "url": "https://www.ti.com/lit/ds/symlink/tps25200.pdf"
     },
     {
+      "id": "tps2596_datasheet",
+      "part": "TPS2596",
+      "title": "TPS2596 2.7-19 V eFuse (USB-A VBUS; replaces TPS25200, no KiCad symbol)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/tps2596.pdf"
+    },
+    {
+      "id": "tps22917_datasheet",
+      "part": "TPS22917",
+      "title": "TPS22917 load switch (switched rails)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ti.com/lit/ds/symlink/tps22917.pdf"
+    },
+    {
+      "id": "dmp3013sfv_datasheet",
+      "part": "DMP3013SFV",
+      "title": "DMP3013SFV -30 V P-MOSFET (USB-PD sink power path)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.diodes.com/assets/Datasheets/DMP3013SFV.pdf"
+    },
+    {
+      "id": "usblc6-2_datasheet",
+      "part": "USBLC6-2SC6",
+      "title": "USBLC6-2 USB ESD protection",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.st.com/resource/en/datasheet/usblc6-2.pdf",
+      "manual": true
+    },
+    {
       "id": "ap2112_datasheet",
       "part": "AP2112K-3.3",
       "title": "AP2112 600 mA LDO (ADSBee carrier)",

@@ -14,7 +14,10 @@ How it works:
 
 | Sheet | Script | Status |
 |-------|--------|--------|
-| M1421 (page 14) | [gen_m1421.py](gen_m1421.py) | Generated. ERC: only the expected cross-sheet "not driven" items until the P4 / USB Dev sheets exist |
+| M1421 (page 14) | [gen_m1421.py](gen_m1421.py) | Generated |
+| Power Input, Charger Battery, Power Rails, Power Monitor (pages 2–5) | [gen_power.py](gen_power.py) | Generated |
+
+Whole-project ERC: 16 items, all cross-sheet signals whose drivers (P4, GPIO expander, Dev USB) are on sheets not generated yet. Footprints are checked on every run (`MISSING FOOTPRINTS:` is printed if a name doesn't exist). 154 parts, no duplicate references.
 
 ## Regenerate a sheet
 
@@ -34,5 +37,6 @@ edit it in KiCad from then on.
   U1401, R1401, …).
 - Net names: `P4_*` = driven by the P4, `DEV_*` = from the Dev-port domain,
   `M1421_*` = the m1421 side, rails like `3V3_M1421` are global labels.
-- Temporary `PWR_FLAG`s ("staging") keep ERC useful until the power sheets
-  drive the rails. Remove them when the power sheets are generated.
+- `PWR_FLAG`s mark rails fed through passive parts (shunts, inductors) so ERC
+  knows they're driven.
+- If no footprint is given, the library symbol's default footprint is used.

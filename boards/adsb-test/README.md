@@ -46,10 +46,10 @@ reference board while ADSB_Test is designed.
 | Page | Sheet | Source |
 |------|-------|--------|
 | 1 | Top level | — |
-| 2 | Power Input (User USB-C, PD sink) | New |
-| 3 | Charger Battery | New |
-| 4 | Power Rails | New |
-| 5 | Power Monitor | New |
+| 2 | Power Input (User USB-C, PD sink) | **Schematic generated** |
+| 3 | Charger Battery | **Schematic generated** |
+| 4 | Power Rails | **Schematic generated** |
+| 5 | Power Monitor | **Schematic generated** |
 | 6 | ESP32-P4 | Copy of reference board |
 | 7 | ESP32-C5 | New (same SDIO wiring as the reference board's C6) |
 | 8 | Ethernet | New (per Espressif P4 Function EV board) |

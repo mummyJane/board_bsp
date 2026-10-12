@@ -146,12 +146,6 @@ a = s.add("Connector:Conn_Coaxial", "J1403", "SMA 1090/978", (304.8, 213.36),
 s.connect(a, "1", "RF_ADSB_ANT", kind="label")
 s.connect(a, "2", "GND")
 
-# ------------------------------------------------------------------ staging
-# Until the Power Rails sheet drives 3V3_M1421 and GND, flag them here so ERC
-# checks the rest. REMOVE when the power sheets are generated.
-s.pwr_flag(VCC, (279.4, 35.56))
-s.pwr_flag("GND", (292.1, 35.56))
-
 # ------------------------------------------------------------------ notes
 s.text("FIT OPTIONS: (a) solder U1401 m1421, or (b) leave U1401 off and plug the ADSBee 1421 Dev Kit\n"
        "into J1402 with its JST-GH-to-DuPont harness (Dev Kit uses its own U.FL antenna).\n"
@@ -173,4 +167,7 @@ if notes is not None:
             k[1] = ["font", ["size", "1.27", "1.27"]]
 
 s.write(SHEET, "ADSB_Test - M1421", "Requirements: boards/adsb-test/docs/requirements.md", keep_notes=notes)
+missing = s.missing_footprints({"ADSB_Test": KICAD / "lib/ADSB_Test.pretty"})
+if missing:
+    print("  MISSING FOOTPRINTS:", missing)
 print("wrote", SHEET)

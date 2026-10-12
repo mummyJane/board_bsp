@@ -202,12 +202,19 @@ class Sheet:
         self.placed = {}
         self._pwr = 0
         self.locals = set()     # nets that only exist on this sheet -> local labels
+        self.footprints = {}    # ref -> footprint, for missing_footprints()
 
     # --- symbols
     def add(self, lib_id, ref, value, at, footprint="", unit=1, dnp=False, props=None, datasheet=""):
         if lib_id not in self.lib_symbols:
             self.lib_symbols[lib_id] = self.libs.get(lib_id)
         pins = self.libs.pins(lib_id)
+        if not footprint and not ref.startswith("#"):
+            # fall back to the library symbol's own default footprint
+            fp = [unq(p[2]) for p in find(self.lib_symbols[lib_id], "property") if unq(p[1]) == "Footprint"]
+            footprint = fp[0] if fp else ""
+        if footprint and not ref.startswith("#"):
+            self.footprints[ref] = footprint
         x, y = at
         node = ["symbol", ["lib_id", q(lib_id)], ["at", fmt(x), fmt(y), "0"], ["unit", str(unit)],
                 ["exclude_from_sim", "no"], ["in_bom", "no" if ref.startswith("#") else "yes"],
@@ -248,6 +255,10 @@ class Sheet:
             return ((right + 1.27, y - 1.27), "left"), ((right + 1.27, y + 1.27), "left")
         if horizontal_two_pin or (w < 7.62 and h < 7.62):   # LED, diode, test point: above / below
             return ((x, top - 1.27), None), ((x, bottom + 2.54), None)
+        has_left = any(int(p[2]) == 0 for p in pins.values())
+        has_right = any(int(p[2]) == 180 for p in pins.values())
+        if has_right and not has_left:   # pins stick out to the right (e.g. Kelvin shunt): text on the left
+            return ((left - 1.27, top), "right"), ((left - 1.27, bottom), "right")
         # ICs, connectors: outside the top-right and bottom-right corners
         return ((right + 1.27, top - 1.27), "left"), ((right + 1.27, bottom + 1.27), "left")
 
@@ -292,7 +303,20 @@ class Sheet:
         if net in ("GND", "+3V3", "+5V"):
             self.power(net, at)
         else:
-            self.label(net, at, 90, shape="passive")
+            self.label(net, at, 90, kind="label" if net in self.locals else "global_label", shape="passive")
+
+    def missing_footprints(self, project_libs=None):
+        """Return {ref: footprint} whose footprint file can't be found."""
+        fp_dir = KICAD_SYM_DIR.parent / "footprints"
+        out = {}
+        for ref, fp in self.footprints.items():
+            lib, name = fp.split(":", 1) if ":" in fp else ("", fp)
+            paths = [fp_dir / f"{lib}.pretty" / f"{name}.kicad_mod"]
+            if project_libs and lib in project_libs:
+                paths.append(Path(project_libs[lib]) / f"{name}.kicad_mod")
+            if not any(p.exists() for p in paths):
+                out[ref] = fp
+        return out
 
     # --- connections
     def _stub(self, part, pin):
