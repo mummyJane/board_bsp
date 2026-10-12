@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Fixed
+- Ignore per-config build logs (`build_*_log.txt`); one was committed in v0.21.0.
+
 ## [0.21.0] - 2026-10-12
 
 ### Added
