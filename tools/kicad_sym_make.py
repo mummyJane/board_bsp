@@ -61,3 +61,54 @@ def add_box_symbol(lib_path, name, ref, value, left, right, footprint="", datash
     assert text.endswith(")")
     text = text[:-1].rstrip() + "\n\t" + sym + "\n)\n"
     lib_path.write_text(text, encoding="utf-8", newline="\n")
+
+
+def copy_symbol(src_lib, name, dst_lib, new_name=None, pin_moves=None, description_note=""):
+    """Copy a symbol from a KiCad library into the project library (replacing an older copy),
+    optionally moving pins for a cleaner drawing: pin_moves = {number: (x, y, angle)}.
+    Only graphics change; pin numbers, names and types stay the same."""
+    new_name = new_name or name
+    src = Path(src_lib).read_text(encoding="utf-8")
+    m = re.search(r'\n\s*\(symbol "%s"\s' % re.escape(name), src)
+    start = src.index("(", m.start())
+    depth = 0
+    for k in range(start, len(src)):
+        depth += {"(": 1, ")": -1}.get(src[k], 0)
+        if depth == 0:
+            block = src[start:k + 1]
+            break
+    if new_name != name:
+        block = block.replace(f'(symbol "{name}"', f'(symbol "{new_name}"', 1)
+        block = re.sub(r'\(symbol "%s_(\d+)_(\d+)"' % re.escape(name), rf'(symbol "{new_name}_\1_\2"', block)
+    for num, (x, y, a) in (pin_moves or {}).items():
+        done = False
+        for pm in re.finditer(r"\(pin ", block):          # walk each (pin ...) block on its own
+            depth, s0 = 0, pm.start()
+            for k in range(s0, len(block)):
+                depth += {"(": 1, ")": -1}.get(block[k], 0)
+                if depth == 0:
+                    pin = block[s0:k + 1]
+                    break
+            if re.search(r'\(number "%s"' % re.escape(str(num)), pin):
+                new_pin = re.sub(r"\(at [-\d.]+ [-\d.]+(?: \d+)?\)", f"(at {x} {y} {a})", pin, count=1)
+                block = block[:s0] + new_pin + block[s0 + len(pin):]
+                done = True
+                break
+        assert done, f"pin {num} not found in {name}"
+    if description_note:
+        block = re.sub(r'(\(property "Description" ")([^"]*)"', lambda mm: f'{mm.group(1)}{mm.group(2)} ({description_note})"',
+                       block, count=1)
+    dst = Path(dst_lib)
+    text = dst.read_text(encoding="utf-8")
+    m = re.search(r'\n\s*\(symbol "%s"\s' % re.escape(new_name), text)
+    if m:
+        s0 = text.index("(", m.start())
+        depth = 0
+        for k in range(s0, len(text)):
+            depth += {"(": 1, ")": -1}.get(text[k], 0)
+            if depth == 0:
+                text = text[:m.start()] + text[k + 1:]
+                break
+    text = text.rstrip()
+    text = text[:-1].rstrip() + "\n\t" + block + "\n)\n"
+    dst.write_text(text, encoding="utf-8", newline="\n")

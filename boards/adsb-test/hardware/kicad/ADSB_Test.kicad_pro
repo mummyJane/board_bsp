@@ -19,10 +19,140 @@
     "version": 1
   },
   "net_settings": {
-    "classes": [],
+    "classes": [
+      {
+        "name": "Default",
+        "priority": 2147483647,
+        "clearance": 0.15,
+        "track_width": 0.15,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.15,
+        "diff_pair_gap": 0.15,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "tuning_profile": ""
+      },
+      {
+        "name": "USB_90R",
+        "priority": 1,
+        "clearance": 0.15,
+        "track_width": 0.2,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.2,
+        "diff_pair_gap": 0.15,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "schematic_color": "rgb(0, 102, 204)",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "tuning_profile": ""
+      },
+      {
+        "name": "MIPI_100R",
+        "priority": 2,
+        "clearance": 0.15,
+        "track_width": 0.15,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.15,
+        "diff_pair_gap": 0.2,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "schematic_color": "rgb(170, 0, 170)",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "tuning_profile": ""
+      },
+      {
+        "name": "ETH_100R",
+        "priority": 3,
+        "clearance": 0.15,
+        "track_width": 0.15,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.15,
+        "diff_pair_gap": 0.2,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "schematic_color": "rgb(210, 105, 0)",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "tuning_profile": ""
+      },
+      {
+        "name": "RF_50R",
+        "priority": 4,
+        "clearance": 0.2,
+        "track_width": 0.35,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.35,
+        "diff_pair_gap": 0.2,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "schematic_color": "rgb(200, 0, 0)",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "tuning_profile": ""
+      }
+    ],
     "meta": {
-      "version": 0
-    }
+      "version": 4
+    },
+    "netclass_patterns": [
+      {
+        "netclass": "USB_90R",
+        "pattern": "*_D_P"
+      },
+      {
+        "netclass": "USB_90R",
+        "pattern": "*_D_N"
+      },
+      {
+        "netclass": "MIPI_100R",
+        "pattern": "*DSI_*"
+      },
+      {
+        "netclass": "ETH_100R",
+        "pattern": "*ETH_TX?"
+      },
+      {
+        "netclass": "ETH_100R",
+        "pattern": "*ETH_RX?"
+      },
+      {
+        "netclass": "RF_50R",
+        "pattern": "*RF_ADSB_ANT"
+      },
+      {
+        "netclass": "RF_50R",
+        "pattern": "*M1421_RF_*"
+      },
+      {
+        "netclass": "RF_50R",
+        "pattern": "*GPS_RF"
+      }
+    ]
   },
   "pcbnew": {
     "page_layout_descr_file": ""

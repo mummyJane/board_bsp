@@ -173,8 +173,8 @@ s = new("usb_user.kicad_sch")
 s.locals |= {"CP_VBUS", "CP_RST", "CP_TXLED", "CP_RXLED"}
 u = s.add("Interface_USB:CP2102N-Axx-xQFN24", "U901", "CP2102N-A02-GQFN24", (165.1, 114.3),
           footprint=HS + "QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm_HandSolder")
-s.connect(u, "3", "USER_DP")
-s.connect(u, "4", "USER_DM")
+s.connect(u, "3", "USER_D_P")
+s.connect(u, "4", "USER_D_N")
 s.connect(u, ["5", "6", "7"], "3V3_PERIPH")       # self-powered: VREGIN = VDD = 3.3 V
 s.connect(u, "8", "CP_VBUS")
 s.connect(u, "9", "CP_RST")
@@ -227,14 +227,14 @@ s.connect(cp, "1", "VBUS_HOST")
 s.connect(cp, "2", "GND")
 C(s, "C1104", "100nF", (241.3, 76.2), "VBUS_HOST")
 e = s.add("Power_Protection:USBLC6-2SC6", "U1102", "USBLC6-2SC6", (279.4, 152.4), footprint=SOT23_6)
-s.connect(e, ["1", "6"], "USB_HS_DP")
-s.connect(e, ["3", "4"], "USB_HS_DM")
+s.connect(e, ["1", "6"], "USB_HS_D_P")
+s.connect(e, ["3", "4"], "USB_HS_D_N")
 s.connect(e, "5", "VBUS_HOST")
 s.connect(e, "2", "GND")
 j = s.add("Connector:USB_A", "J1101", "USB-A (SDR hub)", (330.2, 101.6), footprint="Connector_USB:USB_A_Molex_67643_Horizontal")
 s.connect(j, "1", "VBUS_HOST")
-s.connect(j, "2", "USB_HS_DM")
-s.connect(j, "3", "USB_HS_DP")
+s.connect(j, "2", "USB_HS_D_N")
+s.connect(j, "3", "USB_HS_D_P")
 s.connect(j, ["4", "SH"], "GND")
 TP(s, "TP1101", "VBUS_HOST", (254.0, 203.2))
 TP(s, "TP1102", "USBA_FAULT", (266.7, 203.2))
@@ -515,9 +515,9 @@ done(s, "test_debug.kicad_sch", "ADSB_Test - Test Debug")
 
 # =================================================================== USB Dev (page 10), A2
 s = new("usb_dev.kicad_sch")
-s.locals |= {"DEV_DP", "DEV_DM", "DEV_CC1", "DEV_CC2", "3V3_DEV", "HUB_XI", "HUB_XO", "HUB_RBIAS", "HUB_CRFILT",
+s.locals |= {"DEV_D_P", "DEV_D_N", "DEV_CC1", "DEV_CC2", "3V3_DEV", "HUB_XI", "HUB_XO", "HUB_RBIAS", "HUB_CRFILT",
              "HUB_PLLFILT", "HUB_RESET", "HUB_VBUS_DET", "HUB_CFG0", "HUB_CFG1", "HUB_NONREM0", "HUB_NONREM1",
-             "HUB_DN2_M", "HUB_DN2_P", "FT_DM", "FT_DP", "RP_DM_H", "RP_DP_H", "RP_DM", "RP_DP",
+             "HUB_DN2_M", "HUB_DN2_P", "FT_D_N", "FT_D_P", "RP_HUB_D_N", "RP_HUB_D_P", "RP_D_N", "RP_D_P",
              "FT_1V8", "FT_XI", "FT_XO", "FT_REF", "FT_RESET", "FT_EECS", "FT_EECLK", "FT_EEDATA", "FT_EEDO",
              "FT_A_TXD", "FT_A_RXD", "FT_A_RTS", "FT_A_DTR", "FT_B_TXD", "FT_B_RXD", "FT_B_RTS", "FT_B_DTR",
              "QA1_B", "QA2_B", "QB1_B", "QB2_B",
@@ -528,8 +528,8 @@ s.locals |= {"DEV_DP", "DEV_DM", "DEV_CC1", "DEV_CC2", "3V3_DEV", "HUB_XI", "HUB
 j = s.add("Connector:USB_C_Receptacle_USB2.0_16P", "J1001", "Dev USB-C", (38.1, 88.9),
           footprint="Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")
 s.connect(j, ["A4", "A9", "B4", "B9"], "VBUS_DEV")
-s.connect(j, ["A6", "B6"], "DEV_DP")
-s.connect(j, ["A7", "B7"], "DEV_DM")
+s.connect(j, ["A6", "B6"], "DEV_D_P")
+s.connect(j, ["A7", "B7"], "DEV_D_N")
 s.connect(j, "A5", "DEV_CC1")
 s.connect(j, "B5", "DEV_CC2")
 s.connect(j, ["A1", "A12", "B1", "B12", "SH"], "GND")
@@ -538,8 +538,8 @@ s.nc(j, "B8")
 R(s, "R1001", "5.1k", (76.2, 152.4), "DEV_CC1", "GND")
 R(s, "R1002", "5.1k", (88.9, 152.4), "DEV_CC2", "GND")
 e = s.add("Power_Protection:USBLC6-2SC6", "U1001", "USBLC6-2SC6", (38.1, 190.5), footprint=SOT23_6)
-s.connect(e, ["1", "6"], "DEV_DP")
-s.connect(e, ["3", "4"], "DEV_DM")
+s.connect(e, ["1", "6"], "DEV_D_P")
+s.connect(e, ["3", "4"], "DEV_D_N")
 s.connect(e, "5", "VBUS_DEV")
 s.connect(e, "2", "GND")
 ld = s.add("Regulator_Linear:AP2112K-3.3", "U1002", "AP2112K-3.3", (38.1, 254.0), footprint=SOT23_5)
@@ -555,16 +555,16 @@ TP(s, "TP1002", "3V3_DEV", (38.1, 330.2))
 hub = s.add("Interface_USB:USB2514B_Bi", "U1003", "USB2514B", (160.02, 114.3),
             footprint=HS + "QFN-36-1EP_6x6mm_P0.5mm_EP3.7x3.7mm_HandSolder",
             props={"Ports": "DN1 P4 USB-Serial/JTAG, DN2 disabled, DN3 FT2232H, DN4 RP2040"})
-s.connect(hub, "31", "DEV_DP")
-s.connect(hub, "30", "DEV_DM")
-s.connect(hub, "2", "P4_USJ_DP")
-s.connect(hub, "1", "P4_USJ_DM")
+s.connect(hub, "31", "DEV_D_P")
+s.connect(hub, "30", "DEV_D_N")
+s.connect(hub, "2", "P4_USJ_D_P")
+s.connect(hub, "1", "P4_USJ_D_N")
 s.connect(hub, "4", "HUB_DN2_P")
 s.connect(hub, "3", "HUB_DN2_M")
-s.connect(hub, "7", "FT_DP")
-s.connect(hub, "6", "FT_DM")
-s.connect(hub, "9", "RP_DP_H")
-s.connect(hub, "8", "RP_DM_H")
+s.connect(hub, "7", "FT_D_P")
+s.connect(hub, "6", "FT_D_N")
+s.connect(hub, "9", "RP_HUB_D_P")
+s.connect(hub, "8", "RP_HUB_D_N")
 s.connect(hub, ["5", "10", "29", "36", "15", "23"], "3V3_DEV")
 s.connect(hub, ["11", "37"], "GND")
 s.connect(hub, "14", "HUB_CRFILT")
@@ -603,8 +603,8 @@ C(s, "C1012", "4.7uF", (177.8, 254.0), "3V3_DEV")
 # FT2232HL: A = P4 UART0, B = C5 UART0, both with esptool auto-reset
 ft = s.add("Interface_USB:FT2232HL", "U1004", "FT2232HL", (330.2, 127.0),
            props={"Package": "LQFP-64 0.5 mm (leaded, iron-solderable)"})
-s.connect(ft, "8", "FT_DP")
-s.connect(ft, "7", "FT_DM")
+s.connect(ft, "8", "FT_D_P")
+s.connect(ft, "7", "FT_D_N")
 s.connect(ft, "50", "3V3_DEV")                     # VREGIN
 s.connect(ft, "49", "FT_1V8")                      # VREGOUT -> VCORE
 s.connect(ft, ["12", "37", "64"], "FT_1V8")
@@ -679,16 +679,16 @@ s.connect(rp, "21", "RP_XO")
 s.connect(rp, "24", "RP_SWCLK")
 s.connect(rp, "25", "RP_SWDIO")
 s.connect(rp, "26", "RP_RUN")
-s.connect(rp, "46", "RP_DM")
-s.connect(rp, "47", "RP_DP")
+s.connect(rp, "46", "RP_D_N")
+s.connect(rp, "47", "RP_D_P")
 for p, n in {"56": "RP_QSS", "52": "RP_QSCK", "53": "RP_QD0", "55": "RP_QD1", "54": "RP_QD2", "51": "RP_QD3",
              "27": "RP_LED", "38": "RP_NRST", "39": "RP_SYNC", "40": "RP_TX", "41": "RP_RX"}.items():
     s.connect(rp, p, n)
 for p in [str(n) for n in range(2, 10)] + [str(n) for n in range(11, 19)] + ["28", "29", "30", "31", "32", "34",
                                                                            "35", "36", "37"]:
     s.nc(rp, p)
-R(s, "R1030", "27R", (101.6, 381.0), "RP_DP_H", "RP_DP")
-R(s, "R1031", "27R", (114.3, 381.0), "RP_DM_H", "RP_DM")
+R(s, "R1030", "27R", (101.6, 381.0), "RP_HUB_D_P", "RP_D_P")
+R(s, "R1031", "27R", (114.3, 381.0), "RP_HUB_D_N", "RP_D_N")
 y = s.add("Device:Crystal", "Y1003", "12MHz", (63.5, 304.8), footprint=XTAL5032)
 s.connect(y, "1", "RP_XI")
 s.connect(y, "2", "RP_XO_R")

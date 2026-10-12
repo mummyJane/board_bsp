@@ -49,7 +49,7 @@ nets = {
     "20": "PM_ALERT", "22": "I2C_SDA", "23": "I2C_SCL", "24": "CHG_PD_INT", "25": "DBG_A", "26": "DBG_B",
     "27": "P4_GPIO12", "28": "RTC_INT", "29": "P4_GPIO20", "30": "P4_USER_TX", "31": "P4_USER_RX", "32": "TOUCH_RST",
     "34": "DSI_D1_P", "35": "DSI_D1_N", "36": "DSI_CLK_N", "37": "DSI_CLK_P", "38": "DSI_D0_P", "39": "DSI_D0_N",
-    "48": "USB_HS_DM", "49": "USB_HS_DP", "50": "P4_USJ_DM", "51": "P4_USJ_DP", "53": "TOUCH_INT",
+    "48": "USB_HS_D_N", "49": "USB_HS_D_P", "50": "P4_USJ_D_N", "51": "P4_USJ_D_P", "53": "TOUCH_INT",
     "54": "USBA_FAULT", "55": "ETH_CRS_DV", "56": "ETH_RXD0", "57": "ETH_RXD1", "58": "ETH_MDC",
     "59": "LCD_BL_PWM", "60": "LCD_RST", "61": "ETH_TXD0", "62": "ETH_TXD1_BOOT", "63": "P4_GPIO36",
     "64": "P4_CON_TX", "65": "P4_CON_RX", "66": "SD_VIO", "67": "SD_D0", "68": "SD_D1", "69": "SD_D2",

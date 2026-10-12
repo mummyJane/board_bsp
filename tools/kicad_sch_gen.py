@@ -351,16 +351,32 @@ class Sheet:
             kind = "label" if net in self.locals else "global_label"
         elif kind == "label":
             self.locals.add(net)
+        side_gnd = {}                         # GND on left/right pins: x of stub end -> [y, ...]
         for p in ([pin] if not isinstance(pin, (list, tuple)) else pin):
             key = (part.ref, part.pin_xy(p)[:2], net)
             if key in self._stubbed:          # stacked pins share one stub
                 continue
             self._stubbed.add(key)
             end, ang = self._stub(part, p)
-            if net in ("GND", "+3V3", "+5V"):
+            if net == "GND" and ang in (0, 180):
+                side_gnd.setdefault(round(end[0], 3), []).append(end[1])
+            elif net in ("GND", "+3V3", "+5V"):
                 self.power(net, end)
             else:
                 self.label(net, end, ang, kind=kind, shape=shape)
+        # neighbouring side pins to GND: join the stub ends with one wire and one GND symbol at the bottom
+        # Only directly adjacent pins (2.54 mm apart) are joined, so the wire never passes another pin.
+        for x, ys in side_gnd.items():
+            ys = sorted(ys)
+            run = [ys[0]]
+            for y in ys[1:] + [None]:
+                if y is not None and abs(y - run[-1] - 2.54) < 0.01:
+                    run.append(y)
+                    continue
+                for a, b in zip(run, run[1:]):
+                    self.wire((x, a), (x, b))
+                self.power("GND", (x, run[-1]))
+                run = [y]
 
     def nc(self, part, pin):
         x, y, _ = part.pin_xy(pin)

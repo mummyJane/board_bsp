@@ -8,6 +8,15 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Added
+- ADSB_Test net classes (`gen_netclasses.py` → `ADSB_Test.kicad_pro` net settings): **USB_90R** (7 USB pairs), **MIPI_100R** (DSI clock + 2 lanes), **ETH_100R** (MDI TX/RX), **RF_50R** (m1421 and GNSS feeds), each with its own schematic wire colour and starting pair width/gap (to be recalculated for PCBWay's stack-up). Custom rules `ADSB_Test.kicad_dru`: in-pair skew (USB 0.15 mm, DSI 0.1 mm, Ethernet 0.5 mm), DSI lane-to-lane matching 1 mm, uncoupled-length limits, no vias on RF feeds.
+- `tools/kicad_sym_make.copy_symbol()`: copy a library symbol into the project library with pins moved (graphics only).
+
+### Changed
+- USB pair nets renamed `*_DP/*_DM` → `*_D_P/*_D_N` so KiCad recognises them as differential pairs (USB_HS, USER, DEV, P4_USJ, FT, RP, RP_HUB).
+- U201 STUSB4500: project copy of the symbol with VSYS (pin 22, tied to GND when unused per DS12499) moved to the bottom edge, so its ground connection draws normally.
+- Generator: neighbouring side pins tied to GND (e.g. ADDR0/ADDR1) share one wire and one GND symbol. Connectivity checked identical (478 nets); ERC 0.
+
 ### Fixed
 - Generated sheets: stacked pins (several pins at one point, e.g. the m1421's 4 x VCC / 7 x GND, the SCN-2-11's 3 x GND) printed their numbers on top of each other. `kicad_sch_gen.py` now keeps the lowest-numbered pin of each stack visible and hides the rest as passive pins (KiCad's stacked-pin convention), and draws one stub per stack. Pin-to-net map checked identical before/after (1,641 pins); ERC 0.
 - ADSB_Test display sheet: LCD strap resistors (R1317/R1318/R1322-R1324) moved off the 30-pin FPC connector into a row beside it; reset parts below re-spaced.

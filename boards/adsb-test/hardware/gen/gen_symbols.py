@@ -23,3 +23,11 @@ add_box_symbol(LIB, "AP3032", "U", "AP3032",
                description="AP3032 LED driver boost, 1 A switch, OVP, PWM/analog dimming via FB, SOT-23-6",
                keywords="LED backlight boost")
 print("wrote AP3032 into", LIB.name)
+
+# STUSB4500QTR: KiCad's symbol puts VSYS (pin 22) on the top edge. It is tied to GND here (unused), so move
+# it to the bottom edge next to GND for a normal-looking ground connection. Graphics only.
+from kicad_sym_make import copy_symbol  # noqa: E402
+
+copy_symbol(r"C:\Program Files\KiCad\10.0\share\kicad\symbols\Interface_USB.kicad_sym", "STUSB4500QTR", LIB,
+            pin_moves={22: (2.54, -22.86, 90)}, description_note="ADSB_Test copy: VSYS pin moved to the bottom edge")
+print("wrote STUSB4500QTR (VSYS at the bottom) into", LIB.name)

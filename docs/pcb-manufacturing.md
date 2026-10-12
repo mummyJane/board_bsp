@@ -22,6 +22,21 @@ and recheck them against PCBWay's page at that point.
 | Impedance control | ±10 % (±5 Ω at ≤ 50 Ω) | Needed: RF 50 Ω CPW (m1421, GNSS), USB 90 Ω diff, MIPI-DSI 100 Ω diff, RMII ~50 Ω |
 | Finish | HASL, ENIG, … | **ENIG**: flat pads for the fine-pitch QFNs and the m1421 |
 
+## Impedance-controlled nets (ADSB_Test)
+
+Net classes are in `ADSB_Test.kicad_pro` and pair rules in `ADSB_Test.kicad_dru`, both written by
+`boards/adsb-test/hardware/gen/gen_netclasses.py`. KiCad finds the pairs from the `_P`/`_N` suffix.
+
+| Class | Nets | Target | In-pair skew | Other |
+|-------|------|--------|--------------|-------|
+| USB_90R | USB_HS, USER, DEV, P4_USJ, FT, RP, RP_HUB `_D_P/_D_N` | 90 Ω differential | 0.15 mm | uncoupled ≤ 3 mm |
+| MIPI_100R | DSI_CLK, DSI_D0, DSI_D1 `_P/_N` | 100 Ω differential | 0.1 mm | lanes matched to 1 mm, uncoupled ≤ 2 mm |
+| ETH_100R | ETH_TXP/TXN, ETH_RXP/RXN | 100 Ω differential | 0.5 mm | |
+| RF_50R | RF_ADSB_ANT, M1421_RF_978/1090, GPS_RF | 50 Ω CPW | — | no vias |
+
+The widths/gaps in the net classes are starting values (4-layer 1.6 mm, about 0.2 mm prepreg to the
+L2 ground). **Recalculate them with PCBWay's stack-up before layout** and order impedance control.
+
 ## Our design rules (start values, slightly conservative)
 
 | Rule | Value |

@@ -102,8 +102,8 @@ s.connect(j, ["A4", "A9", "B4", "B9"], "VBUS_USER_RAW")
 s.connect(j, ["A1", "A12", "B1", "B12", "SH"], "GND")
 s.connect(j, "A5", "USER_CC1")
 s.connect(j, "B5", "USER_CC2")
-s.connect(j, ["A6", "B6"], "USER_DP")
-s.connect(j, ["A7", "B7"], "USER_DM")
+s.connect(j, ["A6", "B6"], "USER_D_P")
+s.connect(j, ["A7", "B7"], "USER_D_N")
 s.nc(j, "A8")
 s.nc(j, "B8")
 
@@ -114,12 +114,12 @@ s.connect(d, "2", "GND")
 cap(s, "C201", "10uF 25V", (96.52, 50.8), "VBUS_USER_RAW", "GND", C0805)
 
 e = s.add("Power_Protection:USBLC6-2SC6", "U202", "USBLC6-2SC6", (78.74, 152.4), footprint="Package_TO_SOT_SMD:SOT-23-6_Handsoldering")
-s.connect(e, ["1", "6"], "USER_DP")
-s.connect(e, ["3", "4"], "USER_DM")
+s.connect(e, ["1", "6"], "USER_D_P")
+s.connect(e, ["3", "4"], "USER_D_N")
 s.connect(e, "5", "3V3_PERIPH")
 s.connect(e, "2", "GND")
 
-u = s.add("Interface_USB:STUSB4500QTR", "U201", "STUSB4500QTR", (152.4, 101.6),
+u = s.add("ADSB_Test:STUSB4500QTR", "U201", "STUSB4500QTR", (152.4, 101.6),
           footprint="ADSB_Test:QFN-24-1EP_4x4mm_P0.5mm_EP2.7x2.7mm_HandSolder",
           props={"Check": "VSYS to GND (unused), VBUS_VS_DISCH to receptacle VBUS, DISCH via series R: per DS12499 pin table",
                  "NVM": "PDO1 5V/3A, PDO2 9V/3A, PDO3 15V/3A"})
