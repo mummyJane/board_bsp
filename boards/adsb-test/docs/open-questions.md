@@ -7,6 +7,7 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
+| Q28 | Board size: the floorplan check (docs/floorplan.md) puts 188 × 97 mm at 100 % in the display/middle zones. Go to **196 × 97 mm** (16 mm margins on the short edges)? Also: POWER switch to the RF edge | Proposed: **196 × 97 mm**, POWER switch on the RF edge |
 | Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
 
 ## Answered
