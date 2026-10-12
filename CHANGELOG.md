@@ -9,7 +9,7 @@ project uses [Semantic Versioning](https://semver.org/) (see
 ## [Unreleased]
 
 ### Added
-- ADSB_Test block floorplan check (`hardware/floorplan/`: `areas.py` courtyards from the footprints, `floorplan.py` zones, edge budget, mounting holes, panel cable landings, battery shadow; `floorplan.svg/png`) and `docs/floorplan.md`. Result: 188 × 97 mm is too tight (display strip 100 %); 196 × 97 mm puts every zone under 90 %. New open question Q28 (board size, POWER switch to the RF edge).
+- ADSB_Test block floorplan check (`hardware/floorplan/`: `areas.py` courtyards from the footprints, `floorplan.py` zones, edge budget, mounting holes, panel cable landings, battery shadow; `floorplan.svg/png`) and `docs/floorplan.md`. Result: 188 × 97 mm is too tight (display strip 100 %). With the panel (164.9 × 100 mm) centred and an even 8 mm gap all round, **180.9 × 116 mm** puts every zone at 83 % or less; panel cables through PCB slots, corner mounting holes, POWER switch back on the digital edge. Open question Q28.
 - ADSB_Test display: resistor options on LCD FPC pins 5/6 (R1322 DNP, R1323 fitted, R1324 DNP) so panels that use them as UPDN/SHLR scan-direction straps (e.g. the AliExpress 1024x600 MIPI panel the user found) can be set either way; default stays as the Waveshare panel (pin 5 high, pin 6 low).
 
 ## [0.23.0] - 2026-10-12

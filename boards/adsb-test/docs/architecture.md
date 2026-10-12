@@ -517,7 +517,7 @@ Outline and case (Q20, decided 2026-10-10):
 
 | Item | Decision |
 |------|----------|
-| Board outline | Panel area 164 × 97 mm plus a **≈ 12 mm margin on each short edge**, so ≈ **188 × 97 mm** (final widths set during layout) |
+| Board outline | ~~188 × 97 mm~~. **Proposed (Q28, floorplan check): 180.9 × 116 mm**, panel centred with an 8 mm gap all round, panel cables through PCB slots, mounting holes in the board corners. See [floorplan.md](floorplan.md) |
 | Digital edge (one short edge) | User USB-C, Dev USB-C, USB-A, RJ45, microSD (mid-mount/sink-in parts, ≈ 70 mm of the 97 mm edge) |
 | RF edge (other short edge) | GNSS SMA and m1421 SMA, spaced apart |
 | C5 antenna | In the digital-edge margin, at the end **furthest from the RJ45 and USB-A metal shells** |

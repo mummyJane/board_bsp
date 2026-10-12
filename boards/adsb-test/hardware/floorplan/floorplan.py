@@ -20,8 +20,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from areas import parts  # noqa: E402
 
-W, H = 188.0, 97.0             # board, mm (override: --size WxH)
-PANEL_X0 = 12.0                # panel/PCB-area starts 12 mm in from the digital edge
+W, H = 180.9, 116.0            # board, mm: panel 164.9 x 100 + 8 mm all round (override: --size WxH)
 K = 1.6                        # spacing + routing factor for small parts
 FIXED = 1.15                   # factor for big parts (fan-out only)
 BIG = 150.0                    # courtyard mm2 above which a part is "fixed"
@@ -30,46 +29,54 @@ HOLE_KEEPOUT = 3.5             # mm radius (M2.5 screw head + clearance)
 # Edge connectors: (ref, edge, along-edge size, depth, label); spread evenly between the hole keep-outs
 EDGE_PARTS = [("J201", "L", 10.6, 8.9, "User USB-C"), ("J1001", "L", 10.6, 8.9, "Dev USB-C"),
               ("J1101", "L", 17.2, 16.3, "USB-A"), ("J801", "L", 19.0, 22.3, "RJ45"),
-              ("J1501", "L", 13.7, 13.1, "microSD"),
-              ("J1403", "R", 8.2, 14.9, "SMA 1090/978"), ("SW401", "R", 11.4, 9.4, "POWER"),
+              ("J1501", "L", 13.7, 13.1, "microSD"), ("SW401", "L", 11.4, 9.4, "POWER"),
+              ("J1403", "R", 8.2, 14.9, "SMA 1090/978"),
               ("J1201", "R", 8.2, 14.9, "SMA GNSS")]
 
 
+PANEL_W, PANEL_H = 164.9, 100.0   # 7" panel outline (AliExpress 1024x600 MIPI drawing; Waveshare 164.28 x 99.17 lens)
+
+
 def layout(w, h):
-    """Zone rectangles for a w x h board (bands: power on top, logic in the middle, display at the
-    bottom long edge where the panel FPCs fold over, RF column at the RF edge)."""
-    global W, H, HOLES, EDGE, BATTERY
+    """Zone rectangles for a w x h board with the panel centred on the other side.
+    Bands: power on top, logic in the middle, display + Ethernet at the bottom (panel cables fold
+    through slots at the panel's bottom edge), RF column at the RF edge."""
+    global W, H, HOLES, EDGE, BATTERY, FPC
     W, H = w, h
-    x0p = (W - 164) / 2                                   # panel centred between the two short edges
-    top = 30 + (H - 97)                                   # extra height goes to the power band
-    HOLES = [(x0p + 4, H - 93), (x0p + 160, H - 93), (x0p + 4, H - 4), (x0p + 160, H - 4)]
+    x0p, y0p = (W - PANEL_W) / 2, (H - PANEL_H) / 2
+    cx, cy = W / 2, H / 2
+    HOLES = [(4, 4), (W - 4, 4), (4, H - 4), (W - 4, H - 4)]   # case screws in the board corners (outside the panel)
     EDGE = []
     for side in "LR":
         items = [e for e in EDGE_PARTS if e[1] == side]
-        lo, hi = H - 93 + HOLE_KEEPOUT + 0.5, H - 4 - HOLE_KEEPOUT - 0.5
+        lo, hi = 4 + HOLE_KEEPOUT + 0.5, H - 4 - HOLE_KEEPOUT - 0.5        # between the corner holes
         gap = (hi - lo - sum(e[2] for e in items)) / (len(items) - 1)
         y = lo
         for ref, sd, along, depth, label in items:
             EDGE.append((ref, sd, y + along / 2, along, depth, label))
             y += along + gap
+    top = 30 * H / 97                                      # bands grow in proportion
+    bot = 23 * H / 97
     rf0 = W - 36
-    la0, la1 = 84, 100                                    # LA header column between Dev USB and the MCU
-    global FPC
-    # panel cable tails (Waveshare drawing, back view, digital edge on the left): LCD 30-pin and touch 6-pin
-    FPC = [("LCD FPC", W - x0p - 36.2 - 9, 18), ("Touch FPC", W - x0p - 113.2, 6)]
-    BATTERY = (la1 + 8, 12, la1 + 48, 85)                 # 2 x 18650 across the board, over the MCU area
+    span = rf0 - 24
+    la0 = 24 + 0.5 * (span - 16)
+    la1 = la0 + 16
+    # panel cable tails (Waveshare drawing, back view, digital edge on the left) through slots at the
+    # panel's bottom edge: LCD 30-pin and touch 6-pin
+    FPC = [("LCD FPC", W - x0p - 36.2 - 9, 18, y0p + PANEL_H), ("Touch FPC", W - x0p - 113.2, 6, y0p + PANEL_H)]
+    BATTERY = (la1 + 8, y0p + 12, la1 + 48, y0p + 85)     # 2 x 18650 across the board, over the MCU area
     return {
-        "Power in + User UART": (24, 0, 52, top, ["Power Input", "USB User"]),
-        "Charger + RTC": (52, 0, 90, top, ["Charger Battery", "RTC"]),
-        "Bucks + switches + monitors": (90, 0, rf0, top, ["Power Rails", "Power Monitor"]),
+        "Power in + User UART": (24, 0, 24 + 0.22 * span, top, ["Power Input", "USB User"]),
+        "Charger + RTC": (24 + 0.22 * span, 0, 24 + 0.52 * span, top, ["Charger Battery", "RTC"]),
+        "Bucks + switches + monitors": (24 + 0.52 * span, 0, rf0, top, ["Power Rails", "Power Monitor"]),
         "m1421 + RF (can 27.5)": (rf0, 0, W - 2, H / 2, ["M1421"]),
         "GNSS (can 17.8)": (rf0, H / 2, W - 2, H, ["GPS"]),
-        "Dev USB (hub, FT2232H, RP2040)": (24, top, la0, H - 23, ["USB Dev"]),
+        "Dev USB (hub, FT2232H, RP2040)": (24, top, la0, H - bot, ["USB Dev"]),
         "LA header (vertical)": (la0, top, la1, H, ["Test Debug"]),
-        "MCU module": (la1, top, rf0, H - 23, ["MCU Module"]),
-        "Ethernet + USB host": (24, H - 23, 64, H, ["Ethernet", "USB Host"]),
-        "Storage + expander + touch FPC": (64, H - 23, la0, H, ["Storage Misc"]),
-        "Display supplies + LCD FPC": (la1, H - 23, rf0, H, ["Display Touch"]),
+        "MCU module": (la1, top, rf0, H - bot, ["MCU Module"]),
+        "Ethernet + USB host": (24, H - bot, 24 + 0.65 * (la0 - 24), H, ["Ethernet", "USB Host"]),
+        "Storage + expander + touch FPC": (24 + 0.65 * (la0 - 24), H - bot, la0, H, ["Storage Misc"]),
+        "Display supplies + LCD FPC": (la1, H - bot, rf0, H, ["Display Touch"]),
     }
 
 
@@ -190,7 +197,7 @@ def svg(rows, ps, sizes):
            f'font-family="Arial" font-size="11"><rect width="100%" height="100%" fill="white"/>',
            f'<g transform="translate({pad},{pad})">',
            f'<rect x="0" y="0" width="{W * s}" height="{H * s}" fill="#e8f3e8" stroke="#060" stroke-width="2"/>',
-           f'<rect x="{(W - 164) / 2 * s}" y="{(H - 97) * s}" width="{164 * s}" height="{97 * s}" fill="none" stroke="#999" '
+           f'<rect x="{(W - PANEL_W) / 2 * s}" y="{(H - PANEL_H) / 2 * s}" width="{PANEL_W * s}" height="{PANEL_H * s}" fill="none" stroke="#999" '
            f'stroke-dasharray="6,4"/>']
     bx0, by0, bx1, by1 = BATTERY
     out.append(f'<rect x="{bx0 * s}" y="{by0 * s}" width="{(bx1 - bx0) * s}" height="{(by1 - by0) * s}" '
@@ -210,10 +217,10 @@ def svg(rows, ps, sizes):
             x, y, w, h = W - depth, c - along / 2, depth, along
         out.append(f'<rect x="{x * s}" y="{y * s}" width="{w * s}" height="{h * s}" fill="#69c" stroke="#036"/>'
                    f'<text x="{x * s + 3}" y="{(y + h / 2) * s + 4}" fill="white" font-size="10">{label}</text>')
-    for label, x, wid in FPC:
-        out.append(f'<rect x="{(x - wid / 2) * s}" y="{(H - 3) * s}" width="{wid * s}" height="{6 * s}" fill="#a3c" '
-                   f'fill-opacity="0.8"/><text x="{(x - wid / 2) * s}" y="{(H - 4) * s}" fill="#a3c" '
-                   f'font-weight="bold">{label} (approx.)</text>')
+    for label, x, wid, fy in FPC:
+        out.append(f'<rect x="{(x - wid / 2) * s}" y="{(fy - 1) * s}" width="{wid * s}" height="{2 * s}" fill="#a3c" '
+                   f'fill-opacity="0.9"/><text x="{(x - wid / 2) * s}" y="{(fy - 2) * s}" fill="#a3c" '
+                   f'font-weight="bold">{label} slot (approx.)</text>')
     for hx, hy in HOLES:
         out.append(f'<circle cx="{hx * s}" cy="{hy * s}" r="{HOLE_KEEPOUT * s}" fill="#ccc" stroke="#555"/>')
     out.append(f'<text x="0" y="{H * s + 20}">ADSB_Test floorplan, component (bottom) side, {W:.0f} x {H:.0f} mm. '
@@ -236,19 +243,20 @@ if __name__ == "__main__":
     import io
     import contextlib
     ap = argparse.ArgumentParser()
-    ap.add_argument("--size", default="188x97", help="board size WxH in mm")
+    ap.add_argument("--size", default="180.9x116", help="board size WxH in mm")
     ap.add_argument("--compare", action="store_true", help="fill summary for several board sizes")
     a = ap.parse_args()
     ps = parts()
     if a.compare:
-        for size in ("188x97", "196x97", "204x97", "188x105", "196x105"):
-            w, h = map(float, size.split("x"))
+        for g in (4, 6, 8, 10, 12, 14, 16):
+            w, h = round(PANEL_W + 2 * g, 1), round(PANEL_H + 2 * g, 1)
+            size = f"{w:g}x{h:g} (gap {g})"
             ZONES = layout(w, h)
             with contextlib.redirect_stdout(io.StringIO()):
                 rows, issues = main(ps)
             worst = max(rows, key=lambda r: r[6] / r[5])
             tot = sum(r[6] for r in rows) / sum(r[5] for r in rows)
-            print(f"{size:8s} overall {100 * tot:3.0f} %  fullest: {worst[0]} {100 * worst[6] / worst[5]:.0f} %  "
+            print(f"{size:22s} overall {100 * tot:3.0f} %  fullest: {worst[0]} {100 * worst[6] / worst[5]:.0f} %  "
                   f"issues: {len(issues)}")
     w, h = map(float, a.size.split("x"))
     ZONES = layout(w, h)
