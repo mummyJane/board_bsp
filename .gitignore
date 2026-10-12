@@ -99,3 +99,6 @@ sdkconfig.*build
 # Python bytecode
 __pycache__/
 *.pyc
+
+# KiCad 10 local history (per-project git repo)
+.history/
