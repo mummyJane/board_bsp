@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Fixed
+- ADSB_Test PCB: panel-cable slots moved to the panel drawings' positions (they were taken from the Waveshare board drawing and were about 45 mm off). LCD slot 56–96 mm and touch slot 32–52 mm from the panel's left edge (front view); J1301/J1302 moved next to them, LA header moved up to clear J1301. Midas MDT070005 datasheet added to the datasheet list.
+
 ### Added
 - ADSB_Test PCB started (`gen_pcb.py`, run with KiCad's Python / pcbnew): 180.9 × 116 mm, 4 layers, 1.6 mm; M2.5 holes in the four corners; Edge.Cuts slots for the LCD (22 mm) and touch (10 mm) FPCs just outside the panel's bottom edge; panel outline on Dwgs.User. All parts on the bottom side. Edge connectors placed and turned to face out (digital edge: User USB-C, Dev USB-C, USB-A, RJ45, microSD, POWER; RF edge: both SMAs, on their 'PCB Edge' markers); module, m1421 + can, GNSS + can, LA header, both FPC connectors, battery connector, buttons and debug headers placed; the other 466 parts parked beside the board, grouped by sheet. Footprints carry their schematic links and pad nets: DRC schematic parity 0, no courtyard or edge-clearance errors. Bottom-view picture: `hardware/floorplan/pcb_start_bottom.svg`.
 

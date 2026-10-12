@@ -50,6 +50,7 @@ get them. "Local" shows whether the last run saved a copy.
 | BAT54S-7-F | [BAT54S Schottky (VGH/VGL charge pumps)](https://www.diodes.com/assets/Datasheets/ds11005.pdf) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | BZT52C7V5S / BZT52C18S | [Diodes BZT52C-S zener (VGL/VGH clamps)](https://www.diodes.com/part/view/BZT52C18S) | ADSB_Test | link only |
 | 1N5819HW | [Diodes 1N5819HW 1 A Schottky, SOD-123 (panel boosts)](https://www.diodes.com/part/view/1N5819HW) | ADSB_Test | link only |
+| MDT070005 (7in 1024x600 MIPI, EK79007AD2) | [Midas MDT070005 7in 1024x600 MIPI TFT: specification + mechanical drawing (FPC tail 72.88 mm, 44.97 mm long)](https://midasdisplays.com/wp-content/uploads/2024/12/MDT070005.pdf) | ADSB_Test | yes (2026-10-12) |
 
 ## power
 

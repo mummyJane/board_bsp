@@ -63,7 +63,8 @@ def layout(w, h):
     la1 = la0 + 16
     # panel cable tails (Waveshare drawing, back view, digital edge on the left) through slots at the
     # panel's bottom edge: LCD 30-pin and touch 6-pin
-    FPC = [("LCD FPC", W - x0p - 36.2 - 9, 18, y0p + PANEL_H), ("Touch FPC", W - x0p - 113.2, 6, y0p + PANEL_H)]
+    # front-view slot centres: LCD 76 mm (56-96), touch 42 mm (32-52) from the panel's left edge (docs/floorplan.md)
+    FPC = [("LCD FPC", W - x0p - 76.0, 40, y0p + PANEL_H + 2.5), ("Touch FPC", W - x0p - 42.0, 20, y0p + PANEL_H + 2.5)]
     BATTERY = (la1 + 8, y0p + 12, la1 + 48, y0p + 85)     # 2 x 18650 across the board, over the MCU area
     return {
         "Power in + User UART": (24, 0, 24 + 0.22 * span, top, ["Power Input", "User USB-C"]),

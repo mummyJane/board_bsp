@@ -68,9 +68,9 @@ BIG = {
     "SH1401": (158.0, 30.0, None),
     "U1201": (160.0, 94.0, None),           # MAX-M10S, under can SH1201
     "SH1201": (160.0, 94.0, None),
-    "J1601": (86.5, 72.0, None),            # LA5016 2x20 header, vertical in the LA column
-    "J1301": (127.7, 101.0, "+y"),          # LCD 30-pin FPC, opening towards its slot
-    "J1302": (59.7, 101.0, "+y"),           # touch 6-pin FPC, opening towards its slot
+    "J1601": (86.5, 65.0, None),            # LA5016 2x20 header, vertical in the LA column (clear of J1301)
+    "J1301": (W - (W - PW) / 2 - 76.0, 101.0, "+y"),   # LCD 30-pin FPC, opening towards its slot
+    "J1302": (W - (W - PW) / 2 - 42.0, 101.0, "+y"),   # touch 6-pin FPC, opening towards its slot
     "J301": (64.0, 9.0, None),              # battery connector (outside the battery footprint)
     "SW601": (110.0, 12.0, None),           # BOOT  (top band, clear of the battery)
     "SW602": (122.0, 12.0, None),           # RESET
@@ -79,7 +79,11 @@ BIG = {
     "J1402": (138.0, 22.0, None),           # ADSBee Dev Kit header (1x6, vertical, beside the m1421 can)
     "J1801": (72.0, 84.0, None),            # RP2040 GPIO header (DNP)
 }
-SLOTS = [("LCD FPC slot", 127.7, 22.0), ("Touch FPC slot", 59.7, 10.0)]   # (name, bottom-view x, length)
+# Panel-cable slots, given in FRONT-VIEW mm from the panel's left edge (as the panel drawings are dimensioned):
+#   LCD 30-pin tail: Midas MDT070005 drawing 72.88 +/-0.5 mm (tail ~17 mm wide), AliExpress panel ~71 mm to the tail
+#   centre -> slot 56..96 mm covers both readings. Touch tail: 37.5 mm to its left edge, ~10-14 mm wide -> 32..52 mm.
+SLOTS_FRONT = [("LCD FPC slot", 56.0, 96.0), ("Touch FPC slot", 32.0, 52.0)]
+SLOTS = [(n, W - (W - PW) / 2 - (a + b) / 2, b - a) for n, a, b in SLOTS_FRONT]   # (name, bottom-view x, length)
 SLOT_Y, SLOT_W = (H + PH) / 2 + 2.5, 2.5      # just outside the panel's bottom edge
 
 
