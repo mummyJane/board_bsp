@@ -114,6 +114,43 @@ class SymbolLibs:
                 pin[:] = [x for x in pin if x != "hide" and not (isinstance(x, list) and x[:2] == ["hide", "yes"])]
         return sym
 
+    def body_bbox(self, lib_id):
+        """(xmin, ymin, xmax, ymax) of the drawn body (not pins), symbol coordinates (y up)."""
+        sym = self.get(lib_id)
+        xs, ys = [], []
+
+        def walk(node):
+            for x in node:
+                if not isinstance(x, list) or not x:
+                    continue
+                if x[0] in ("rectangle",):
+                    for k in ("start", "end"):
+                        p = find(x, k)[0]
+                        xs.append(float(p[1]))
+                        ys.append(float(p[2]))
+                elif x[0] in ("polyline", "bezier"):
+                    for p in find(find(x, "pts")[0], "xy"):
+                        xs.append(float(p[1]))
+                        ys.append(float(p[2]))
+                elif x[0] == "circle":
+                    c = find(x, "center")[0]
+                    r = float(find(x, "radius")[0][1])
+                    xs.extend([float(c[1]) - r, float(c[1]) + r])
+                    ys.extend([float(c[2]) - r, float(c[2]) + r])
+                elif x[0] == "arc":
+                    for k in ("start", "mid", "end"):
+                        p = find(x, k)
+                        if p:
+                            xs.append(float(p[0][1]))
+                            ys.append(float(p[0][2]))
+                elif x[0] == "symbol":
+                    walk(x)
+
+        walk(sym)
+        if not xs:
+            return (-1.27, -1.27, 1.27, 1.27)
+        return (min(xs), min(ys), max(xs), max(ys))
+
     def pins(self, lib_id):
         """{number: (x, y, angle, name, type, unit)} in symbol coordinates (y up)."""
         sym = self.get(lib_id)
@@ -176,13 +213,16 @@ class Sheet:
                 ["exclude_from_sim", "no"], ["in_bom", "no" if ref.startswith("#") else "yes"],
                 ["on_board", "no" if ref.startswith("#") else "yes"], ["dnp", "yes" if dnp else "no"],
                 ["uuid", uid()]]
-        fields = [("Reference", ref, (x, y - 3.81), ref.startswith("#")),
-                  ("Value", value, (x, y + 3.81), ref.startswith("#PWR")),
-                  ("Footprint", footprint, (x, y), True), ("Datasheet", datasheet, (x, y), True)]
+        (rpos, rjust), (vpos, vjust) = self._field_positions(lib_id, pins, x, y)
+        fields = [("Reference", ref, rpos, rjust, ref.startswith("#")),
+                  ("Value", value, vpos, vjust, ref.startswith("#PWR")),
+                  ("Footprint", footprint, (x, y), None, True), ("Datasheet", datasheet, (x, y), None, True)]
         for k, v in (props or {}).items():
-            fields.append((k, v, (x, y), True))
-        for k, v, (fx, fy), hide in fields:
+            fields.append((k, v, (x, y), None, True))
+        for k, v, (fx, fy), just, hide in fields:
             eff = ["effects", ["font", ["size", "1.27", "1.27"]]]
+            if just:
+                eff.append(["justify", just])
             if hide:
                 eff.append(["hide", "yes"])
             node.append(["property", q(k), q(v), ["at", fmt(fx), fmt(fy), "0"], eff])
@@ -196,6 +236,20 @@ class Sheet:
         if not ref.startswith("#"):
             self.placed[ref] = pl
         return pl
+
+    def _field_positions(self, lib_id, pins, x, y):
+        """Put Reference/Value text outside the symbol body so it never covers pin names."""
+        xmin, ymin, xmax, ymax = self.libs.body_bbox(lib_id)
+        left, right, top, bottom = x + xmin, x + xmax, y - ymax, y - ymin
+        w, h = xmax - xmin, ymax - ymin
+        vertical_two_pin = len(pins) == 2 and all(int(p[2]) in (90, 270) for p in pins.values())
+        horizontal_two_pin = len(pins) == 2 and all(int(p[2]) in (0, 180) for p in pins.values())
+        if vertical_two_pin:            # R, C: text to the right
+            return ((right + 1.27, y - 1.27), "left"), ((right + 1.27, y + 1.27), "left")
+        if horizontal_two_pin or (w < 7.62 and h < 7.62):   # LED, diode, test point: above / below
+            return ((x, top - 1.27), None), ((x, bottom + 2.54), None)
+        # ICs, connectors: outside the top-right and bottom-right corners
+        return ((right + 1.27, top - 1.27), "left"), ((right + 1.27, bottom + 1.27), "left")
 
     # --- primitives
     def wire(self, a, b):

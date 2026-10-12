@@ -62,6 +62,7 @@
 
 /* Battery voltage sense: BAT through 200k/100k divider (V_BAT = 3 x V_pin) */
 #define BSP_BAT_ADC             (20)
+#define BSP_BAT_DIVIDER         3       /* R92 200k / R93 100k */
 
 /* Audio (ES8311 DAC, ES7210 ADC, NS4150B amp) */
 #define BSP_I2S_MCLK            (13)

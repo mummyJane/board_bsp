@@ -36,6 +36,9 @@ esp_err_t bsp_sdcard_unmount(void);
 /** Format the microSD card as FAT32 (ERASES IT) and leave it mounted. */
 esp_err_t bsp_sdcard_format(void);
 
+/** Main Li-ion battery ("BAT", connector J4) voltage in mV, measured on GPIO20 through the 1/3 divider. */
+esp_err_t bsp_battery_voltage_mv(int *out_mv);
+
 #ifdef __cplusplus
 }
 #endif

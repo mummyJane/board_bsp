@@ -2,6 +2,9 @@
 #include "esp_check.h"
 #include "esp_log.h"
 #include "esp_chip_info.h"
+#include "esp_adc/adc_oneshot.h"
+#include "esp_adc/adc_cali.h"
+#include "esp_adc/adc_cali_scheme.h"
 #include "bsp/bsp.h"
 
 static const char *TAG = "bsp";
@@ -109,4 +112,43 @@ esp_err_t bsp_sdcard_format(void)
 esp_err_t bsp_sdcard_unmount(void)
 {
     return p4c_sdcard_unmount();
+}
+
+esp_err_t bsp_battery_voltage_mv(int *out_mv)
+{
+    static adc_oneshot_unit_handle_t s_adc;
+    static adc_cali_handle_t s_cali;
+    static adc_channel_t s_ch;
+    static bool s_cali_ok;
+
+    ESP_RETURN_ON_FALSE(out_mv, ESP_ERR_INVALID_ARG, TAG, "out_mv");
+    if (!s_adc) {
+        adc_unit_t unit;
+        ESP_RETURN_ON_ERROR(adc_oneshot_io_to_channel(BSP_BAT_ADC, &unit, &s_ch), TAG, "gpio -> adc");
+        const adc_oneshot_unit_init_cfg_t ucfg = {.unit_id = unit};
+        ESP_RETURN_ON_ERROR(adc_oneshot_new_unit(&ucfg, &s_adc), TAG, "adc unit");
+        const adc_oneshot_chan_cfg_t ccfg = {.atten = ADC_ATTEN_DB_12, .bitwidth = ADC_BITWIDTH_DEFAULT};
+        ESP_RETURN_ON_ERROR(adc_oneshot_config_channel(s_adc, s_ch, &ccfg), TAG, "adc channel");
+        const adc_cali_curve_fitting_config_t cal = {
+            .unit_id = unit, .chan = s_ch, .atten = ADC_ATTEN_DB_12, .bitwidth = ADC_BITWIDTH_DEFAULT,
+        };
+        s_cali_ok = adc_cali_create_scheme_curve_fitting(&cal, &s_cali) == ESP_OK;
+        if (!s_cali_ok) {
+            ESP_LOGW(TAG, "no ADC calibration data in eFuse; battery voltage is approximate");
+        }
+    }
+
+    int sum = 0;
+    for (int i = 0; i < 16; i++) {
+        int raw = 0;
+        ESP_RETURN_ON_ERROR(adc_oneshot_read(s_adc, s_ch, &raw), TAG, "adc read");
+        sum += raw;
+    }
+    int raw = sum / 16;
+    int pin_mv = raw * 3300 / 4095;
+    if (s_cali_ok) {
+        ESP_RETURN_ON_ERROR(adc_cali_raw_to_voltage(s_cali, raw, &pin_mv), TAG, "adc cali");
+    }
+    *out_mv = pin_mv * BSP_BAT_DIVIDER;
+    return ESP_OK;
 }

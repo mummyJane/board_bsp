@@ -7,6 +7,7 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
+| Q23 | RTC backup cell on the P4 VDD_BAT (like the reference board)? Primary CR1220 needs diode-OR with no charge path; rechargeable ML1220 can be charged (P4 VBAT support, `CONFIG_ESP_VBAT_USE_RECHARGEABLE_BATTERY`). The GPS has its own V_BCKP backup | Fit a holder; ML1220 rechargeable; decide after the reference-board `[rtc_battery]` result |
 | Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
 
 ## Answered

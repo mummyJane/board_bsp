@@ -57,7 +57,7 @@ for pin, net in tp_nets.items():
     s.connect(u, pin, net, kind="label")
 
 s.two_pin("Device:C", "C1401", "1uF", (60.96, 63.5), VCC, "GND", C0402)
-s.two_pin("Device:C", "C1402", "100nF", (71.12, 63.5), VCC, "GND", C0402)
+s.two_pin("Device:C", "C1402", "100nF", (78.74, 63.5), VCC, "GND", C0402)
 
 # ------------------------------------------------------------------ test pads
 for i, (pin, net) in enumerate(tp_nets.items()):
@@ -67,7 +67,7 @@ for i, (pin, net) in enumerate(tp_nets.items()):
     s.connect(tp, "1", net, kind="label")
 
 # ------------------------------------------------------------------ JTAG (Segger J-Link, as the carrier)
-j = s.add("Connector:Conn_ARM_JTAG_SWD_10", "J1401", "m1421 JTAG (J-Link)", (50.8, 190.5),
+j = s.add("Connector:Conn_ARM_JTAG_SWD_10", "J1401", "m1421 JTAG (J-Link)", (50.8, 203.2),
           footprint="Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD")
 s.connect(j, "1", VCC)
 s.connect(j, ["3", "5", "9"], "GND")
@@ -99,7 +99,7 @@ s.connect(m, "6", "DEV_M1421_SEL")
 s.connect(m, "4", "M1421_SURX")
 s.connect(m, "5", VCC)
 s.connect(m, "2", "GND")
-s.two_pin("Device:R", "R1401", "100k", (241.3, 30.48), "DEV_M1421_SEL", "GND", R0402)
+s.two_pin("Device:R", "R1401", "100k", (144.78, 76.2), "DEV_M1421_SEL", "GND", R0402)
 
 # ------------------------------------------------------------------ SYNC = P4 OR Dev
 g = s.add("74xGxx:74LVC1G32", "U1403", "74LVC1G32", (203.2, 106.68), footprint=SC70_5)
@@ -123,9 +123,10 @@ s.two_pin("Device:R", "R1405", "100k", (241.3, 147.32), VCC, "M1421_NRST", R0402
 
 # ------------------------------------------------------------------ activity LEDs (as carrier)
 for i, (net, col, rv) in enumerate((("M1421_SD26", "RED 1090", "287R"), ("M1421_SD27", "GREEN UAT", "115R"))):
-    y = 195.58 + i * 27.94
-    s.two_pin("Device:R", f"R{1406 + i}", rv, (165.1, y), net, f"LED_{net[6:]}_A", R0402)
-    d = s.add("Device:LED", f"D{1401 + i}", col, (182.88, y), footprint="LED_SMD:LED_0603_1608Metric")
+    y = 200.66
+    x0 = 152.4 + i * 50.8
+    s.two_pin("Device:R", f"R{1406 + i}", rv, (x0, y), net, f"LED_{net[6:]}_A", R0402)
+    d = s.add("Device:LED", f"D{1401 + i}", col, (x0 + 17.78, y), footprint="LED_SMD:LED_0603_1608Metric")
     s.connect(d, "2", f"LED_{net[6:]}_A", kind="label")
     s.connect(d, "1", "GND")
 
@@ -161,6 +162,7 @@ s.text("FIT OPTIONS: (a) solder U1401 m1421, or (b) leave U1401 off and plug the
        (127.0, 241.3))
 
 if notes is not None:
+    notes[1] = notes[1].replace("74LVC1G157 mux", "74LVC1G97 (as 2:1 mux)")
     # keep the design notes, smaller, down the right-hand side
     for k in notes:
         if isinstance(k, list) and k[0] == "at":

@@ -8,6 +8,25 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-10-12
+
+### Added
+- Reference board: `bsp_battery_voltage_mv()` (main battery on GPIO20, ADC curve-fitting
+  calibration, ×3 divider) and tests `[battery]` (2 s min/avg/max, flags "no battery" when the
+  charger output is cycling) and `[rtc_battery]` (RTC memory + clock retention across a full
+  power-off on the VDD_BAT coin cell). `CONFIG_ESP_VBAT_INIT_AUTO=y`.
+- README: the two batteries explained (main Li-ion vs RTC coin cell), with a caution that D1
+  trickle-charges the coin-cell node (suits ML1220, not CR1220). ADSB_Test open question Q23.
+
+### Fixed
+- Schematic generator: Reference/Value text now placed outside the symbol body (no overlap with pin
+  names); M1421 sheet re-spaced so no labels overlap or leave the frame; stale "74LVC1G157" in the
+  sheet notes corrected.
+
+### Verified on hardware
+- Full suite 16 tests, 0 failures. BAT 4.17 V steady in one run, 0.65 V in another (likely no battery
+  fitted). VBAT state NORMAL; retention marker set (power-off check pending).
+
 ## [0.15.0] - 2026-10-12
 
 ### Added
@@ -285,7 +304,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/mummyJane/board_bsp/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/mummyJane/board_bsp/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/mummyJane/board_bsp/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/mummyJane/board_bsp/compare/v0.12.0...v0.13.0

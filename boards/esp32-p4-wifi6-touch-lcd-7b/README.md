@@ -74,6 +74,8 @@ BSP API: [`bsp/include/bsp/bsp.h`](bsp/include/bsp/bsp.h). Shared driver code is
 | Wi-Fi (C6 via esp_hosted) | IDF `esp_wifi_*` | `[wifi]` AP scan, see [docs/wifi.md](docs/wifi.md) | ✅ PASS, repeatable (C6 fw old, upgrade recommended) |
 | USB host on USB-A (hub, RTL-SDR) | `espressif/usb` | `[usb]` lists devices, flags RTL-SDRs | ✅ PASS: hub + RTL-SDR (both high speed), repeatable |
 | GPS (eval module on P3) | UART2 + PPS | `[gps]` UBX comms (version, antenna, fix); `[gps_pps]` NMEA + PPS jitter (30 s) | ✅ `[gps]` PASS (MAX-M10S, SPG 5.10); PPS waits for antenna |
+| Main battery (BAT, J4) voltage | `bsp_battery_voltage_mv()` (GPIO20, ×3) | `[battery]` 2 s min/avg/max | ✅ reads; battery fitted? (to confirm) |
+| RTC coin cell (BAT1, VDD_BAT) | `CONFIG_ESP_VBAT_INIT_AUTO` | `[rtc_battery]` power-off retention check | marker set; power-off check to do |
 | Audio / CAN / RS485 | ☐ (not needed for ADSB_Test) | | |
 
 Details: [docs/bringup-log.md](docs/bringup-log.md).
@@ -121,6 +123,31 @@ exFAT. So they won't mount until reformatted as **FAT32**. Either:
   FAT32 above 32 GB), or
 - run the `[sdcard_format]` test, which **erases the card** and formats it
   FAT32 (32 KB clusters).
+
+### Batteries: two different ones
+
+| | Main battery "BAT" | RTC battery "RTC BAT" |
+|---|---|---|
+| Part | J4, 2-pin connector, 1S Li-ion/LiPo | BAT1, CR1220-size coin-cell holder |
+| Charged by | ETA6098 (from USB 5 V) | D1 (B5819WS) from ESP_3V3 (see caution) |
+| Powers | SCT12A0 boost → 5 V: runs the whole board | P4 **VDD_BAT** only (RTC / LP domain backup) |
+| Measured | GPIO20 via 200k/100k (×3) → `[battery]` | no ADC → `[rtc_battery]` checks retention |
+
+`[rtc_battery]` procedure:
+1. Run it: it sets the clock and writes a marker into RTC memory.
+2. Remove **all** power (both USB-C cables and the main battery) for about 30 s.
+3. Power up and run it again. "RTC memory SURVIVED / Clock SURVIVED" means the
+   coin cell kept the RTC domain alive.
+
+It needs `CONFIG_ESP_VBAT_INIT_AUTO=y` (set in `sdkconfig.defaults`).
+
+> **Caution:** D1 feeds ESP_3V3 into the coin-cell node, which trickle-charges
+> the cell. That suits a **rechargeable ML1220**; a primary CR1220 shouldn't be
+> charged. Check which cell is fitted. For an ML1220 also set
+> `CONFIG_ESP_VBAT_USE_RECHARGEABLE_BATTERY=y`.
+
+With **no main battery fitted**, `[battery]` can read anything from ~0 to
+~4.2 V, because the charger keeps probing the empty connector.
 
 ### GPS module wiring (Phase 1)
 

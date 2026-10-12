@@ -24,3 +24,6 @@ Record each test session: date, BSP version, what was tested, result, notes.
 | 2026-10-12 | 0.14.0 | `[gps]` ×2 | PASS | u-blox MAX-M10S: ROM SPG 5.10, PROTVER 34.10, GPS/GLO/GAL/BDS + SBAS/QZSS, 38400 baud. Antenna status DONTKNOW (breakout has no antenna supervision), no fix (no antenna fitted) |
 | 2026-10-12 | 0.14.0 | `[gps_pps]` | PASS (no PPS) | ~360 NMEA sentences in 30 s; 0 PPS pulses (no fix without an antenna) |
 | 2026-10-12 | 0.14.0 | `*` ×2 | PASS | Full suite twice in one boot: 14 tests, 0 failures each time |
+| 2026-10-12 | 0.16.0 | `[battery]` | PASS (info) | BAT read 4167 mV (steady over 2 s) in one run, 648 mV in another: consistent with **no main battery fitted** and the ETA6098 output cycling. To confirm with the owner |
+| 2026-10-12 | 0.16.0 | `[rtc_battery]` | PASS (setup) | `CONFIG_ESP_VBAT_INIT_AUTO` on; VBAT state NORMAL. Marker written and clock set to 2026-01-01. Next: full power-off ~30 s with the coin cell fitted, then run again |
+| 2026-10-12 | 0.16.0 | `*` | PASS | 16 tests, 0 failures |
