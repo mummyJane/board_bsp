@@ -69,14 +69,16 @@ is 75 % overall but 100 % along the display strip.
 
 1. **Board 180.9 × 116 mm**, panel centred with an 8 mm border. Shorter than the
    earlier 188 mm, 19 mm taller.
-2. **Panel cable slots** (front-view mm from the panel's left edge, FPCs at the bottom edge; corrected
-   2026-10-12 from the Midas MDT070005 drawing and the touch-panel drawing):
-   - **LCD 30-pin:** tail at 72.88 ± 0.5 mm (Midas; ~71 mm on the AliExpress panel), about 17 mm wide,
-     44.97 mm long. Slot **56–96 mm** (covers both readings of the drawing), connector J1301 just inside it.
-   - **Touch 6-pin:** tail from 37.5 mm, about 10–14 mm wide, 101 mm long. Slot **32–52 mm**, connector J1302
-     just inside it. Both connectors now sit in the display zone next to the MCU (short MIPI run).
-   - With the panel upright and its FPCs at the bottom, the **digital connectors are on the right** when
-     looking at the screen. Confirm both tail positions on the real panel before ordering PCBs.
+2. **Panel cable slots** (front-view mm from the panel's left edge; revised 2026-10-12):
+   - The tails fold back behind the panel and pass through the PCB **past the wide section with the chip**,
+     as on the Waveshare board (slots and sockets near the middle). Slot centres **30 mm in from the panel's
+     bottom edge** (`SLOT_IN` in `gen_pcb.py`); sockets 7 mm further in, openings facing the slot.
+   - **LCD 30-pin:** Midas MDT070005 tail at 72.88 ± 0.5 mm, ~17 mm wide, 44.97 mm long (first ~19.5 mm wide
+     with the chip). Slot **56–96 mm** wide until measured; socket J1301.
+   - **Touch 6-pin:** tail from 37.5 mm, ~10–14 mm wide, 101 mm long. Slot **32–52 mm**; socket J1302.
+   - The module now sits above the sockets, the LA header runs along the bottom edge.
+   - PROVISIONAL: confirm on the Waveshare board / real panel (tail length to the neck, neck width,
+     chip position) before ordering PCBs.
 3. **Mounting holes move to the board corners** (4 mm in). The Waveshare
    156 × 89 mm pattern would now be under the panel.
 4. **Digital edge:** User USB-C, Dev USB-C, USB-A, RJ45, microSD **and the POWER

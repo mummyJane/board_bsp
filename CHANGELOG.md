@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Changed
+- ADSB_Test PCB: panel-cable slots moved in to 30 mm from the panel's bottom edge (tails fold behind the panel and come through past the chip section, as on the Waveshare board); J1301/J1302 7 mm inside them facing the slots; module moved up above the sockets, LA header along the bottom edge, JTAG/Dev Kit/RP2040 headers re-placed. Provisional until the tails are measured.
+
 ### Fixed
 - ADSB_Test PCB: panel-cable slots moved to the panel drawings' positions (they were taken from the Waveshare board drawing and were about 45 mm off). LCD slot 56–96 mm and touch slot 32–52 mm from the panel's left edge (front view); J1301/J1302 moved next to them, LA header moved up to clear J1301. Midas MDT070005 datasheet added to the datasheet list.
 

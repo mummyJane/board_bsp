@@ -63,28 +63,34 @@ def edge_positions():
 EDGE = edge_positions()
 # interior big parts: ref -> (bx, by, mouth) ; mouth = direction the connector opening faces (bottom view)
 BIG = {
-    "U601": (119.7, 60.0, None),            # OSPTEK ESP32-P4C5 module (MCU zone)
+    "U601": (124.0, 44.0, None),            # OSPTEK ESP32-P4C5 module, above the panel-cable sockets
     "U1401": (158.0, 30.0, None),           # m1421, under can SH1401
     "SH1401": (158.0, 30.0, None),
     "U1201": (160.0, 94.0, None),           # MAX-M10S, under can SH1201
     "SH1201": (160.0, 94.0, None),
-    "J1601": (86.5, 65.0, None),            # LA5016 2x20 header, vertical in the LA column (clear of J1301)
-    "J1301": (W - (W - PW) / 2 - 76.0, 101.0, "+y"),   # LCD 30-pin FPC, opening towards its slot
-    "J1302": (W - (W - PW) / 2 - 42.0, 101.0, "+y"),   # touch 6-pin FPC, opening towards its slot
+    "J1601": (95.0, 104.0, "rot90"),        # LA5016 2x20 header, horizontal along the bottom edge
+    "J1301": (W - (W - PW) / 2 - 76.0, None, "+y"),    # LCD 30-pin FPC, opening towards its slot (y set below)
+    "J1302": (W - (W - PW) / 2 - 42.0, None, "+y"),    # touch 6-pin FPC, opening towards its slot (y set below)
     "J301": (64.0, 9.0, None),              # battery connector (outside the battery footprint)
     "SW601": (110.0, 12.0, None),           # BOOT  (top band, clear of the battery)
     "SW602": (122.0, 12.0, None),           # RESET
     "SW1801": (40.0, 82.0, None),           # RP2040 BOOTSEL (Dev zone)
-    "J1401": (140.0, 50.0, None),           # m1421 JTAG
-    "J1402": (138.0, 22.0, None),           # ADSBee Dev Kit header (1x6, vertical, beside the m1421 can)
-    "J1801": (72.0, 84.0, None),            # RP2040 GPIO header (DNP)
+    "J1401": (150.0, 54.0, None),           # m1421 JTAG (below the m1421 can)
+    "J1402": (140.0, 14.0, None),           # ADSBee Dev Kit header (1x6, vertical, above the module)
+    "J1801": (70.0, 60.0, None),            # RP2040 GPIO header (DNP)
 }
 # Panel-cable slots, given in FRONT-VIEW mm from the panel's left edge (as the panel drawings are dimensioned):
 #   LCD 30-pin tail: Midas MDT070005 drawing 72.88 +/-0.5 mm (tail ~17 mm wide), AliExpress panel ~71 mm to the tail
 #   centre -> slot 56..96 mm covers both readings. Touch tail: 37.5 mm to its left edge, ~10-14 mm wide -> 32..52 mm.
+# The tails fold back behind the panel and come through the PCB past the wide part with the chip (as on the
+# Waveshare board, where both slots/sockets are near the middle). SLOT_IN = distance of the slot centre in from
+# the panel's bottom edge; the LCD tail is ~45 mm long with ~19.5 mm of wide (chip) section first.
 SLOTS_FRONT = [("LCD FPC slot", 56.0, 96.0), ("Touch FPC slot", 32.0, 52.0)]
+SLOT_IN, SLOT_W, SOCKET_GAP = 30.0, 2.5, 7.0
+SLOT_Y = (H + PH) / 2 - SLOT_IN
 SLOTS = [(n, W - (W - PW) / 2 - (a + b) / 2, b - a) for n, a, b in SLOTS_FRONT]   # (name, bottom-view x, length)
-SLOT_Y, SLOT_W = (H + PH) / 2 + 2.5, 2.5      # just outside the panel's bottom edge
+for _r in ("J1301", "J1302"):          # sockets just inside their slots, openings facing the slot
+    BIG[_r] = (BIG[_r][0], SLOT_Y - SOCKET_GAP, BIG[_r][2])
 
 
 # ---------------------------------------------------------------- netlist
@@ -264,7 +270,9 @@ def main():
             placed.append(ref)
         elif ref in BIG:
             bx, by, mouth = BIG[ref]
-            if mouth:
+            if mouth == "rot90":
+                fp.SetOrientationDegrees(fp.GetOrientationDegrees() + 90)
+            elif mouth:
                 turn_to(fp, {"+y": (0, 1), "-y": (0, -1), "+x": (-1, 0), "-x": (1, 0)}[mouth])
             fp.SetPosition(top(bx, by))
             b = body_box(fp)                                             # centre the body on the target
