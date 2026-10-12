@@ -18,14 +18,14 @@ KICAD = ROOT / "boards/adsb-test/hardware/kicad"
 libs = SymbolLibs({"ADSB_Test": KICAD / "lib/ADSB_Test.kicad_sym"})
 root_uuid, sheets = sheet_uuids(KICAD / "ADSB_Test.kicad_sch")
 
-R0402 = "Resistor_SMD:R_0402_1005Metric"
-R0603 = "Resistor_SMD:R_0603_1608Metric"
-C0402 = "Capacitor_SMD:C_0402_1005Metric"
-C0603 = "Capacitor_SMD:C_0603_1608Metric"
-C0805 = "Capacitor_SMD:C_0805_2012Metric"
-C1206 = "Capacitor_SMD:C_1206_3216Metric"
-RSHUNT = "Resistor_SMD:R_1206_3216Metric"   # 4-terminal Kelvin layout done on the PCB
-TP = "TestPoint:TestPoint_Pad_D1.0mm"
+R0402 = "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"   # hand-solder size everywhere
+R0603 = "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+C0402 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+C0603 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+C0805 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+C1206 = "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder"
+RSHUNT = "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"   # 4-terminal Kelvin layout done on the PCB
+TP = "TestPoint:TestPoint_Pad_D1.5mm"
 
 
 def new_sheet(file):
@@ -217,7 +217,7 @@ res(s, "R303", "5.23k 1%", (101.6, 165.1), "CHG_REGN", "CHG_TS")
 res(s, "R304", "30.1k 1%", (114.3, 165.1), "CHG_TS", "GND")
 res(s, "R305", "100R", (139.7, 165.1), "CHG_BATP", "BAT_PACK")
 res(s, "R306", "2.2k", (165.1, 165.1), "CHG_REGN", "CHG_LED_A")
-led = s.add("Device:LED", "D301", "CHG (amber)", (182.88, 165.1), footprint="LED_SMD:LED_0603_1608Metric")
+led = s.add("Device:LED", "D301", "CHG (amber)", (182.88, 165.1), footprint="LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
 s.connect(led, "2", "CHG_LED_A")
 s.connect(led, "1", "CHG_STAT")
 testpoint(s, "TP301", "CHG_QON", (88.9, 190.5))
@@ -228,6 +228,31 @@ bat = s.add("Connector_Generic:Conn_01x03", "J301", "2S Li-ion pack (BAT+, GND, 
 s.connect(bat, "1", "BAT_PACK")
 s.connect(bat, "2", "GND")
 s.connect(bat, "3", "CHG_TS")
+
+# Always-on backup supply (VBACKUP, 3.0 V) for the P4 VDD_BAT (RTC) and the GPS V_BCKP.
+# Fed from VSYS, which is up whenever a battery or USB is present, regardless of the
+# POWER switch. Optional CR1220 holder (not fitted) keeps it alive with the battery removed.
+s.locals |= {"VBACKUP_LDO", "BKP_CELL"}
+ldo = s.add("Regulator_Linear:MCP1703Ax-300xxTT", "U302", "MCP1703 3.0V (2 uA Iq)", (152.4, 226.06))
+s.connect(ldo, "3", "VSYS")
+s.connect(ldo, "2", "VBACKUP_LDO")
+s.connect(ldo, "1", "GND")
+cap(s, "C319", "1uF 25V", (127.0, 226.06), "VSYS", "GND", C0805)
+cap(s, "C320", "1uF", (177.8, 241.3), "VBACKUP_LDO", "GND")
+dl = s.add("Device:D_Schottky", "D302", "BAT43W", (190.5, 226.06), footprint="Diode_SMD:D_SOD-123")
+s.connect(dl, "2", "VBACKUP_LDO")
+s.connect(dl, "1", "VBACKUP")
+cell = s.add("Device:Battery_Cell", "BT301", "CR1220 (optional)", (215.9, 243.84), dnp=True,
+             footprint="Battery:Battery_Panasonic_CR1220-VCN_Vertical_CircularHoles",
+             props={"Fit": "DNP by default; fit to keep RTC/GPS alive with the main battery removed"})
+s.connect(cell, "1", "BKP_CELL")
+s.connect(cell, "2", "GND")
+dc = s.add("Device:D_Schottky", "D303", "BAT43W", (228.6, 226.06), footprint="Diode_SMD:D_SOD-123", dnp=True)
+s.connect(dc, "2", "BKP_CELL")
+s.connect(dc, "1", "VBACKUP")
+cap(s, "C321", "1uF", (254.0, 241.3), "VBACKUP", "GND")
+testpoint(s, "TP305", "VBACKUP", (266.7, 226.06))
+s.pwr_flag("VBACKUP", (279.4, 226.06))
 
 shunt(s, "RS301", "10m", (254.0, 101.6), "VBAT_CHG", "BAT_PACK", "PM1_CH2_P", "PM1_CH2_N")
 shunt(s, "RS302", "10m", (304.8, 101.6), "VSYS_CHG", "VSYS", "PM1_CH3_P", "PM1_CH3_N")
@@ -244,7 +269,7 @@ s, notes = new_sheet("power_rails.kicad_sch")
 def buck(s, n, name, out_net, rfbt, at):
     """TPS62933 from VSYS: RT open = 500 kHz, L 4.7 uH, SS 33 nF, BST 100 nF, EN UVLO ~5.5 V."""
     x, y = at
-    loc = {f"{name}_SW", f"{name}_BST", f"{name}_FB", f"{name}_SS", f"{name}_EN"}
+    loc = {f"{name}_SW", f"{name}_BST", f"{name}_FB", f"{name}_SS", "PWR_EN"}
     s.locals |= loc
     u = s.add("Regulator_Switching:TPS62933", f"U4{n}1", "TPS62933", (x, y),
               footprint="Package_TO_SOT_SMD:SOT-583-8", props={"Out": out_net})
@@ -254,13 +279,14 @@ def buck(s, n, name, out_net, rfbt, at):
     s.connect(u, "6", f"{name}_BST")
     s.connect(u, "8", f"{name}_FB")
     s.connect(u, "7", f"{name}_SS")
-    s.connect(u, "2", f"{name}_EN")
+    s.connect(u, "2", "PWR_EN")              # shared enable: power switch + UVLO divider
     s.nc(u, "1")                                   # RT open -> 500 kHz
     cap(s, f"C4{n}1", "10uF 25V", (x - 38.1, y - 25.4), "VSYS", "GND", C0805)
     cap(s, f"C4{n}2", "10uF 25V", (x - 25.4, y - 25.4), "VSYS", "GND", C0805)
     cap(s, f"C4{n}3", "100nF", (x - 12.7, y - 25.4), "VSYS", "GND")
-    res(s, f"R4{n}1", "100k", (x - 38.1, y + 25.4), "VSYS", f"{name}_EN")
-    res(s, f"R4{n}2", "28k", (x - 25.4, y + 25.4), f"{name}_EN", "GND")
+    if n == 1:   # one UVLO divider (~5.5 V on VSYS) for both bucks
+        res(s, "R411", "100k", (x - 38.1, y + 25.4), "VSYS", "PWR_EN")
+        res(s, "R412", "28k", (x - 25.4, y + 25.4), "PWR_EN", "GND")
     cap(s, f"C4{n}4", "33nF", (x - 12.7, y + 25.4), f"{name}_SS", "GND")
     cap(s, f"C4{n}5", "100nF", (x + 25.4, y - 25.4), f"{name}_BST", f"{name}_SW")
     L = s.add("Device:L", f"L4{n}1", "4.7uH", (x + 38.1, y - 25.4), footprint="Inductor_SMD:L_Bourns_SRP5030T",
@@ -276,6 +302,17 @@ def buck(s, n, name, out_net, rfbt, at):
 
 buck(s, 1, "B5V", "5V", "52.3k 1%", (63.5, 63.5))
 buck(s, 2, "B3V3", "3V3_BUCK", "31.6k 1%", (63.5, 157.48))
+
+# POWER switch: OFF pulls the shared buck enable low, so 5 V and 3V3 (and everything after them)
+# are off. VSYS stays up, so the charger still charges from USB and the always-on backup LDO
+# (Charger sheet, VBACKUP for the P4 RTC + GPS) keeps running.
+sw = s.add("Switch:SW_SPDT", "SW401", "POWER (slide)", (38.1, 228.6),
+           footprint="Button_Switch_THT:SW_Slide_SPDT_Angled_CK_OS102011MA1Q",
+           props={"Positions": "B-C = OFF (enable to GND), B-A = ON"})
+s.connect(sw, "2", "PWR_EN")
+s.connect(sw, "3", "GND")
+s.nc(sw, "1")
+s.text("POWER: SW401 OFF = PWR_EN low = both bucks off.\nVSYS, charger and VBACKUP stay alive.", (25.4, 241.3))
 
 
 def switch(s, ref, at, vin, vout, en):

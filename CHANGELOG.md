@@ -8,6 +8,21 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-10-12
+
+### Added
+- ADSB_Test **POWER slide switch** (SW401, through-hole, case edge): OFF disables both bucks via a
+  shared `PWR_EN`; the charger keeps charging from USB while off.
+- **Always-on VBACKUP** (3.0 V, MCP1703 ~2 µA from VSYS) for the P4 VDD_BAT (RTC) and GPS V_BCKP, with
+  an optional diode-OR'd CR1220 holder (not fitted).
+- `docs/pcb-manufacturing.md`: PCBWay capabilities, start design rules, hand-solder policy and the
+  list of fine-pitch parts for PCBWay assembly. Open questions Q23 (answered), Q24 (assembly), Q25.
+
+### Changed
+- All generated passives and LEDs moved to **0805 HandSolder** footprints (1206 HandSolder for bulk
+  caps and shunts), test points to 1.5 mm pads. Only the ESD7351 (SOD-523 only) stays small.
+- The two buck converters share one enable/UVLO divider.
+
 ## [0.17.0] - 2026-10-12
 
 ### Added
@@ -327,7 +342,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.17.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/mummyJane/board_bsp/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/mummyJane/board_bsp/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/mummyJane/board_bsp/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/mummyJane/board_bsp/compare/v0.14.0...v0.15.0

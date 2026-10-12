@@ -27,8 +27,8 @@ s.locals |= {"M1421_TMSC", "M1421_TCKC", "M1421_TDO", "M1421_TDI", "M1421_RF_978
              "M1421_LD11", "M1421_LD09", "M1421_LD08", "M1421_LRST", "M1421_CSMI", "M1421_CSMO",
              "M1421_CSCK", "M1421_LRCS", "M1421_LBSY"}
 
-R0402 = "Resistor_SMD:R_0402_1005Metric"
-C0402 = "Capacitor_SMD:C_0402_1005Metric"
+R0402 = "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"   # hand-solder size everywhere
+C0402 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 SC70_5 = "Package_TO_SOT_SMD:SOT-353_SC-70-5"
 SC70_6 = "Package_TO_SOT_SMD:SOT-363_SC-70-6"
 VCC = "3V3_M1421"
@@ -63,7 +63,7 @@ s.two_pin("Device:C", "C1402", "100nF", (78.74, 63.5), VCC, "GND", C0402)
 for i, (pin, net) in enumerate(tp_nets.items()):
     tp = s.add("Connector:TestPoint", f"TP{1401 + i}", net.replace("M1421_", ""),
                (25.4 + (i % 6) * 15.24, 236.22 + (i // 6) * 30.48),
-               footprint="TestPoint:TestPoint_Pad_D1.0mm")
+               footprint="TestPoint:TestPoint_Pad_D1.5mm")
     s.connect(tp, "1", net, kind="label")
 
 # ------------------------------------------------------------------ JTAG (Segger J-Link, as the carrier)
@@ -126,7 +126,7 @@ for i, (net, col, rv) in enumerate((("M1421_SD26", "RED 1090", "287R"), ("M1421_
     y = 200.66
     x0 = 152.4 + i * 50.8
     s.two_pin("Device:R", f"R{1406 + i}", rv, (x0, y), net, f"LED_{net[6:]}_A", R0402)
-    d = s.add("Device:LED", f"D{1401 + i}", col, (x0 + 17.78, y), footprint="LED_SMD:LED_0603_1608Metric")
+    d = s.add("Device:LED", f"D{1401 + i}", col, (x0 + 17.78, y), footprint="LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
     s.connect(d, "2", f"LED_{net[6:]}_A", kind="label")
     s.connect(d, "1", "GND")
 

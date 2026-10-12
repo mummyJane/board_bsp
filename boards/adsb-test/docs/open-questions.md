@@ -7,7 +7,7 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
-| Q23 | RTC backup cell on the P4 VDD_BAT (like the reference board)? Primary CR1220 needs diode-OR with no charge path; rechargeable ML1220 can be charged (P4 VBAT support, `CONFIG_ESP_VBAT_USE_RECHARGEABLE_BATTERY`). The GPS has its own V_BCKP backup | Fit a holder; ML1220 rechargeable; decide after the reference-board `[rtc_battery]` result |
+| Q24 | Assembly: full PCBWay PCBA, or partial PCBA (fine-pitch parts, see docs/pcb-manufacturing.md) + hand assembly of the rest? | Partial PCBA for the fine-pitch ICs and modules; hand-fit passives (0805 HandSolder), connectors and through-hole parts |
 | Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
 
 ## Answered
@@ -36,4 +36,6 @@ the CHANGELOG.
 | Q19 | Panel stand-off / outline | **As short as possible.** No bare-panel datasheet is public. Use Waveshare's dimension drawing + STEP: lens 164.28 × 99.17 mm, panel 5.7 mm deep, ≈ 1.4 mm tape to the PCB, all parts on the bottom side, M2.5 holes at 156 × 89 mm |
 | Q20 | Margins and case | **≈ 12 mm margins on both short edges** (board ≈ 188 × 97 mm): digital connectors on one, RF SMAs on the other, C5 antenna at the digital edge away from RJ45/USB-A. **3D-printed plastic** case, ≈ 2 mm walls on the short edges, **thicker (≈ 3 mm) on the long edges** for strength. 2 × 18650 behind the board |
 | Q22 | m1421 fit for Rev A? | **Both supported**: footprint U1401 (solder later) + Dev Kit header J1402 (default for first boards). Pogo pins not recommended on the board (RF/ground; would need a separate jig) |
+| Q23 | RTC / GPS backup when off | **VBACKUP 3.0 V always-on LDO from VSYS** (MCP1703, ~2 µA) feeds the P4 VDD_BAT and GPS V_BCKP. Optional CR1220 holder (DNP), diode-OR'd, for battery-removed backup |
+| Q25 | On/off switch? | **Yes**: slide switch SW401 disables both bucks. The charger keeps charging from USB while off |
 | Q11 | LA5016 header | **2×20 keyed header (40-way cable)**. The key-side row is CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is for the LA5032 (future) |

@@ -25,6 +25,9 @@ is derived from it.
   (key-side row: CH0-7, GND, CH8-15, GND, PWM1, PWM2; other row reserved for LA5032).
 - Vendor documents go in `boards/<board>/hardware/vendor/` (git-ignored, public repo).
 - Third-party KiCad parts go in the board's `hardware/kicad/lib/` with source + licence in its README.
+- Owner hand-solders: passives/LEDs **0805 HandSolder** footprints minimum (1206 HandSolder for
+  big caps/shunts), 1.5 mm test pads, through-hole where it helps. Fine-pitch ICs/modules go to
+  PCBWay assembly. Fab is **PCBWay**; rules in `docs/pcb-manufacturing.md`.
 - Every part used on a board gets an entry in `docs/datasheets.json` (official URL; `link` if no
   direct PDF, `manual` if the site blocks scripts). Run `python tools/fetch_datasheets.py` to
   download into `datasheets/` (git-ignored) and regenerate `docs/datasheets.md`.
