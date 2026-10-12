@@ -26,7 +26,7 @@ uses a **C6**, not a C5. Those items use add-on boards.
 | 1.8 | USB-05 | As 1.7 | AIS decode from one SDR: CPU % on the P4 |
 | 1.9 | GPS-01/02 | MAX-M10S breakout on a UART + PPS GPIO | `[gps]`: UBX MON-VER/MON-RF/NAV-PVT answered (wiring + module OK). `[gps_pps]`: NMEA parsed, PPS interrupt jitter measured |
 | 1.10 | PWR-03 | PAC1954 (or INA3221) breakout on I2C | Channels read, energy accumulator works, values match a multimeter |
-| 1.11 | NET-01 | LAN8720A RMII breakout (REFCLKO = 50 MHz into GPIO50) | Link up, DHCP, iperf |
+| 1.11 | NET-01 | LAN8720A RMII breakout, **reworked to our clocking**: 25 MHz crystal, nINTSEL pulled low so REFCLKO (50 MHz) drives GPIO50 (most breakouts use a 50 MHz oscillator instead) | Link up, DHCP, iperf. REFCLKO mode is outside the RMII timing spec (LAN8720A datasheet 3.7.4): if it is unreliable, switch the board to a 50 MHz oscillator |
 | 1.12 | USB-01/02, PWR-01 | STUSB4500 + BQ25798 eval boards, 2S pack | PD contract at 15 V, charge/discharge, input-current limit set from the PDO, I2C status read |
 | 1.13 | PWR-02 | Reference board + all eval boards, USB power meter on each | Measured power budget replaces the estimate in architecture.md |
 | 1.14 | KEEP-01 | Reference board microSD | Write/read throughput, logging while decoding |

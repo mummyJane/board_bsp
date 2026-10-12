@@ -135,6 +135,8 @@ R(s, "R804", "10k", (63.5, 190.5), "3V3_ETH", "ETH_RXER")      # PHYAD0 = 1
 R(s, "R805", "1.5k", (76.2, 190.5), "3V3_ETH", "ETH_MDIO")
 R(s, "R806", "10k", (88.9, 190.5), "3V3_ETH", "ETH_PHY_RST")
 R(s, "R807", "33R", (241.3, 177.8), "ETH_REFCLKO", "ETH_REF_CLK")
+for i, n in enumerate(("ETH_RXD0", "ETH_RXD1", "ETH_CRS_DV")):   # MODE[2:0] = 111: the P4 pins load the straps (DS00002165 3.7)
+    R(s, f"R{814 + i}", "10k", (101.6 + i * 12.7, 190.5), "3V3_ETH", n)
 for i, n in enumerate(("ETH_TXP", "ETH_TXN", "ETH_RXP", "ETH_RXN")):
     R(s, f"R{808 + i}", "49.9R 1%", (241.3 + i * 12.7, 63.5), "ETH_AVDD", n)
 C(s, "C810", "22nF", (304.8, 63.5), "ETH_AVDD")              # transformer centre taps
@@ -147,8 +149,8 @@ s.connect(j, "6", "ETH_RXN")
 s.connect(j, ["4", "5"], "ETH_AVDD")
 s.connect(j, ["8", "SH"], "GND")
 s.nc(j, "7")
-R(s, "R812", "470R", (279.4, 177.8), "ETH_LED1", "ETH_LED1_K")   # LED1 = link/activity (active high with strap 0)
-R(s, "R813", "470R", (292.1, 177.8), "ETH_LED2", "ETH_LED2_K")
+R(s, "R812", "270R", (279.4, 177.8), "ETH_LED1", "ETH_LED1_K")   # LED1 = link/activity (active high with strap 0)
+R(s, "R813", "270R", (292.1, 177.8), "ETH_LED2", "ETH_LED2_K")
 s.connect(j, "12", "ETH_LED1_K")
 s.connect(j, ["11", "10"], "GND")
 s.connect(j, "9", "ETH_LED2_K")
@@ -158,7 +160,9 @@ TP(s, "TP801", "ETH_REF_CLK", (266.7, 203.2))
 TP(s, "TP802", "ETH_1V2", (279.4, 203.2))
 s.text("ETHERNET: LAN8720A 10/100 RMII PHY (replaces the IP101GRI: KiCad symbol, ESP-IDF lan87xx driver, cheap\n"
        "breakouts for Phase 1). 25 MHz crystal; REFCLKO (pin 14) feeds the P4 REF_CLK in (GPIO50) through 33R.\n"
-       "Straps: REGOFF=0 (int. 1V2 on), nINTSEL=0 (REFCLKO), PHYAD0=1 (address 1), MODE=111 (internal pull-ups).\n"
+       "Straps: REGOFF=0 (int. 1V2 on), nINTSEL=0 (REFCLKO, 10k pull-down), PHYAD0=1 (address 1), MODE=111 (10k\n"
+       "pull-ups: the P4 pins load the straps). LEDs active high via 270R. DS00002165: REFCLKO-mode timing is outside\n"
+       "the RMII spec - verify with the P4 in Phase 1 (fallback: 50 MHz oscillator into XTAL1, nINTSEL=1).\n"
        "3V3_ETH is switched (EXP_EN_ETH): firmware keeps the RMII/MDIO/reset pins low or hi-Z while it is off.\n"
        "TXD1 = GPIO35 = P4 BOOT strap: the PHY TXD1 input has no pull, the 4.7k pull-up on the MCU sheet wins.",
        (25.4, 233.68))
@@ -423,9 +427,9 @@ done(s, "display_touch.kicad_sch", "ADSB_Test - Display Touch")
 # =================================================================== Storage Misc (page 15)
 s = new("storage_misc.kicad_sch")
 s.locals |= {"SD_VDD", "EXP_RESET", "SD_DET"}
-j = s.add("Connector:Micro_SD_Card_Det2", "J1501", "microSD (push-push, detect)", (101.6, 101.6),
+j = s.add("Connector:Micro_SD_Card_Det2", "J1501", "microSD (push-pull, detect)", (101.6, 101.6),
           footprint="Connector_Card:microSD_HC_Molex_104031-0811",
-          props={"Check": "Detect switch polarity (closed = card in?) against the Molex 104031 drawing"})
+          props={"Detect": "Normally-open switch (Molex 104031 spec): closes with a card -> SD_DET low"})
 for p, n in {"1": "SD_D2", "2": "SD_D3", "3": "SD_CMD", "4": "SD_VDD", "5": "SD_CLK", "7": "SD_D0", "8": "SD_D1",
              "9": "SD_DET"}.items():
     s.connect(j, p, n)

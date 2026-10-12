@@ -123,7 +123,7 @@
 #define BSP_EXP_EN_GPS          2
 #define BSP_EXP_EN_M1421        3
 #define BSP_EXP_USBA_EN         4
-#define BSP_EXP_SD_DET          5       /* input: microSD card detect (check polarity at bring-up) */
+#define BSP_EXP_SD_DET          5       /* input: microSD card detect, low = card in (normally-open switch) */
 #define BSP_EXP_GPS_RST         6
 #define BSP_EXP_M1421_RESET     7       /* open-drain to ~SRST */
 

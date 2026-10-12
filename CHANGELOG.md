@@ -8,6 +8,15 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-10-12
+
+### Fixed
+- ADSB_Test Ethernet: 10k pull-ups on RXD0/RXD1/CRS_DV so the LAN8720A MODE straps read 111 even with the P4 pins attached (datasheet DS00002165 §3.7); LED resistors 270R as the datasheet figures. REFCLKO-mode timing caveat noted on the sheet and in test-plan step 1.11.
+- ADSB_Test microSD: Molex 104031 is push-pull with a normally-open detect switch, so SD_DET is low with a card in (sheet and `board_pins.h`).
+
+### Changed
+- Hand-saved datasheets registered: LAN8720A, 93LC56B, MCP1703, C&K OS series, Molex 104031 and 67643. Checked: 93LC56B pin-out (B = fixed x16, as FTDI needs), MCP1703 SOT-23A pins (1 GND, 2 VOUT, 3 VIN), C&K OS102011MA1Q common = pin 2.
+
 ## [0.22.0] - 2026-10-12
 
 ### Added
@@ -410,7 +419,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.22.1...HEAD
+[0.22.1]: https://github.com/mummyJane/board_bsp/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/mummyJane/board_bsp/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/mummyJane/board_bsp/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/mummyJane/board_bsp/compare/v0.19.0...v0.20.0

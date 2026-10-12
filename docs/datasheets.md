@@ -69,7 +69,7 @@ get them. "Local" shows whether the last run saved a copy.
 | DMP3013SFV | [DMP3013SFV -30 V P-MOSFET (USB-PD sink power path)](https://www.diodes.com/assets/Datasheets/DMP3013SFV.pdf) | no longer used | yes (2026-10-12) |
 | AP2112K-3.3 | [AP2112 600 mA LDO (ADSBee carrier)](https://www.diodes.com/assets/Datasheets/AP2112.pdf) | ADSB_Test | yes (2026-10-10) |
 | FDS9435A | [onsemi FDS9435A P-channel MOSFET, SO-8 (input reverse/ideal switch)](https://www.onsemi.com/pdf/datasheet/fds9435a-d.pdf) | ADSB_Test | yes (2026-10-12) |
-| MCP1703 | [Microchip MCP1703 250 mA LDO, 2 uA Iq (VBACKUP)](https://www.microchip.com/en-us/product/MCP1703) | ADSB_Test | link only (open in a browser) |
+| MCP1703 | [Microchip MCP1703 250 mA LDO, 2 uA Iq (VBACKUP)](https://www.microchip.com/en-us/product/MCP1703) | ADSB_Test | yes (manual) |
 
 ## interface
 
@@ -84,7 +84,7 @@ get them. "Local" shows whether the last run saved a copy.
 | RP2040 | [RP2040 datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | ADSB_Test | yes (2026-10-10) |
 | RP2040 | [Hardware design with RP2040](https://datasheets.raspberrypi.com/rp2040/hardware-design-with-rp2040.pdf) | ADSB_Test | yes (2026-10-10) |
 | DS3231M | [Analog Devices (Maxim) DS3231M +/-5ppm I2C RTC](https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231M.pdf) | ADSB_Test | yes (manual) |
-| LAN8720A | [Microchip LAN8720A/LAN8720Ai RMII 10/100 Ethernet PHY](https://www.microchip.com/en-us/product/LAN8720A) | ADSB_Test | link only (open in a browser) |
+| LAN8720A | [Microchip LAN8720A/LAN8720Ai RMII 10/100 Ethernet PHY](https://www.microchip.com/en-us/product/LAN8720A) | ADSB_Test | yes (manual) |
 | MMBT3904 | [onsemi MMBT3904 NPN (Dev auto-reset)](https://www.onsemi.com/pdf/datasheet/mmbt3904lt1-d.pdf) | ADSB_Test | yes (2026-10-12) |
 | WS2812B | [Worldsemi WS2812B addressable LED (programmer status)](https://www.world-semi.com/) | ADSB_Test | link only |
 | 1N4148W | [Diodes 1N4148W small-signal diode, SOD-123](https://www.diodes.com/part/view/1N4148W) | ADSB_Test | link only |
@@ -94,7 +94,7 @@ get them. "Local" shows whether the last run saved a copy.
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
 | GD25Q256EYIGR | [GD25Q256E 32 MB QSPI flash](https://www.gigadevice.com/product/flash/spi-nor-flash/gd25q256e) | Waveshare 7B | link only |
-| 93LC56B | [Microchip 93LC56B Microwire EEPROM (FT2232H config)](https://www.microchip.com/en-us/product/93LC56B) | ADSB_Test | link only (open in a browser) |
+| 93LC56B | [Microchip 93LC56B Microwire EEPROM (FT2232H config)](https://www.microchip.com/en-us/product/93LC56B) | ADSB_Test | yes (manual) |
 | W25Q16JVSS | [Winbond W25Q16JV 16 Mbit QSPI flash (RP2040)](https://www.winbond.com/hq/product/code-storage-flash-memory/serial-nor-flash/?__locale=en&partNo=W25Q16JV) | ADSB_Test | link only |
 
 ## logic
@@ -153,9 +153,9 @@ get them. "Local" shows whether the last run saved a copy.
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
 | HR911105A | [Hanrun HR911105A RJ45 MagJack (magnetics + LEDs)](https://www.hanrun.com/) | ADSB_Test | link only |
-| Molex 104031-0811 | [Molex 104031-0811 microSD push-push with detect](https://www.molex.com/en-us/products/part-detail/1040310811) | ADSB_Test | link only (open in a browser) |
+| Molex 104031-0811 | [Molex 104031-0811 microSD push-push with detect](https://www.molex.com/en-us/products/part-detail/1040310811) | ADSB_Test | yes (manual) |
 | Hirose FH12 | [Hirose FH12 0.5 mm FPC connectors (LCD 30p, touch 6p)](https://www.hirose.com/en/product/series/FH12) | ADSB_Test | link only |
 | GCT USB4105 | [GCT USB4105 USB-C 2.0 16-pin receptacle (User, Dev)](https://gct.co/connector/usb4105) | ADSB_Test | link only |
-| Molex 67643 | [Molex 67643 USB-A receptacle, through-hole (SDR host)](https://www.molex.com/en-us/products/part-detail/676432910) | ADSB_Test | link only (open in a browser) |
+| Molex 67643 | [Molex 67643 USB-A receptacle, through-hole (SDR host)](https://www.molex.com/en-us/products/part-detail/676432910) | ADSB_Test | yes (manual) |
 | SMA-J-P-H-ST-EM1 | [Samtec SMA-J-P-H-ST-EM1 edge-mount SMA (ADS-B, GNSS)](https://www.samtec.com/products/sma-j-p-h-st-em1) | ADSB_Test | link only |
-| OS102011MA1Q | [C&K OS series slide switch (POWER)](https://www.ckswitches.com/media/1428/os.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
+| OS102011MA1Q | [C&K OS series slide switch (POWER)](https://www.ckswitches.com/media/1428/os.pdf) | ADSB_Test | yes (manual) |
