@@ -119,6 +119,50 @@ GPIO28), and Dev hub port 2 is spare. Field updates still go over SDIO
   P4's GPIO2–5 (an alternative JTAG pad set) are free for GPS/PM. **Never burn
   `EFUSE_JTAG_SEL_ENABLE`** on this board.
 
+## P4 + C5 module option (WT01P4C5-S1) _(proposed 2026-10-12, Q26)_
+
+Hand-soldering the bare ESP32-P4 (QFN-104, 0.35 mm pitch, big exposed pad) is the
+hardest job on Rev 1. A module with the P4 **and** the Wi-Fi chip on it removes
+that job, the flash, the P4 core supplies and the separate C5-WROOM.
+
+| | **Wireless-Tag WT01P4C5-S1** (recommended) | Waveshare ESP32-P4-Module | Bare P4 + C5-WROOM (current plan) |
+|---|---|---|---|
+| Chips | ESP32-P4 + **ESP32-C5** (2.4 + 5 GHz Wi-Fi 6) | ESP32-P4NRW32 + ESP32-C6 (2.4 GHz) | P4NRW32 + C5-WROOM-1-N16R8 |
+| Memory | 16 MB flash, 16 or 32 MB PSRAM (N16R16 / N16R32) | 16 or 32 MB flash, 32 MB PSRAM | 32 MB flash, 32 MB PSRAM |
+| Package | 35 × 35 × 3.7 mm, **92 castellated pads, 1.4 mm pitch** (23 per side) | 25 × 25 mm, 88 castellated pads, 1.0 mm pitch | QFN-104 0.35 mm + LGA module |
+| Wi-Fi antenna | **IPEX (U.FL) only**: needs a small external antenna / pigtail | Castellated ANT pad (PCB antenna on our board) or IPEX | On-module PCB antenna |
+| Supply | **5 V in** (4.8–5.5 V, up to 1.5 A), regulators inside; PWR_CTRL pin (low = off) | 3.3 V | Our 3V3 + P4 core rails |
+| P4 VBAT (RTC) | **Not connected** (Q27) | Yes | Yes |
+| Firmware vs reference board | P4↔C5 SDIO on P4 GPIO14–19 (same as reference), C5 CHIP_PU on P4 **GPIO13**, C5 GPIO0 wake on **GPIO12** | Identical to the reference board (SDIO 14–19, reset 54, IO 6) | As planned |
+| C5/C6 debug pins | C5_EN, U0TXD/RXD, GPIO28 (BOOT), JTAG GPIO2–5 all on pads | C6 UART, BOOT, JTAG on pads | As planned |
+| Hand soldering | **Easy**: 1.4 mm castellated edge, iron on each pad | Fair: 1.0 mm castellated | Hard (P4 needs stencil + hot air) |
+| Docs | 22-page datasheet v1.3 (no schematic yet, no power figures) | Full schematic + land pattern + STEP | Espressif datasheets |
+
+Why WT01P4C5-S1: it keeps the **C5** chosen in Q2 (dual-band) with the same SDIO
+pins as the reference board, and its 1.4 mm castellated edge is the easiest to
+hand-solder. The Waveshare module is the fallback: the same circuit as the
+reference board (no firmware change at all), but 2.4 GHz only and 1.0 mm pitch.
+
+Exposed P4 GPIOs on the WT01P4C5-S1: 0–4, 6–11, 20–54 (**GPIO5 is not brought out**;
+12–19 are used inside for the C5). Effect on our allocation (`board_pins.h`, to
+change once Q26 is confirmed):
+
+| Signal | Now | With the module |
+|--------|-----|-----------------|
+| PM_ALERT | GPIO5 | **GPIO20** (was spare) |
+| C5 reset (CHIP_PU) | GPIO54 | **GPIO13** (inside the module) |
+| C5 wake (C5 GPIO0) | GPIO6 | **GPIO12** (inside the module) |
+| Spares | 12, 13, 20, 36 | **6, 36, 54** |
+
+Everything else (MIPI-DSI, USB HS, USB-Serial-JTAG on 24/25, SD on 39–45 with
+ESP_LDO_VO4, Ethernet RMII, UARTs, GPS, m1421, straps 34–38) is on pads with the
+same GPIO numbers. Board changes: the P4 + C5 sheets become one module sheet; a
+switched, monitored **5V_MCU** rail feeds the module; P4 VBAT/RTC goes to an
+external RTC (Q27); the Wi-Fi antenna is a U.FL pigtail to a small antenna on the
+digital edge (or a stick antenna through the case). The 360 MHz rating suggests
+P4 silicon below v3 (as on the reference board): use the `sdkconfig.rev1` overlay
+until the module's chip revision is read with esptool.
+
 ## ADSBee m1421 integration
 
 Sources:
@@ -475,7 +519,7 @@ Consequences:
 |-------|------|
 | Component side | The panel is bonded to the top side (≈ 1.4 mm tape gap), so **all components go on the bottom side**. See the panel stack-up below |
 | Board zoning | RF zone (m1421 + combiner + SMA, GNSS + bias-T + SMA) along the RF edge. Digital zone (P4, PSRAM/flash, MIPI-DSI, USB, Ethernet) and power zone (bucks, charger) away from it. Continuous ground plane, stitched along the zone boundary |
-| RF cans _(optional)_ | Two-piece shield footprints (frame soldered, lid removable for probing) over: (1) m1421 + SCN-2-11 combiner + ESD; (2) GNSS module + bias-T; (3, optional) the switching regulators, as a noise source. Fit the frames, decide on lids after the first RF tests. Clear the m1421's 2.7 mm height and the footprint's top-copper keep-outs |
+| RF cans _(optional)_ | Two-piece shields (frame soldered, lid snaps on and off for probing), **frames DNP by default**: (1) **SH1401** Laird BMI-S-203-F frame (26.21 mm, 5.08 mm high) + BMI-S-203-C lid over the m1421 + SCN-2-11 combiner + ESD (on the M1421 sheet); (2) GNSS module + bias-T/LNA, size chosen with the GPS sheet (BMI-S-202-F 16.5 mm or BMI-S-209-F 29.4 × 18.5 mm); (3, optional) the switching regulators. Fit the frames, decide on lids after the first RF tests (Wi-Fi, screen, Ethernet noise). Stitch each frame's pad ring to GND; RF traces leave the can on an inner layer. Fit a frame only after the module under it is soldered and checked (the m1421 hand-solder pads need iron access) |
 | RF feeds | 50 Ω CPW from each module to its edge SMA, as short as possible, ground-via fenced. m1421 RF routing copied from the ADSBee 1421 carrier |
 | C5 antenna | **On-module PCB antenna (ESP32-C5-WROOM-1-N16R8)**: Wi-Fi is a backup and the unit normally runs offline (Q18). Place the module's antenna end in a **board margin strip outside the panel outline**, at the board edge, with the datasheet copper keep-out on all layers. Keep it away from the SMA/RF edge and the metal panel frame. The case must be non-metallic over the antenna. Expect reduced range, which is acceptable for a backup link |
 | Noise | MIPI-DSI and the bucks are the main digital noise sources near the 1090/978 and GNSS L1 inputs. Keep the switch-node copper small. The buck frequencies must not have harmonics landing on 978/1090/1575 MHz (check during part selection) |

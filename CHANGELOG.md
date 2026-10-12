@@ -8,6 +8,16 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-10-12
+
+### Added
+- ADSB_Test: optional RF can SH1401 (Laird BMI-S-203-F frame + BMI-S-203-C lid, DNP) over the m1421, combiner and ESD; GNSS can planned with the GPS sheet.
+- ADSB_Test: P4 + C5 module option (Wireless-Tag WT01P4C5-S1, fallback Waveshare ESP32-P4-Module) compared in architecture.md, with the pin moves it needs; open questions Q26 (adopt the module) and Q27 (external RTC, as the module has no P4 VBAT pin).
+- Datasheet entries for WT01P4C5-S1, Waveshare ESP32-P4-Module and the Laird shield.
+
+### Changed
+- pcb-manufacturing.md: castellated-module and RF-can footprint rules.
+
 ## [0.19.0] - 2026-10-12
 
 ### Added
@@ -359,7 +369,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/mummyJane/board_bsp/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/mummyJane/board_bsp/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/mummyJane/board_bsp/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/mummyJane/board_bsp/compare/v0.16.0...v0.17.0

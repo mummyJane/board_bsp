@@ -14,7 +14,7 @@ How it works:
 
 | Sheet | Script | Status |
 |-------|--------|--------|
-| M1421 (page 14) | [gen_m1421.py](gen_m1421.py) | Generated |
+| M1421 (page 14) | [gen_m1421.py](gen_m1421.py) | Generated (incl. optional RF can SH1401) |
 | Power Input, Charger Battery, Power Rails, Power Monitor (pages 2–5) | [gen_power.py](gen_power.py) | Generated |
 
 Whole-project ERC: 16 items, all cross-sheet signals whose drivers (P4, GPIO expander, Dev USB) are on sheets not generated yet. Footprints are checked on every run (`MISSING FOOTPRINTS:` is printed if a name doesn't exist). 154 parts, no duplicate references.

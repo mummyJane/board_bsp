@@ -23,6 +23,8 @@ get them. "Local" shows whether the last run saved a copy.
 | ESP32-C6-MINI-1 | [ESP32-C6-MINI-1 / MINI-1U datasheet](https://documentation.espressif.com/esp32-c6-mini-1_mini-1u_datasheet_en.pdf) | Waveshare 7B | yes (2026-10-10) |
 | ESP-IDF | [ESP-IDF programming guide (ESP32-P4)](https://docs.espressif.com/projects/esp-idf/en/latest/esp32p4/) | Waveshare 7B, ADSB_Test | link only |
 | esp_hosted | [ESP-Hosted-MCU (Wi-Fi co-processor) repository and docs](https://github.com/espressif/esp-hosted-mcu) | Waveshare 7B, ADSB_Test | link only |
+| WT01P4C5-S1 | [Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5 module) datasheet v1.3](https://img03.71360.com/w3/77q677/20260127/9a1f9a9cd53575eaf50a76b38847ef97.pdf?dl=1&dlf=WT01P4C5-S1_datasheet_V1.3.pdf) | ADSB_Test | yes (2026-10-12) |
+| WT01P4C5-S1 | [Wireless-Tag WT01P4C5-S1 product page](http://en.wireless-tag.com/product-item-73.html) | ADSB_Test | link only |
 
 ## waveshare
 
@@ -32,6 +34,8 @@ get them. "Local" shows whether the last run saved a copy.
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare dimension drawing + STEP (ZIP)](https://files.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-7B/ESP32-P4-WIFI6-Touch-LCD-7B-3D.zip) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare product docs](https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B) | Waveshare 7B | link only |
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare example code](https://github.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-7B) | Waveshare 7B | link only |
+| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module schematic (fallback module option)](https://files.waveshare.com/wiki/ESP32-P4-Module/ESP32-P4-Module-datasheet.pdf) | ADSB_Test | yes (2026-10-12) |
+| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module wiki (pinout, land pattern, STEP)](https://www.waveshare.com/wiki/ESP32-P4-Module) | ADSB_Test | link only |
 
 ## display
 
@@ -102,6 +106,7 @@ get them. "Local" shows whether the last run saved a copy.
 | MAX-M10S | [u-blox MAX-M10S integration manual](https://content.u-blox.com/sites/default/files/MAX-M10S_IntegrationManual_UBX-20053088.pdf) | ADSB_Test | yes (2026-10-10) |
 | SCN-2-11+ | [Mini-Circuits SCN-2-11+ power splitter/combiner](https://www.minicircuits.com/pdfs/SCN-2-11+.pdf) | ADSB_Test | yes (2026-10-10) |
 | ESD7351 | [ESD7351 RF ESD diode](https://www.onsemi.com/download/data-sheet/pdf/esd7351-d.pdf) | ADSB_Test | yes (2026-10-10) |
+| Laird BMI-S-203-F / -C | [Laird BMI-S-203-F shield frame (26.21 mm) - DigiKey page with datasheet](https://www.digikey.com/en/products/detail/laird-technologies-emi/BMI-S-203-F/2175890) | ADSB_Test | link only |
 
 ## adsbee
 

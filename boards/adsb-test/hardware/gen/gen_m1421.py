@@ -146,13 +146,22 @@ a = s.add("Connector:Conn_Coaxial", "J1403", "SMA 1090/978", (304.8, 213.36),
 s.connect(a, "1", "RF_ADSB_ANT", kind="label")
 s.connect(a, "2", "GND")
 
+# ------------------------------------------------------------------ optional RF can (two-piece: frame + snap-on lid)
+# Frame BMI-S-203-F (26.21 mm, 5.08 mm high) covers the module + combiner + ESD; lid BMI-S-203-C is DNP
+# until RF tests show Wi-Fi / screen / Ethernet noise. Fit the frame after the module is soldered and checked.
+sh = s.add("Mechanical:Housing_Pad", "SH1401", "RF can frame (DNP)", (279.4, 76.2), dnp=True,
+           footprint="RF_Shielding:Laird_Technologies_BMI-S-203-F_26.21x26.21mm",
+           props={"DNP": "Fit if RF noise", "MPN": "Laird BMI-S-203-F frame + BMI-S-203-C lid"})
+s.connect(sh, "1", "GND")
+
 # ------------------------------------------------------------------ notes
 s.text("FIT OPTIONS: (a) solder U1401 m1421, or (b) leave U1401 off and plug the ADSBee 1421 Dev Kit\n"
        "into J1402 with its JST-GH-to-DuPont harness (Dev Kit uses its own U.FL antenna).\n"
        "SYNC (pad 28) is an INPUT: high at reset = ROM bootloader, high at run time = sleep.\n"
        "M1421_NRST: TCA6408A bit 7 drives it open-drain style (output-low = reset, input = release),\n"
        "U1404 for the Dev-port RP2040, J1401 pin 10 for a J-Link.\n"
-       "RF: copy the ADSBee 1421 carrier CPW layout; keep the footprint keep-outs; filled+capped vias.",
+       "RF: copy the ADSBee 1421 carrier CPW layout; keep the footprint keep-outs; filled+capped vias.\n"
+       "SH1401 RF can frame (optional): stitch its pad ring to GND; RF trace to J1403 leaves on an inner layer.",
        (127.0, 241.3))
 
 if notes is not None:

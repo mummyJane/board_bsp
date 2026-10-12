@@ -7,6 +7,8 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
+| Q26 | Use a **P4 + C5 module** instead of the bare ESP32-P4 chip + ESP32-C5-WROOM? Candidate: **Wireless-Tag WT01P4C5-S1** (see architecture.md "P4 + C5 module option") | **Recommended**: removes the hardest hand-soldering job (P4 QFN-104 at 0.35 mm) and the P4 core supplies. Costs: IPEX-only Wi-Fi antenna (accepted 2026-10-12), no P4 VBAT pin (Q27), 5 V supply, a few pin moves |
+| Q27 | With the module the P4 has no VBAT pin, so the P4 RTC stops when the switch is off. Add a small I2C RTC on VBACKUP (e.g. DS3231M in SO-8: no crystal, hand-solderable), or rely on GPS time after a fix? | Proposed: **DS3231M on VBACKUP** (keeps time with the GPS unplugged or indoors) |
 | Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
 
 ## Answered
