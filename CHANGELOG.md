@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Added
+- ADSB_Test PCB started (`gen_pcb.py`, run with KiCad's Python / pcbnew): 180.9 × 116 mm, 4 layers, 1.6 mm; M2.5 holes in the four corners; Edge.Cuts slots for the LCD (22 mm) and touch (10 mm) FPCs just outside the panel's bottom edge; panel outline on Dwgs.User. All parts on the bottom side. Edge connectors placed and turned to face out (digital edge: User USB-C, Dev USB-C, USB-A, RJ45, microSD, POWER; RF edge: both SMAs, on their 'PCB Edge' markers); module, m1421 + can, GNSS + can, LA header, both FPC connectors, battery connector, buttons and debug headers placed; the other 466 parts parked beside the board, grouped by sheet. Footprints carry their schematic links and pad nets: DRC schematic parity 0, no courtyard or edge-clearance errors. Bottom-view picture: `hardware/floorplan/pcb_start_bottom.svg`.
+
 ### Changed
 - ADSB_Test Dev port split from one A2 sheet into three A3 sheets: **Dev USB Hub** (page 10: Dev USB-C, USB2514B, 3V3_DEV), **Dev UARTs** (new page 17: FT2232H, EEPROM, auto-reset, UART buffers; refs 17xx) and **Dev m1421 Programmer** (new page 18: RP2040, flash, LED, BOOTSEL, m1421 buffers, GPIO header J1801, I2C option R1812/R1813; refs 18xx). Connectivity checked identical apart from the renumbering.
 - Old full-height placeholder "DESIGN NOTES" boxes removed from Power Input, Charger Battery, Power Rails, Power Monitor and M1421 (they ran into the title block and were partly out of date); each sheet now has a short current note at the bottom-left. Top-level overview text updated (OSPTEK module, LAN8720A, sheets generated).

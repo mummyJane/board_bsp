@@ -21,6 +21,7 @@ How it works:
 | Ethernet, User USB-C, Dev USB Hub, USB Host, GPS, Display Touch, Storage Misc, Test Debug, Dev UARTs, Dev m1421 Programmer (pages 8-13, 15-18) | [gen_periph.py](gen_periph.py) | Generated |
 | AP3032 symbol, STUSB4500QTR copy with VSYS at the bottom (library) | [gen_symbols.py](gen_symbols.py) | Generated (uses `tools/kicad_sym_make.py`) |
 | Net classes + pair rules (`ADSB_Test.kicad_pro`, `ADSB_Test.kicad_dru`) | [gen_netclasses.py](gen_netclasses.py) | Generated |
+| PCB start (`ADSB_Test.kicad_pcb`): outline, corner holes, panel-cable slots, edge connectors, big parts; rest parked by sheet | [gen_pcb.py](gen_pcb.py) (run with KiCad's Python) | Generated once: **stop re-running it once layout work starts in KiCad** |
 | `_HandSolder` copies of vendor footprints (library) | [gen_footprints.py](gen_footprints.py) | Generated |
 
 Whole-project ERC: **0 violations** (all 16 sheets generated, every cross-sheet net has both ends). 480 parts, 481 nets, no duplicate references; power symbols are numbered page x 1000 per sheet. Footprints are checked on every run (`MISSING FOOTPRINTS:` is printed if a name doesn't exist).
