@@ -8,6 +8,28 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-10-12
+
+### Added
+- ADSB_Test: all remaining schematic sheets generated (`gen_periph.py`):
+  - Ethernet (LAN8720A + HR911105A MagJack, 25 MHz crystal, REFCLKO → P4 REF_CLK, PHY address 1).
+  - USB User (CP2102N → P4 UART1, activity LEDs).
+  - USB Dev (A2): USB2514B hub → P4 USB-Serial/JTAG, FT2232HL (P4 + C5 consoles with esptool auto-reset), RP2040 + W25Q16 for the stock ADSBee 1421 Programmer, Ioff/open-drain buffers so neither domain back-powers the other.
+  - USB Host (TPS259621 eFuse ~1.5 A, 5.7 V clamp, 150 µF, USBLC6, USB-A).
+  - GPS (MAX-M10S, VCC_RF active-antenna bias, ESD, edge SMA, PPS LED, optional RF can SH1201).
+  - Display Touch (reference-board panel supplies: AP3012 AVDD, VGH/VGL charge pumps, VCOM, 1V8, AP3032 backlight; 30-pin and 6-pin FPCs).
+  - Storage Misc (microSD with AO3401A power switch and card detect, TCA6408A expander with enable pull-downs).
+  - Test Debug (LA5016 2x20 header with 100R series resistors, PWM pads, M2.5 mounting holes).
+- AP3032 symbol (`gen_symbols.py`, new `tools/kicad_sym_make.py`); hand-solder footprints for VQFN-24, QFN-24 (EP2.6), QFN-36 and QFN-56.
+- Datasheet entries for the new parts (LAN8720A, MMBT3904, 93LC56B, W25Q16JV, WS2812B, FDS9435A, MCP1703, connectors, diodes, BMI-S-202-F).
+
+### Changed
+- m1421 RX: the 74LVC1G97 is now wired as an AND of P4 TX and Dev TX (both idle high, 100k pull-ups). The stock ADSBee Programmer firmware has no mux-select output (its pins: GPIO26 ~SRST, 27 SYNC, 28 TX, 29 RX).
+- Ethernet PHY IP101GRI → LAN8720A (KiCad symbol, ESP-IDF driver, cheap breakouts); panel 1V8 LDO RT9193 → AP2112K-1.8.
+- TCA6408A bit 5 is now microSD card detect (`BSP_EXP_SD_DET`).
+- Generated sheets number their power symbols per page (page × 1000), so KiCad reports no annotation errors. Whole-project ERC: 0 violations, 480 parts.
+- Datasheet list: parts no longer on ADSB_Test marked "no longer used".
+
 ### Fixed
 - Ignore per-config build logs (`build_*_log.txt`); one was committed in v0.21.0.
 
@@ -388,7 +410,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.22.0...HEAD
+[0.22.0]: https://github.com/mummyJane/board_bsp/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/mummyJane/board_bsp/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/mummyJane/board_bsp/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/mummyJane/board_bsp/compare/v0.18.0...v0.19.0

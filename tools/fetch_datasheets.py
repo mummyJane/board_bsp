@@ -27,7 +27,7 @@ BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 
 MAGIC = {"pdf": b"%PDF", "zip": b"PK"}
-BOARDS = {"ref": "Waveshare 7B", "adsb": "ADSB_Test"}
+BOARDS = {"ref": "Waveshare 7B", "adsb": "ADSB_Test", "superseded": "no longer used"}
 
 
 def download(url):

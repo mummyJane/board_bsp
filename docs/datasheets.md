@@ -18,7 +18,7 @@ get them. "Local" shows whether the last run saved a copy.
 | ESP32-C5 | [ESP32-C5 datasheet](https://documentation.espressif.com/esp32-c5_datasheet_en.pdf) | ADSB_Test | yes (2026-10-10) |
 | ESP32-C5 | [ESP32-C5 Technical Reference Manual](https://documentation.espressif.com/esp32-c5_technical_reference_manual_en.pdf) | ADSB_Test | yes (2026-10-10) |
 | ESP32-C5 | [ESP32-C5 hardware design guidelines](https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c5/esp-hardware-design-guidelines-en-master-esp32c5.pdf) | ADSB_Test | yes (2026-10-10) |
-| ESP32-C5-WROOM-1-N16R8 | [ESP32-C5-WROOM-1 / WROOM-1U datasheet](https://documentation.espressif.com/esp32-c5-wroom-1_wroom-1u_datasheet_en.pdf) | ADSB_Test | yes (2026-10-10) |
+| ESP32-C5-WROOM-1-N16R8 | [ESP32-C5-WROOM-1 / WROOM-1U datasheet](https://documentation.espressif.com/esp32-c5-wroom-1_wroom-1u_datasheet_en.pdf) | no longer used | yes (2026-10-10) |
 | ESP32-C6 | [ESP32-C6 datasheet](https://documentation.espressif.com/esp32-c6_datasheet_en.pdf) | Waveshare 7B | yes (2026-10-10) |
 | ESP32-C6-MINI-1 | [ESP32-C6-MINI-1 / MINI-1U datasheet](https://documentation.espressif.com/esp32-c6-mini-1_mini-1u_datasheet_en.pdf) | Waveshare 7B | yes (2026-10-10) |
 | ESP-IDF | [ESP-IDF programming guide (ESP32-P4)](https://docs.espressif.com/projects/esp-idf/en/latest/esp32p4/) | Waveshare 7B, ADSB_Test | link only |
@@ -46,14 +46,16 @@ get them. "Local" shows whether the last run saved a copy.
 | AP3012KTR-E1 | [AP3012 boost (panel AVDD)](https://www.diodes.com/assets/Datasheets/AP3012.pdf) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | AP3032KTR-G1 | [AP3032 LED backlight boost](https://www.diodes.com/assets/Datasheets/AP3032.pdf) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | BAT54S-7-F | [BAT54S Schottky (VGH/VGL charge pumps)](https://www.diodes.com/assets/Datasheets/ds11005.pdf) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
+| BZT52C7V5S / BZT52C18S | [Diodes BZT52C-S zener (VGL/VGH clamps)](https://www.diodes.com/part/view/BZT52C18S) | ADSB_Test | link only |
+| 1N5819HW | [Diodes 1N5819HW 1 A Schottky, SOD-123 (panel boosts)](https://www.diodes.com/part/view/1N5819HW) | ADSB_Test | link only |
 
 ## power
 
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
-| RT9193-18 / -33 | [RT9193 300 mA LDO (product page; no direct PDF link)](https://www.richtek.com/Products/Linear%20Regulators/Single%20Output%20Linear%20Regulator/RT9193?sc_lang=en) | Waveshare 7B, ADSB_Test | link only |
+| RT9193-18 / -33 | [RT9193 300 mA LDO (product page; no direct PDF link)](https://www.richtek.com/Products/Linear%20Regulators/Single%20Output%20Linear%20Regulator/RT9193?sc_lang=en) | Waveshare 7B | link only |
 | MP1658GTF-Z | [MP1658 3 A buck (product page; MPS has no public PDF link)](https://www.monolithicpower.com/en/mp1658.html) | Waveshare 7B | link only |
-| MP1605GTF-Z | [MP1605 2 A buck (product page)](https://www.monolithicpower.com/en/mp1605.html) | Waveshare 7B, ADSB_Test | link only |
+| MP1605GTF-Z | [MP1605 2 A buck (product page)](https://www.monolithicpower.com/en/mp1605.html) | Waveshare 7B | link only |
 | AO3401A | [AO3401A P-MOSFET (SD power, VBUS OR)](https://www.aosmd.com/res/datasheets/AO3401A.pdf) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | ETA6098 | [ETA6098 1S Li-ion charger](https://www.lcsc.com/search?q=ETA6098) | Waveshare 7B | link only |
 | STUSB4500 | [STUSB4500 USB-PD sink controller](https://www.st.com/resource/en/datasheet/stusb4500.pdf) | ADSB_Test | yes (manual) |
@@ -61,43 +63,51 @@ get them. "Local" shows whether the last run saved a copy.
 | BQ25798 | [BQ25798 1-4S buck-boost charger with MPPT (proposed replacement for BQ25792)](https://www.ti.com/lit/ds/symlink/bq25798.pdf) | ADSB_Test | yes (2026-10-10) |
 | PAC1954 | [PAC195x family datasheet DS20006539 (power monitor; saved by hand, Microchip blocks scripts)](https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/PAC1951-2-3-4-Single-Multi-Channel-Power-Monitor-with-Accumulator-32V-Full-Scale-Range-DS20006539.pdf) | ADSB_Test | yes (manual) |
 | TPS62933 | [TPS62933 3 A buck (3V3)](https://www.ti.com/lit/ds/symlink/tps62933.pdf) | ADSB_Test | yes (2026-10-10) |
-| TPS25200 | [TPS25200 eFuse (USB-A VBUS)](https://www.ti.com/lit/ds/symlink/tps25200.pdf) | ADSB_Test | yes (2026-10-10) |
+| TPS25200 | [TPS25200 eFuse (USB-A VBUS)](https://www.ti.com/lit/ds/symlink/tps25200.pdf) | no longer used | yes (2026-10-10) |
 | TPS2596 | [TPS2596 2.7-19 V eFuse (USB-A VBUS; replaces TPS25200, no KiCad symbol)](https://www.ti.com/lit/ds/symlink/tps2596.pdf) | ADSB_Test | yes (2026-10-12) |
 | TPS22917 | [TPS22917 load switch (switched rails)](https://www.ti.com/lit/ds/symlink/tps22917.pdf) | ADSB_Test | yes (2026-10-12) |
-| DMP3013SFV | [DMP3013SFV -30 V P-MOSFET (USB-PD sink power path)](https://www.diodes.com/assets/Datasheets/DMP3013SFV.pdf) | ADSB_Test | yes (2026-10-12) |
+| DMP3013SFV | [DMP3013SFV -30 V P-MOSFET (USB-PD sink power path)](https://www.diodes.com/assets/Datasheets/DMP3013SFV.pdf) | no longer used | yes (2026-10-12) |
 | AP2112K-3.3 | [AP2112 600 mA LDO (ADSBee carrier)](https://www.diodes.com/assets/Datasheets/AP2112.pdf) | ADSB_Test | yes (2026-10-10) |
+| FDS9435A | [onsemi FDS9435A P-channel MOSFET, SO-8 (input reverse/ideal switch)](https://www.onsemi.com/pdf/datasheet/fds9435a-d.pdf) | ADSB_Test | yes (2026-10-12) |
+| MCP1703 | [Microchip MCP1703 250 mA LDO, 2 uA Iq (VBACKUP)](https://www.microchip.com/en-us/product/MCP1703) | ADSB_Test | link only (open in a browser) |
 
 ## interface
 
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
 | USBLC6-2SC6 | [USBLC6-2 USB ESD protection](https://www.st.com/resource/en/datasheet/usblc6-2.pdf) | ADSB_Test | yes (manual) |
-| IP101GRI | [IP101G family datasheet IP101G-DS-R01 (unofficial distributor mirror; IC Plus has no public link)](https://dfsimg2.hqewimg.com/group1/M00/1E/7E/wKhk72GgdAWACBnTACa6J2TDLkI754.pdf) | ADSB_Test | yes (2026-10-10) |
+| IP101GRI | [IP101G family datasheet IP101G-DS-R01 (unofficial distributor mirror; IC Plus has no public link)](https://dfsimg2.hqewimg.com/group1/M00/1E/7E/wKhk72GgdAWACBnTACa6J2TDLkI754.pdf) | no longer used | yes (2026-10-10) |
 | USB2514B | [USB2514B 4-port USB 2.0 hub (Microchip product page; site blocks scripts)](https://www.microchip.com/en-us/product/USB2514B) | ADSB_Test | link only (open in a browser) |
 | FT2232H | [FT2232H dual USB-UART (FTDI product page; site blocks scripts)](https://ftdichip.com/products/ft2232hq/) | ADSB_Test | link only (open in a browser) |
 | CP2102N | [CP2102N USB-UART](https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf) | ADSB_Test | yes (manual) |
 | CH343P | [CH343 USB-UART (reference board)](https://www.wch-ic.com/products/CH343.html) | Waveshare 7B | link only |
 | RP2040 | [RP2040 datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | ADSB_Test | yes (2026-10-10) |
 | RP2040 | [Hardware design with RP2040](https://datasheets.raspberrypi.com/rp2040/hardware-design-with-rp2040.pdf) | ADSB_Test | yes (2026-10-10) |
-| DS3231M | [Analog Devices (Maxim) DS3231M +/-5ppm I2C RTC](https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231M.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
+| DS3231M | [Analog Devices (Maxim) DS3231M +/-5ppm I2C RTC](https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231M.pdf) | ADSB_Test | yes (manual) |
+| LAN8720A | [Microchip LAN8720A/LAN8720Ai RMII 10/100 Ethernet PHY](https://www.microchip.com/en-us/product/LAN8720A) | ADSB_Test | link only (open in a browser) |
+| MMBT3904 | [onsemi MMBT3904 NPN (Dev auto-reset)](https://www.onsemi.com/pdf/datasheet/mmbt3904lt1-d.pdf) | ADSB_Test | yes (2026-10-12) |
+| WS2812B | [Worldsemi WS2812B addressable LED (programmer status)](https://www.world-semi.com/) | ADSB_Test | link only |
+| 1N4148W | [Diodes 1N4148W small-signal diode, SOD-123](https://www.diodes.com/part/view/1N4148W) | ADSB_Test | link only |
 
 ## memory
 
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
-| GD25Q256EYIGR | [GD25Q256E 32 MB QSPI flash](https://www.gigadevice.com/product/flash/spi-nor-flash/gd25q256e) | Waveshare 7B, ADSB_Test | link only |
+| GD25Q256EYIGR | [GD25Q256E 32 MB QSPI flash](https://www.gigadevice.com/product/flash/spi-nor-flash/gd25q256e) | Waveshare 7B | link only |
+| 93LC56B | [Microchip 93LC56B Microwire EEPROM (FT2232H config)](https://www.microchip.com/en-us/product/93LC56B) | ADSB_Test | link only (open in a browser) |
+| W25Q16JVSS | [Winbond W25Q16JV 16 Mbit QSPI flash (RP2040)](https://www.winbond.com/hq/product/code-storage-flash-memory/serial-nor-flash/?__locale=en&partNo=W25Q16JV) | ADSB_Test | link only |
 
 ## logic
 
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
 | TCA6408A | [TCA6408A I2C GPIO expander](https://www.ti.com/lit/ds/symlink/tca6408a.pdf) | ADSB_Test | yes (2026-10-10) |
-| 74LVC1G157 (Nexperia) | [2:1 mux alternative (not used: no KiCad symbol; 74LVC1G97 used instead)](https://assets.nexperia.com/documents/data-sheet/74LVC1G157.pdf) | ADSB_Test | yes (2026-10-10) |
+| 74LVC1G157 (Nexperia) | [2:1 mux alternative (not used: no KiCad symbol; 74LVC1G97 used instead)](https://assets.nexperia.com/documents/data-sheet/74LVC1G157.pdf) | no longer used | yes (2026-10-10) |
 | 74LVC1G97 (Nexperia) | [Configurable gate used as 2:1 mux (m1421 UART RX); KiCad has no 74LVC1G157 symbol](https://assets.nexperia.com/documents/data-sheet/74LVC1G97.pdf) | ADSB_Test | yes (2026-10-12) |
 | SN74LVC1G32 | [OR gate (m1421 SYNC)](https://www.ti.com/lit/ds/symlink/sn74lvc1g32.pdf) | ADSB_Test | yes (2026-10-10) |
 | SN74LVC1G07 | [Open-drain buffer (resets)](https://www.ti.com/lit/ds/symlink/sn74lvc1g07.pdf) | ADSB_Test | yes (2026-10-10) |
 | SN74LVC1G125 | [3-state buffer (Dev isolation)](https://www.ti.com/lit/ds/symlink/sn74lvc1g125.pdf) | ADSB_Test | yes (2026-10-10) |
-| SN74LVC2T45 | [Dual level translator (Dev isolation)](https://www.ti.com/lit/ds/symlink/sn74lvc2t45.pdf) | ADSB_Test | yes (2026-10-10) |
+| SN74LVC2T45 | [Dual level translator (Dev isolation)](https://www.ti.com/lit/ds/symlink/sn74lvc2t45.pdf) | no longer used | yes (2026-10-10) |
 
 ## rf
 
@@ -108,6 +118,7 @@ get them. "Local" shows whether the last run saved a copy.
 | SCN-2-11+ | [Mini-Circuits SCN-2-11+ power splitter/combiner](https://www.minicircuits.com/pdfs/SCN-2-11+.pdf) | ADSB_Test | yes (2026-10-10) |
 | ESD7351 | [ESD7351 RF ESD diode](https://www.onsemi.com/download/data-sheet/pdf/esd7351-d.pdf) | ADSB_Test | yes (2026-10-10) |
 | Laird BMI-S-203-F / -C | [Laird BMI-S-203-F shield frame (26.21 mm) - DigiKey page with datasheet](https://www.digikey.com/en/products/detail/laird-technologies-emi/BMI-S-203-F/2175890) | ADSB_Test | link only |
+| Laird BMI-S-202-F / -C | [Laird BMI-S-202-F shield frame 16.5 mm (GNSS can)](https://www.digikey.com/en/products/result?keywords=BMI-S-202-F) | ADSB_Test | link only |
 
 ## adsbee
 
@@ -136,3 +147,15 @@ get them. "Local" shows whether the last run saved a copy.
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
 | LA5016 | [Kingst LA5016 logic analyser (product page; header pin-out in architecture.md)](http://www.qdkingst.com/en/products) | ADSB_Test | link only |
+
+## connectors
+
+| Part | Document | Boards | Local |
+|------|----------|--------|-------|
+| HR911105A | [Hanrun HR911105A RJ45 MagJack (magnetics + LEDs)](https://www.hanrun.com/) | ADSB_Test | link only |
+| Molex 104031-0811 | [Molex 104031-0811 microSD push-push with detect](https://www.molex.com/en-us/products/part-detail/1040310811) | ADSB_Test | link only (open in a browser) |
+| Hirose FH12 | [Hirose FH12 0.5 mm FPC connectors (LCD 30p, touch 6p)](https://www.hirose.com/en/product/series/FH12) | ADSB_Test | link only |
+| GCT USB4105 | [GCT USB4105 USB-C 2.0 16-pin receptacle (User, Dev)](https://gct.co/connector/usb4105) | ADSB_Test | link only |
+| Molex 67643 | [Molex 67643 USB-A receptacle, through-hole (SDR host)](https://www.molex.com/en-us/products/part-detail/676432910) | ADSB_Test | link only (open in a browser) |
+| SMA-J-P-H-ST-EM1 | [Samtec SMA-J-P-H-ST-EM1 edge-mount SMA (ADS-B, GNSS)](https://www.samtec.com/products/sma-j-p-h-st-em1) | ADSB_Test | link only |
+| OS102011MA1Q | [C&K OS series slide switch (POWER)](https://www.ckswitches.com/media/1428/os.pdf) | ADSB_Test | no: site blocks scripts, save by hand |

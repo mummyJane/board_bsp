@@ -76,7 +76,7 @@
       "title": "ESP32-C5-WROOM-1 / WROOM-1U datasheet",
       "category": "espressif",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://documentation.espressif.com/esp32-c5-wroom-1_wroom-1u_datasheet_en.pdf"
@@ -239,8 +239,7 @@
       "title": "RT9193 300 mA LDO (product page; no direct PDF link)",
       "category": "power",
       "boards": [
-        "ref",
-        "adsb"
+        "ref"
       ],
       "type": "link",
       "url": "https://www.richtek.com/Products/Linear%20Regulators/Single%20Output%20Linear%20Regulator/RT9193?sc_lang=en"
@@ -262,8 +261,7 @@
       "title": "MP1605 2 A buck (product page)",
       "category": "power",
       "boards": [
-        "ref",
-        "adsb"
+        "ref"
       ],
       "type": "link",
       "url": "https://www.monolithicpower.com/en/mp1605.html"
@@ -355,7 +353,7 @@
       "title": "TPS25200 eFuse (USB-A VBUS)",
       "category": "power",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://www.ti.com/lit/ds/symlink/tps25200.pdf"
@@ -388,7 +386,7 @@
       "title": "DMP3013SFV -30 V P-MOSFET (USB-PD sink power path)",
       "category": "power",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://www.diodes.com/assets/Datasheets/DMP3013SFV.pdf"
@@ -422,8 +420,7 @@
       "title": "GD25Q256E 32 MB QSPI flash",
       "category": "memory",
       "boards": [
-        "ref",
-        "adsb"
+        "ref"
       ],
       "type": "link",
       "url": "https://www.gigadevice.com/product/flash/spi-nor-flash/gd25q256e"
@@ -434,7 +431,7 @@
       "title": "IP101G family datasheet IP101G-DS-R01 (unofficial distributor mirror; IC Plus has no public link)",
       "category": "interface",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://dfsimg2.hqewimg.com/group1/M00/1E/7E/wKhk72GgdAWACBnTACa6J2TDLkI754.pdf"
@@ -525,7 +522,7 @@
       "title": "2:1 mux alternative (not used: no KiCad symbol; 74LVC1G97 used instead)",
       "category": "logic",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://assets.nexperia.com/documents/data-sheet/74LVC1G157.pdf"
@@ -580,7 +577,7 @@
       "title": "Dual level translator (Dev isolation)",
       "category": "logic",
       "boards": [
-        "adsb"
+        "superseded"
       ],
       "type": "file",
       "url": "https://www.ti.com/lit/ds/symlink/sn74lvc2t45.pdf"
@@ -838,6 +835,210 @@
       "type": "file",
       "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231M.pdf",
       "manual": true
+    },
+    {
+      "id": "lan8720a_datasheet",
+      "part": "LAN8720A",
+      "title": "Microchip LAN8720A/LAN8720Ai RMII 10/100 Ethernet PHY",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.microchip.com/en-us/product/LAN8720A",
+      "manual": true
+    },
+    {
+      "id": "mmbt3904_datasheet",
+      "part": "MMBT3904",
+      "title": "onsemi MMBT3904 NPN (Dev auto-reset)",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.onsemi.com/pdf/datasheet/mmbt3904lt1-d.pdf"
+    },
+    {
+      "id": "93lc56b_product",
+      "part": "93LC56B",
+      "title": "Microchip 93LC56B Microwire EEPROM (FT2232H config)",
+      "category": "memory",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.microchip.com/en-us/product/93LC56B",
+      "manual": true
+    },
+    {
+      "id": "w25q16jv_product",
+      "part": "W25Q16JVSS",
+      "title": "Winbond W25Q16JV 16 Mbit QSPI flash (RP2040)",
+      "category": "memory",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.winbond.com/hq/product/code-storage-flash-memory/serial-nor-flash/?__locale=en&partNo=W25Q16JV"
+    },
+    {
+      "id": "ws2812b_product",
+      "part": "WS2812B",
+      "title": "Worldsemi WS2812B addressable LED (programmer status)",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.world-semi.com/"
+    },
+    {
+      "id": "fds9435a_datasheet",
+      "part": "FDS9435A",
+      "title": "onsemi FDS9435A P-channel MOSFET, SO-8 (input reverse/ideal switch)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.onsemi.com/pdf/datasheet/fds9435a-d.pdf"
+    },
+    {
+      "id": "mcp1703_product",
+      "part": "MCP1703",
+      "title": "Microchip MCP1703 250 mA LDO, 2 uA Iq (VBACKUP)",
+      "category": "power",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.microchip.com/en-us/product/MCP1703",
+      "manual": true
+    },
+    {
+      "id": "lan_hr911105a",
+      "part": "HR911105A",
+      "title": "Hanrun HR911105A RJ45 MagJack (magnetics + LEDs)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.hanrun.com/"
+    },
+    {
+      "id": "molex_104031",
+      "part": "Molex 104031-0811",
+      "title": "Molex 104031-0811 microSD push-push with detect",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.molex.com/en-us/products/part-detail/1040310811",
+      "manual": true
+    },
+    {
+      "id": "hirose_fh12",
+      "part": "Hirose FH12",
+      "title": "Hirose FH12 0.5 mm FPC connectors (LCD 30p, touch 6p)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.hirose.com/en/product/series/FH12"
+    },
+    {
+      "id": "gct_usb4105",
+      "part": "GCT USB4105",
+      "title": "GCT USB4105 USB-C 2.0 16-pin receptacle (User, Dev)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://gct.co/connector/usb4105"
+    },
+    {
+      "id": "molex_67643",
+      "part": "Molex 67643",
+      "title": "Molex 67643 USB-A receptacle, through-hole (SDR host)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.molex.com/en-us/products/part-detail/676432910",
+      "manual": true
+    },
+    {
+      "id": "samtec_sma_em1",
+      "part": "SMA-J-P-H-ST-EM1",
+      "title": "Samtec SMA-J-P-H-ST-EM1 edge-mount SMA (ADS-B, GNSS)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.samtec.com/products/sma-j-p-h-st-em1"
+    },
+    {
+      "id": "ck_os102011ma1q",
+      "part": "OS102011MA1Q",
+      "title": "C&K OS series slide switch (POWER)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.ckswitches.com/media/1428/os.pdf",
+      "manual": true
+    },
+    {
+      "id": "laird_bmi-s-202-f",
+      "part": "Laird BMI-S-202-F / -C",
+      "title": "Laird BMI-S-202-F shield frame 16.5 mm (GNSS can)",
+      "category": "rf",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.digikey.com/en/products/result?keywords=BMI-S-202-F"
+    },
+    {
+      "id": "bzt52c_s_product",
+      "part": "BZT52C7V5S / BZT52C18S",
+      "title": "Diodes BZT52C-S zener (VGL/VGH clamps)",
+      "category": "display",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.diodes.com/part/view/BZT52C18S"
+    },
+    {
+      "id": "1n5819hw_product",
+      "part": "1N5819HW",
+      "title": "Diodes 1N5819HW 1 A Schottky, SOD-123 (panel boosts)",
+      "category": "display",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.diodes.com/part/view/1N5819HW"
+    },
+    {
+      "id": "1n4148w_product",
+      "part": "1N4148W",
+      "title": "Diodes 1N4148W small-signal diode, SOD-123",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.diodes.com/part/view/1N4148W"
     }
   ]
 }

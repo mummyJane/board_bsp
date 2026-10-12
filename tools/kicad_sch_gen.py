@@ -192,7 +192,7 @@ class Placed:
 
 
 class Sheet:
-    def __init__(self, libs, project, root_uuid, sheet_uuid, page_uuid=None):
+    def __init__(self, libs, project, root_uuid, sheet_uuid, page_uuid=None, pwr_base=0):
         self.libs = libs
         self.project = project
         self.path = f"/{root_uuid}/{sheet_uuid}" if sheet_uuid else f"/{root_uuid}"
@@ -200,7 +200,7 @@ class Sheet:
         self.lib_symbols = {}
         self.items = []
         self.placed = {}
-        self._pwr = 0
+        self._pwr = pwr_base    # #PWR/#FLG numbering; give each sheet its own range (page x 1000)
         self.locals = set()     # nets that only exist on this sheet -> local labels
         self.footprints = {}    # ref -> footprint, for missing_footprints()
 

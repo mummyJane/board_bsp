@@ -69,7 +69,7 @@
 
 /* ---- New on ADSB_Test ---- */
 
-/* Ethernet RMII PHY IP101GRI (ESP-IDF ESP32-P4 defaults) */
+/* Ethernet RMII PHY LAN8720A (ESP-IDF ESP32-P4 pin defaults); REF_CLK = 50 MHz out of the PHY (REFCLKO) */
 #define BSP_ETH_TX_EN           (49)
 #define BSP_ETH_TXD0            (34)
 #define BSP_ETH_TXD1            (35)    /* also BOOT strap: PHY must not pull it low at reset */
@@ -80,7 +80,7 @@
 #define BSP_ETH_MDC             (31)
 #define BSP_ETH_MDIO            (52)
 #define BSP_ETH_PHY_RST         (51)
-#define BSP_ETH_PHY_ADDR        1
+#define BSP_ETH_PHY_ADDR        1       /* LAN8720A PHYAD0 strap (RXER pulled up) */
 
 /* User UART (CP2102N on User USB-C) */
 #define BSP_USER_UART_NUM       1
@@ -123,7 +123,7 @@
 #define BSP_EXP_EN_GPS          2
 #define BSP_EXP_EN_M1421        3
 #define BSP_EXP_USBA_EN         4
-#define BSP_EXP_SPARE5          5
+#define BSP_EXP_SD_DET          5       /* input: microSD card detect (check polarity at bring-up) */
 #define BSP_EXP_GPS_RST         6
 #define BSP_EXP_M1421_RESET     7       /* open-drain to ~SRST */
 

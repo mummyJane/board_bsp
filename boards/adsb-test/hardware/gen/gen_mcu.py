@@ -30,7 +30,7 @@ def tp(s, ref, net, at, local=True):
 
 
 # =================================================================== MCU Module (page 6)
-s = Sheet(libs, "ADSB_Test", root_uuid, sheets["mcu_module.kicad_sch"])
+s = Sheet(libs, "ADSB_Test", root_uuid, sheets["mcu_module.kicad_sch"], pwr_base=6000)
 s.locals |= {"XTAL32_P", "XTAL32_N", "C5_TMS", "C5_TDI", "C5_TCK", "C5_TDO", "C5_IO26", "MCU_PWR_CTRL",
              "C5_IO1", "C5_IO6", "C5_IO23", "C5_IO24", "C5_IO25", "C5_IO27", "P4_GPIO36", "P4_GPIO54"}
 u = s.add("ADSB_Test:Wireless-Tag_WT01P4C5-S1", "U601", "WT01P4C5-S1-N16R32", (203.2, 142.24),
@@ -122,7 +122,7 @@ print("wrote mcu_module.kicad_sch")
 missing = s.missing_footprints({"ADSB_Test": KICAD / "lib/ADSB_Test.pretty"})
 
 # =================================================================== RTC (page 7)
-r = Sheet(libs, "ADSB_Test", root_uuid, sheets["rtc.kicad_sch"])
+r = Sheet(libs, "ADSB_Test", root_uuid, sheets["rtc.kicad_sch"], pwr_base=7000)
 rtc = r.add("Timer_RTC:DS3231MZ", "U701", "DS3231M", (127.0, 101.6),
             footprint="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", props={"I2C": "0x68", "MPN": "DS3231MZ+"})
 r.connect(rtc, "2", "3V3")

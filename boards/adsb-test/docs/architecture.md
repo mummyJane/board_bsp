@@ -30,7 +30,7 @@ flowchart LR
   P4[ESP32-P4<br/>WT01P4C5-S1 module]
   C5[ESP32-C5<br/>inside the module]
   P4 <-->|SDIO esp_hosted| C5
-  P4 <-->|RMII| PHY[IP101GRI + RJ45]
+  P4 <-->|RMII| PHY[LAN8720A + RJ45]
   P4 <-->|USB HS OTG| USBA[USB-A host<br/>ext. hub, 1-2 SDR]
   P4 <-->|MIPI-DSI + I2C| LCD[7in LCD + touch]
   P4 <-->|UART + PPS| GPS[GNSS<br/>MAX-M10S]
@@ -213,7 +213,7 @@ message-activity markers.
 |--------------|--------|----------------------|
 | 1, 4, 19, 22 | VCC | `3V3_M1421`: switched branch, PM3 ch2 |
 | 6, 18, 23, 25, 27, 34, 36, MP | GND | GND. **Filled and capped** thermal vias in both MP pads and under the GND pads next to the RF pins |
-| 20 / 21 | SURX / SUTX (console) | P4 UART3 at 1 Mbaud (≥ 921600 recommended). TX also goes to the Dev probe. RX comes from a 2:1 mux (74LVC1G97): P4 by default, Dev probe when selected |
+| 20 / 21 | SURX / SUTX (console) | P4 UART3 at 1 Mbaud (≥ 921600 recommended). TX also goes to the Dev probe. RX = P4 TX AND Dev TX (74LVC1G97 wired as AND; both idle high) |
 | 28 | SYNC | `SYNC = P4_SYNC OR DEV_SYNC` (74LVC1G32, target-powered). DEV_SYNC is pulled low, so an unpowered Dev domain can't assert it. 100 kΩ pull-down on SYNC. LA CH6 |
 | 17 | ~SRST | Open-drain wired-AND: TCA6408A bit 7, Dev probe (74LVC1G07, Ioff), 10-pin JTAG header pin 10 |
 | 8–11 | JMSC / JCKC / JTDO / JTDI | 10-pin 1.27 mm Cortex debug header, as on the carrier: **Segger J-Link, target CC1314R10, JTAG 4 MHz** (the documented flow) |
@@ -232,13 +232,16 @@ The m1421 is new, so Rev A supports **both**:
 | **(b) ADSBee 1421 Dev Kit** _(default for first boards)_ | Leave U1401 unfitted. Plug the Dev Kit's comms connector into **J1402** (1×6 2.54 mm) with the JST-GH-to-DuPont harness in the kit. Pinout matches the Dev Kit: 1 VIN, 2 UART RX (into module), 3 UART TX, 4 SYNC, 5 RESET, 6 GND. VIN = `3V3_M1421` (switched and measured; the Dev Kit's AP2112K then gives ≈ 3.0 V, inside the module's 1.8–3.3 V range). The Dev Kit uses its own U.FL antenna; the board's SMA path is unused | Proving the module, firmware and host code with known-good RF |
 | **(a) Solder U1401** | Fit the module on the board; J1402 left empty. RF through the board's combiner to the edge SMA | Once the module is proven, and to test the board's own RF layout |
 
-Both options share the same nets (UART, SYNC, RESET, power), so the RX mux,
+Both options share the same nets (UART, SYNC, RESET, power), so the RX combiner,
 SYNC OR gate, reset buffer and Dev-port RP2040 work the same either way. **Never
 fit U1401 and connect a Dev Kit at the same time.**
 
-The RX mux is a **74LVC1G97** configured as a 2:1 mux (KiCad has no
-74LVC1G157 symbol). Nexperia function table: C (pin 6) = 0 → Y = B (pin 1,
-P4 TX); C = 1 → Y = A (pin 3, Dev TX). Select is pulled low (P4 by default).
+The RX combiner is a **74LVC1G97** wired as a 2-input AND (Nexperia function
+table: C = 0 → Y = B, C = 1 → Y = A; with B = GND, Y = A AND C). A = Dev TX,
+C = P4 TX, both pulled up with 100 kΩ. UART lines idle high, so whichever side
+talks drives SURX; don't talk from both at once. _Changed 2026-10-12: the stock
+ADSBee Programmer (its `board.hh`: GPIO26 ~SRST, 27 SYNC, 28 TX, 29 RX) has no
+mux-select output, so the earlier select line is gone._
 
 **Pogo pins to an unsoldered module?** Possible, but not recommended on
 ADSB_Test:
@@ -270,7 +273,7 @@ That gives two update paths on ADSB_Test:
 | Path | How | Use |
 |------|-----|-----|
 | **P4 (field update)** | The P4 drives SYNC (GPIO) and ~SRST (expander) and talks to the ROM bootloader on UART3. It needs a CC13x4 ROM bootloader client in the BSP. Write it from TI's protocol spec (CC13x4 TRM SWCU194, "ROM Serial Bootloader") to keep the BSP MIT. The ADSBee Programmer's client is GPL-3.0 | Firmware updates in the field, including over Wi-Fi/Ethernet via the P4 |
-| **Dev USB-C (bench)** | RP2040 on Dev hub port 4 running the **stock ADSBee 1421 Programmer** firmware (open source, RP2040-Zero). Any changes go in a separate fork repo that links back to PantsForBirds/adsbee (Q16). It works as a USB-serial adapter with RTS → SYNC and DTR → ~SRST, so the ADSBee web console's firmware uploader and AT terminal work unchanged. It also drives the UART mux select while its port is open | Console, AT configuration, firmware upload, logs from the PC |
+| **Dev USB-C (bench)** | RP2040 on Dev hub port 4 running the **stock ADSBee 1421 Programmer** firmware (open source, RP2040-Zero). Any changes go in a separate fork repo that links back to PantsForBirds/adsbee (Q16). It works as a USB-serial adapter with RTS → SYNC and DTR → ~SRST, so the ADSBee web console's firmware uploader and AT terminal work unchanged. Its TX reaches the module through the RX AND gate, so no select line is needed | Console, AT configuration, firmware upload, logs from the PC |
 | **JTAG** | 10-pin Cortex header + Segger J-Link | Breakpoint debugging, and recovery if the bootloader backdoor was turned off (`AT+BOOTLOADER_PIN=0`) |
 
 Living with the stock Programmer (Q16):
@@ -371,15 +374,17 @@ second, independent measurement for checking.
 | Port | Connector | Connected to |
 |------|-----------|--------------|
 | User | USB-C (sink) | CC → STUSB4500. D+/D- → CP2102N → P4 UART1 |
-| Dev | USB-C (device) | USB2514B hub. Port 1: P4 USB-Serial/JTAG. Port 2: spare (the C5's USB pins are used by SDIO). Port 3: FT2232H (A = P4 UART0 + auto-reset, B = C5 UART0 + auto-reset). Port 4: RP2040 running the ADSBee 1421 Programmer firmware, auto-reflash off (m1421 console + RTS→SYNC / DTR→~SRST + UART mux select) |
+| Dev | USB-C (device) | USB2514B hub. Port 1: P4 USB-Serial/JTAG. Port 2: spare (the C5's USB pins are used by SDIO). Port 3: FT2232H (A = P4 UART0 + auto-reset, B = C5 UART0 + auto-reset). Port 4: RP2040 running the ADSBee 1421 Programmer firmware, auto-reflash off (m1421 console + RTS→SYNC / DTR→~SRST; RP2040 GPIO26 ~SRST, 27 SYNC, 28 TX, 29 RX, 16 WS2812 status) |
 | Host | USB-A | P4 USB 2.0 HS OTG (host) → TPS2596 eFuse, ESD → external hub → SDR(s) |
 
 Design rules for the Dev domain:
 - The hub, FT2232H and RP2040 run from Dev VBUS, so debugging still works when
   the target is unpowered.
-- Every signal crossing into the target goes through a buffer powered from the
-  target rail (e.g. SN74LVC2T45), or uses open-drain, so the Dev domain can't
-  back-power the target (USB-04).
+- No signal can back-power the other domain (USB-04): Dev → target UART lines
+  use open-drain 74LVC1G07s (Dev-powered) with target-side pull-ups; target →
+  Dev lines use 74LVC1G125s (Dev-powered, Ioff inputs); the m1421 lines use
+  74LVC1G125s into the target's own LVC gates; EN/BOOT auto-reset uses
+  open-collector MMBT3904 pairs.
 - The P4 USB-Serial/JTAG lines get series resistors and ESD protection
   only.
 - The BQ25798's BC1.2 detection is **disabled**, because the User D+/D- lines
@@ -476,8 +481,8 @@ The source of truth is [`bsp/include/bsp/board_pins.h`](../bsp/include/bsp/board
 | 54 | spare (test pad) | C6 CHIP_PU | |
 
 **Spare: 36, 54 (test pads); GPIO5 not available on the module.** Slow outputs are on the
-TCA6408A: EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN, GPS_RST, M1421_RESET,
-and one spare bit.
+TCA6408A: EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN, SD_DET (input),
+GPS_RST, M1421_RESET.
 
 **Phase 1 bonus:** GPS (2, 3, 4), PM ALERT (5), m1421 (46, 47, 48) and
 Ethernet (28–31, 34, 49–52) are all on the reference board's P1/P3 headers.
@@ -489,7 +494,7 @@ For those, use a spare header pin in Phase 1.
 **Checks:**
 - **GPIO35** is both the BOOT strap and RMII TXD1, as on Espressif's P4 EV
   board. The PHY's TXD1 input must not pull it low during reset (check the
-  IP101GRI pin state at reset). Keep the reference 4.7 kΩ pull-up.
+  LAN8720A: TXD1 has no pull or strap). Keep the reference 4.7 kΩ pull-up.
 - P4 strapping pins confirmed from the datasheet: GPIO34–38 (see above).
   GPIO36 is left unloaded on purpose.
 
@@ -620,7 +625,7 @@ come from the part datasheets where we have them.
 | 3V3 buck | TPS62933 | TPS62130 | 3.8–30 V in, 3 A |
 | 5V buck | TPS62933 (same part as 3V3) | | 3 A, 3.8–30 V in, one part type for both rails |
 | USB-A power | TPS2596 eFuse | TPS25200 (no KiCad symbol) | Adjustable limit, fault flag, KiCad symbol available |
-| Ethernet PHY | IP101GRI | LAN8720A | Espressif P4 EV board, ESP-IDF driver |
+| Ethernet PHY | LAN8720A (since 2026-10-12) | IP101GRI (no KiCad symbol) | KiCad symbol, ESP-IDF lan87xx driver, cheap breakouts for Phase 1, 25 MHz crystal → 50 MHz REFCLKO |
 | Dev hub | USB2514B | CH334 | 4-port HS hub |
 | Dev UART | FT2232H | CH342 | 2 × UART with DTR/RTS auto-reset |
 | Dev m1421 access | RP2040 + ADSBee 1421 Programmer firmware (auto-reflash off) | FTDI channel with RTS→SYNC, DTR→~SRST | Same as the Dev Kit, works with the ADSBee web console |

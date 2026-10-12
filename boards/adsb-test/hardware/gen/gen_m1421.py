@@ -20,7 +20,7 @@ SHEET = KICAD / "m1421.kicad_sch"
 libs = SymbolLibs({"ADSB_Test": KICAD / "lib/ADSB_Test.kicad_sym"})
 root_uuid, sheets = sheet_uuids(KICAD / "ADSB_Test.kicad_sch")
 notes = existing_notes(SHEET)
-s = Sheet(libs, "ADSB_Test", root_uuid, sheets["m1421.kicad_sch"])
+s = Sheet(libs, "ADSB_Test", root_uuid, sheets["m1421.kicad_sch"], pwr_base=14000)
 # Nets that never leave this sheet (everything else is a global label).
 s.locals |= {"M1421_TMSC", "M1421_TCKC", "M1421_TDO", "M1421_TDI", "M1421_RF_978", "M1421_RF_1090",
              "RF_ADSB_ANT", "LED_SD26_A", "LED_SD27_A", "M1421_SD23", "M1421_SD24", "M1421_SD25",
@@ -89,17 +89,20 @@ s.connect(h, "4", "M1421_SYNC")
 s.connect(h, "5", "M1421_NRST")
 s.connect(h, "6", "GND")
 
-# ------------------------------------------------------------------ RX mux: 74LVC1G97 as 2:1 mux
-# Nexperia function table: C=L -> Y=B (pin 1), C=H -> Y=A (pin 3). Select C = pin 6.
-m = s.add("74xGxx:74LVC1G97", "U1402", "74LVC1G97 (2:1 mux)", (203.2, 50.8), footprint=SC70_6,
-          props={"Function": "C(6)=0: Y=B(1)=P4 TX; C(6)=1: Y=A(3)=Dev TX"})
-s.connect(m, "1", "P4_M1421_TX")
+# ------------------------------------------------------------------ RX combiner: 74LVC1G97 as a 2-input AND
+# Nexperia function table: C=L -> Y=B (pin 1), C=H -> Y=A (pin 3). With B = GND: Y = A AND C.
+# Both UART TX lines idle high, so whichever side talks drives SURX (the stock ADSBee Programmer has no
+# mux-select output). Pull-ups keep an absent / resetting side high.
+m = s.add("74xGxx:74LVC1G97", "U1402", "74LVC1G97 (AND)", (203.2, 50.8), footprint=SC70_6,
+          props={"Function": "B(1)=GND: Y = A(3) AND C(6) = Dev TX AND P4 TX (UART idle high)"})
+s.connect(m, "1", "GND")
 s.connect(m, "3", "DEV_M1421_TX")
-s.connect(m, "6", "DEV_M1421_SEL")
+s.connect(m, "6", "P4_M1421_TX")
 s.connect(m, "4", "M1421_SURX")
 s.connect(m, "5", VCC)
 s.connect(m, "2", "GND")
-s.two_pin("Device:R", "R1401", "100k", (144.78, 76.2), "DEV_M1421_SEL", "GND", R0402)
+s.two_pin("Device:R", "R1401", "100k", (144.78, 76.2), VCC, "DEV_M1421_TX", R0402)
+s.two_pin("Device:R", "R1409", "100k", (157.48, 76.2), VCC, "P4_M1421_TX", R0402)
 
 # ------------------------------------------------------------------ SYNC = P4 OR Dev
 g = s.add("74xGxx:74LVC1G32", "U1403", "74LVC1G32", (203.2, 106.68), footprint=SC70_5)
@@ -166,6 +169,9 @@ s.text("FIT OPTIONS: (a) solder U1401 m1421, or (b) leave U1401 off and plug the
 
 if notes is not None:
     notes[1] = notes[1].replace("74LVC1G157 mux", "74LVC1G97 (as 2:1 mux)")
+    notes[1] = notes[1].replace("SURX(20) <- 74LVC1G97 (as 2:1 mux) (default P4 TX; RP2040 TX when its select is high).",
+                                "SURX(20) <- 74LVC1G97 wired as AND: P4 TX AND Dev (RP2040) TX, both idle high with 100k pull-ups "
+                                "(the stock Programmer has no select output). Don't talk from both sides at once.")
     # keep the design notes, smaller, down the right-hand side
     for k in notes:
         if isinstance(k, list) and k[0] == "at":

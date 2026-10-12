@@ -59,7 +59,8 @@ assembled, depending on how many fixes Rev 1 needs.
 |------|-----|
 | BQ25798 (VQFN-HR-29, 0.4 mm) | Power pads under the chip, not just around the edge: an iron can't reach them |
 | ESP32-P4NRW32 (QFN-104, 0.35 mm) | Very fine pitch + large exposed pad. **Not used on ADSB_Test**: replaced by the WT01P4C5-S1 module (Q26), 1.4 mm castellated pads, iron-solderable |
-| RP2040 (QFN-56, 0.4 mm), USB2514B, FT2232H, CP2102N, IP101GRI | Fine-pitch QFNs; `_HandSolder` variants will be made when their sheets are generated |
+| RP2040 (QFN-56, 0.4 mm), USB2514B (QFN-36), CP2102N (QFN-24), LAN8720A (VQFN-24) | Fine-pitch QFNs: `_HandSolder` variants (longer pads, hole in the EP) help, but use paste + hot air. FT2232H**L** is LQFP-64 (leads: iron + drag soldering) |
+| FPC connectors (Hirose FH12, 0.5 mm) | Drag-solder with flux; check for bridges under magnification |
 | MiniCircuits SCN-2-11+ (RF combiner), ESD7351 (SOD-523) | Small parts only made in these packages |
 
 Suggested kit: stencil from PCBWay, solder paste, a small hot plate or hot-air

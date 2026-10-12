@@ -32,6 +32,18 @@ jobs = [
          name="VQFN-16-1EP_3x3mm_P0.5mm_EP1.1x1.1mm_HandSolder", extend=0.5),
     # TPS62933 SOT-583: short leads, longer pads help
     dict(src=KIFP / "Package_TO_SOT_SMD.pretty/SOT-583-8.kicad_mod", name="SOT-583-8_HandSolder", extend=0.4),
+    # LAN8720A VQFN-24 4x4 (Ethernet PHY): EP = GND, hole for back-side soldering
+    dict(src=KIFP / "Package_DFN_QFN.pretty/VQFN-24-1EP_4x4mm_P0.5mm_EP2.5x2.5mm.kicad_mod",
+         name="VQFN-24-1EP_4x4mm_P0.5mm_EP2.5x2.5mm_HandSolder", extend=0.5, holes={"25": [(0, 0, 1.0)]}),
+    # CP2102N QFN-24 4x4 (User UART)
+    dict(src=KIFP / "Package_DFN_QFN.pretty/QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm.kicad_mod",
+         name="QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm_HandSolder", extend=0.5, holes={"25": [(0, 0, 1.0)]}),
+    # USB2514B QFN-36 6x6 (Dev hub)
+    dict(src=KIFP / "Package_DFN_QFN.pretty/QFN-36-1EP_6x6mm_P0.5mm_EP3.7x3.7mm.kicad_mod",
+         name="QFN-36-1EP_6x6mm_P0.5mm_EP3.7x3.7mm_HandSolder", extend=0.5, holes={"37": [(0, 0, 1.2)]}),
+    # RP2040 QFN-56 7x7 0.4 mm (Dev m1421 programmer): still a stencil/hot-air part, the longer pads help rework
+    dict(src=KIFP / "Package_DFN_QFN.pretty/QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm.kicad_mod",
+         name="QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm_HandSolder", extend=0.4, holes={"57": [(0, 0, 1.0)]}),
 ]
 
 for j in jobs:

@@ -12,7 +12,7 @@ reference board while ADSB_Test is designed.
 - **Wireless-Tag WT01P4C5-S1** module: ESP32-P4 + ESP32-C5 (dual-band Wi-Fi 6 backup link over SDIO, esp_hosted), 16 MB flash, 32 MB PSRAM, IPEX antenna; 1.4 mm castellated pads for hand soldering
 - DS3231M RTC on the always-on backup supply
 - **ADSBee m1421** dual-band ADS-B receiver (1090 MHz Mode S + 978 MHz UAT), RF front end copied from the ADSBee 1421 carrier
-- 10/100 Ethernet (IP101GRI RMII PHY, RJ45)
+- 10/100 Ethernet (LAN8720A RMII PHY, HR911105A RJ45 MagJack)
 - **User USB-C:** USB-PD sink (main power + charging) and a USB-UART to the P4 user UART
 - **Dev USB-C:** one cable for all debug: P4 USB-Serial/JTAG, P4 + C5 UARTs with auto-reset (FT2232H), m1421 console + firmware upload (RP2040 with ADSBee 1421 Programmer firmware). m1421 JTAG on a J-Link header
 - **USB-A host** (P4 USB 2.0 HS) to an external hub: 1 SDR (AIS etc.), 2 supported, 4 nice-to-have

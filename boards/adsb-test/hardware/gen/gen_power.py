@@ -29,7 +29,9 @@ TP = "TestPoint:TestPoint_Pad_D1.5mm"
 
 
 def new_sheet(file):
-    s = Sheet(libs, "ADSB_Test", root_uuid, sheets[file])
+    page = {"power_input.kicad_sch": 2, "charger_battery.kicad_sch": 3, "power_rails.kicad_sch": 4,
+            "power_monitor.kicad_sch": 5}[file]
+    s = Sheet(libs, "ADSB_Test", root_uuid, sheets[file], pwr_base=page * 1000)
     return s, existing_notes(KICAD / file)
 
 
