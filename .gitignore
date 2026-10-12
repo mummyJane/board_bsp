@@ -95,3 +95,7 @@ build_log.txt
 # Alternate build dirs / sdkconfigs (e.g. per chip revision)
 build_*/
 sdkconfig.*build
+
+# Python bytecode
+__pycache__/
+*.pyc
