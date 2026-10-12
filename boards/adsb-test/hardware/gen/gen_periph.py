@@ -398,15 +398,15 @@ for p, n in fpc.items():
 s.connect(j, ["10", "13", "16", "19", "22", "25", "MP"], "GND")
 for p in ("11", "12", "14", "15"):
     s.nc(j, p)
-R(s, "R1317", "10k", (330.2, 165.1), "VCC_1V8", "LCD_STRAP5")
-R(s, "R1318", "10k", (342.9, 165.1), "VCC_1V8", "LCD_STRAP26")
+R(s, "R1317", "10k", (279.4, 165.1), "VCC_1V8", "LCD_STRAP5")
+R(s, "R1318", "10k", (292.1, 165.1), "VCC_1V8", "LCD_STRAP26")
 # Pins 5/6 are UPDN/SHLR (scan direction) on some EK79007 panels, pin 6 is GND on the Waveshare panel.
 # Default = Waveshare: pin 5 high, pin 6 low. Swap the fitted/DNP parts to flip a mirrored panel.
-R(s, "R1322", "0R", (355.6, 165.1), "LCD_STRAP5", "GND", dnp=True, props={"Option": "UPDN low (flip vertical)"})
-R(s, "R1323", "0R", (368.3, 165.1), "LCD_STRAP6", "GND", props={"Option": "Waveshare panel: pin 6 = GND / SHLR low"})
-R(s, "R1324", "10k", (381.0, 165.1), "VCC_1V8", "LCD_STRAP6", dnp=True, props={"Option": "SHLR high (fit instead of R1323)"})
-R(s, "R1319", "0R", (304.8, 190.5), "LCD_RST", "LCD_RESET")
-R(s, "R1320", "10k", (317.5, 190.5), "LCD_RESET", "GND")
+R(s, "R1322", "0R", (304.8, 165.1), "LCD_STRAP5", "GND", dnp=True, props={"Option": "UPDN low (flip vertical)"})
+R(s, "R1323", "0R", (317.5, 165.1), "LCD_STRAP6", "GND", props={"Option": "Waveshare panel: pin 6 = GND / SHLR low"})
+R(s, "R1324", "10k", (330.2, 165.1), "VCC_1V8", "LCD_STRAP6", dnp=True, props={"Option": "SHLR high (fit instead of R1323)"})
+R(s, "R1319", "0R", (304.8, 203.2), "LCD_RST", "LCD_RESET")
+R(s, "R1320", "10k", (317.5, 203.2), "LCD_RESET", "GND")
 # Touch FPC (6-pin 0.5 mm)
 t = s.add("Connector_Generic_MountingPin:Conn_01x06_MountingPin", "J1302", "Touch FPC 6p 0.5mm", (368.3, 203.2),
           footprint="Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal")
@@ -416,8 +416,8 @@ s.connect(t, ["3", "MP"], "GND")
 s.connect(t, "4", "TOUCH_INT")
 s.connect(t, "5", "I2C_SDA")
 s.connect(t, "6", "I2C_SCL")
-R(s, "R1321", "0R", (304.8, 228.6), "TOUCH_RST", "TP_RESET")
-C(s, "C1322", "100nF", (342.9, 228.6), "3V3")
+R(s, "R1321", "0R", (304.8, 241.3), "TOUCH_RST", "TP_RESET")
+C(s, "C1322", "100nF", (330.2, 241.3), "3V3")
 for i, net in enumerate(("AVDD", "VGH", "VGL", "VCOM", "VCC_1V8", "LED_P")):
     TP(s, f"TP{1301 + i}", net, (190.5 + i * 12.7, 203.2))
 s.text("DISPLAY: 7in 1024x600 EK79007 bare COG panel, 2-lane MIPI-DSI from the module; same FPC pin-out and panel\n"

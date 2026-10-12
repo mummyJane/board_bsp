@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Fixed
+- ADSB_Test display sheet: LCD strap resistors (R1317/R1318/R1322-R1324) moved off the 30-pin FPC connector into a row beside it; reset parts below re-spaced.
+
 ## [0.24.0] - 2026-10-12
 
 ### Changed
