@@ -299,7 +299,7 @@ done(s, "gps.kicad_sch", "ADSB_Test - GPS")
 s = new("display_touch.kicad_sch")
 s.locals |= {"AVDD", "AVDD_SW", "AVDD_FB", "AVDD_SHDN", "VGH", "VGH_RAW", "VGH_PUMP", "VGL", "VGL_RAW",
              "VGL_PUMP", "VCOM", "VCC_1V8", "LED_P", "LED_N", "BL_SW", "BL_FB", "BL_EN", "BL_OV", "BL_CTRL",
-             "BL_RC", "LCD_RESET", "TP_RESET", "LCD_STRAP5", "LCD_STRAP26"}
+             "BL_RC", "LCD_RESET", "TP_RESET", "LCD_STRAP5", "LCD_STRAP6", "LCD_STRAP26"}
 # AVDD 9.6 V boost (AP3012)
 b = s.add("Regulator_Switching:AP3012", "U1301", "AP3012KTR-E1", (63.5, 50.8), footprint=SOT23_5)
 s.connect(b, "5", "5V_LCD")
@@ -390,7 +390,7 @@ R(s, "R1316", "0R", (50.8, 241.3), "LCD_BL_PWM", "BL_CTRL")
 j = s.add("Connector_Generic_MountingPin:Conn_01x30_MountingPin", "J1301", "LCD FPC 30p 0.5mm", (368.3, 127.0),
           footprint="Connector_FFC-FPC:Hirose_FH12-30S-0.5SH_1x30-1MP_P0.50mm_Horizontal",
           props={"Check": "Bottom-contact flip-lock, 2.0 mm high, as the reference board P2; confirm the contact side for the FPC wrap"})
-fpc = {"1": "LED_P", "2": "LED_P", "3": "VGH", "4": "VGL", "5": "LCD_STRAP5", "6": "GND", "7": "LED_N", "8": "LED_N",
+fpc = {"1": "LED_P", "2": "LED_P", "3": "VGH", "4": "VGL", "5": "LCD_STRAP5", "6": "LCD_STRAP6", "7": "LED_N", "8": "LED_N",
        "9": "AVDD", "17": "DSI_CLK_P", "18": "DSI_CLK_N", "20": "DSI_D1_P", "21": "DSI_D1_N", "23": "DSI_D0_P",
        "24": "DSI_D0_N", "26": "LCD_STRAP26", "27": "LCD_RESET", "28": "VCC_1V8", "29": "VCC_1V8", "30": "VCOM"}
 for p, n in fpc.items():
@@ -400,6 +400,11 @@ for p in ("11", "12", "14", "15"):
     s.nc(j, p)
 R(s, "R1317", "10k", (330.2, 165.1), "VCC_1V8", "LCD_STRAP5")
 R(s, "R1318", "10k", (342.9, 165.1), "VCC_1V8", "LCD_STRAP26")
+# Pins 5/6 are UPDN/SHLR (scan direction) on some EK79007 panels, pin 6 is GND on the Waveshare panel.
+# Default = Waveshare: pin 5 high, pin 6 low. Swap the fitted/DNP parts to flip a mirrored panel.
+R(s, "R1322", "0R", (355.6, 165.1), "LCD_STRAP5", "GND", dnp=True, props={"Option": "UPDN low (flip vertical)"})
+R(s, "R1323", "0R", (368.3, 165.1), "LCD_STRAP6", "GND", props={"Option": "Waveshare panel: pin 6 = GND / SHLR low"})
+R(s, "R1324", "10k", (381.0, 165.1), "VCC_1V8", "LCD_STRAP6", dnp=True, props={"Option": "SHLR high (fit instead of R1323)"})
 R(s, "R1319", "0R", (304.8, 190.5), "LCD_RST", "LCD_RESET")
 R(s, "R1320", "10k", (317.5, 190.5), "LCD_RESET", "GND")
 # Touch FPC (6-pin 0.5 mm)

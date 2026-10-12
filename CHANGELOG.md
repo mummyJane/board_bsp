@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Added
+- ADSB_Test display: resistor options on LCD FPC pins 5/6 (R1322 DNP, R1323 fitted, R1324 DNP) so panels that use them as UPDN/SHLR scan-direction straps (e.g. the AliExpress 1024x600 MIPI panel the user found) can be set either way; default stays as the Waveshare panel (pin 5 high, pin 6 low).
+
 ## [0.23.0] - 2026-10-12
 
 ### Added
