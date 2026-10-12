@@ -50,7 +50,7 @@ assembled, depending on how many fixes Rev 1 needs.
 | Modules with bottom (LGA-style) pads (ADSBee m1421, newer ESP32 modules) | `_HandSolder` copy with edge pads lengthened **1.5 mm** (≈ 1.1 mm visible past the body for the iron) and plated holes in the large bottom ground pads (solder from the back). Slightly worse RF ground than filled vias, accepted for Rev 1 |
 | Power FETs | Leaded packages (SO-8) instead of PowerDI / DFN |
 | Switch, coin-cell holder, headers | Through-hole where possible |
-| Castellated modules (e.g. WT01P4C5-S1) | Vendor land pattern with pads lengthened ~1 mm outward for the iron |
+| Castellated modules (WT01P4C5-S1) | Pads run 1.2 mm under the module and **1.3 mm past its edge** for the iron (`Wireless-Tag_WT01P4C5-S1_HandSolder`). No exposed copper or untented vias under the module (it has RF test pads underneath) |
 | RF can frames (optional, DNP) | Laird BMI-S-2xx-F two-piece frames; fit after the parts underneath are soldered and tested |
 
 ### Parts that still need hot air or a hot plate + stencil
@@ -58,7 +58,7 @@ assembled, depending on how many fixes Rev 1 needs.
 | Part | Why |
 |------|-----|
 | BQ25798 (VQFN-HR-29, 0.4 mm) | Power pads under the chip, not just around the edge: an iron can't reach them |
-| ESP32-P4NRW32 (QFN-104, 0.35 mm) | Very fine pitch + large exposed pad. **Avoided** if the WT01P4C5-S1 P4 + C5 module is adopted (ADSB_Test Q26): 1.4 mm castellated pads, iron-solderable |
+| ESP32-P4NRW32 (QFN-104, 0.35 mm) | Very fine pitch + large exposed pad. **Not used on ADSB_Test**: replaced by the WT01P4C5-S1 module (Q26), 1.4 mm castellated pads, iron-solderable |
 | RP2040 (QFN-56, 0.4 mm), USB2514B, FT2232H, CP2102N, IP101GRI | Fine-pitch QFNs; `_HandSolder` variants will be made when their sheets are generated |
 | MiniCircuits SCN-2-11+ (RF combiner), ESD7351 (SOD-523) | Small parts only made in these packages |
 

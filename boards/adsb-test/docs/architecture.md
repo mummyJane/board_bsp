@@ -27,8 +27,8 @@ flowchart LR
   CHG -->|VSYS| RAILS[5V / 3V3 bucks<br/>+ load switches]
   RAILS -.->|shunts| PM[Power monitors<br/>3x PAC1954]
 
-  P4[ESP32-P4NRW32]
-  C5[ESP32-C5-WROOM-1<br/>N16R8]
+  P4[ESP32-P4<br/>WT01P4C5-S1 module]
+  C5[ESP32-C5<br/>inside the module]
   P4 <-->|SDIO esp_hosted| C5
   P4 <-->|RMII| PHY[IP101GRI + RJ45]
   P4 <-->|USB HS OTG| USBA[USB-A host<br/>ext. hub, 1-2 SDR]
@@ -57,10 +57,10 @@ Facts below are from the Waveshare schematic
 
 | Block | Reference board | ADSB_Test |
 |-------|-----------------|-----------|
-| SoC | ESP32-P4NRW32 (32 MB in-package PSRAM) | Same |
-| Flash | GD25Q256EYIGR (32 MB) | Same |
-| Core supplies | MP1605 / MP1658 bucks, RT9193 LDOs | Same circuit for the P4 core rails (VDD_HP buck etc.) |
-| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5-WROOM-1-N16R8** (dual-band Wi-Fi 6, 16 MB flash, 8 MB PSRAM, PCB antenna). Same SDIO wiring and esp_hosted host side |
+| SoC | ESP32-P4NRW32 (32 MB in-package PSRAM) | **WT01P4C5-S1-N16R32 module** (P4 + 32 MB PSRAM, Q26) |
+| Flash | GD25Q256EYIGR (32 MB) | 16 MB inside the module |
+| Core supplies | MP1605 / MP1658 bucks, RT9193 LDOs | **Inside the module** (5 V in) |
+| Wireless co-processor | ESP32-C6-MINI-1 over SDIO | **ESP32-C5 inside the module** (dual-band Wi-Fi 6, IPEX antenna). Same SDIO wiring and esp_hosted host side |
 | USB-UART | CH343P | Moves to the Dev port (FT2232H) and User port (CP2102N) |
 | Battery | ETA6098 1S charger, RTC battery | Replaced by 2S BQ25798 power path. RTC battery kept if used |
 | Display + touch | 7" EK79007 bare COG panel, 2-lane MIPI-DSI, GT911 touch. Panel supplies generated on the board | Same FPC connectors, pin-out and **panel supply circuits** (AVDD 9.6 V boost, VGH/VGL charge pumps, VCOM, 1V8 LDO, AP3032 backlight driver), same stack-up. Touch INT newly wired to the P4 |
@@ -88,10 +88,11 @@ Facts below are from the Waveshare schematic
   the C5 slave firmware. OTA is a nice-to-have: the P4 can push new C5 firmware
   over SDIO (esp_hosted host-driven slave OTA) or the C5 can be reflashed over
   the Dev port. 8 MB PSRAM gives headroom for larger Wi-Fi buffers.
-- **Antenna:** on-module PCB antenna (WROOM-1). Wi-Fi is a backup and the unit
-  normally runs offline. The antenna end sits in a board margin outside the
-  panel outline (see Mechanical and RF layout). WROOM-1U (u.FL) remains the
-  fallback if range turns out too poor.
+- **Antenna (since Q26):** IPEX on the WT01P4C5-S1 → U.FL pigtail → small
+  2.4/5 GHz antenna at the digital edge (or a stick antenna through the case).
+  Wi-Fi is a backup and the unit normally runs offline.
+- _This section was written for the C5-WROOM; the module's C5 has its own
+  flash (C5 GPIO numbers below are unchanged; see the module section)._
 
 ### ESP32-C5 pins and straps (from the C5 datasheet)
 
@@ -119,13 +120,13 @@ GPIO28), and Dev hub port 2 is spare. Field updates still go over SDIO
   P4's GPIO2–5 (an alternative JTAG pad set) are free for GPS/PM. **Never burn
   `EFUSE_JTAG_SEL_ENABLE`** on this board.
 
-## P4 + C5 module option (WT01P4C5-S1) _(proposed 2026-10-12, Q26)_
+## P4 + C5 module (WT01P4C5-S1) _(adopted 2026-10-12, Q26)_
 
 Hand-soldering the bare ESP32-P4 (QFN-104, 0.35 mm pitch, big exposed pad) is the
 hardest job on Rev 1. A module with the P4 **and** the Wi-Fi chip on it removes
 that job, the flash, the P4 core supplies and the separate C5-WROOM.
 
-| | **Wireless-Tag WT01P4C5-S1** (recommended) | Waveshare ESP32-P4-Module | Bare P4 + C5-WROOM (current plan) |
+| | **Wireless-Tag WT01P4C5-S1** (chosen) | Waveshare ESP32-P4-Module (fallback) | Bare P4 + C5-WROOM (previous plan) |
 |---|---|---|---|
 | Chips | ESP32-P4 + **ESP32-C5** (2.4 + 5 GHz Wi-Fi 6) | ESP32-P4NRW32 + ESP32-C6 (2.4 GHz) | P4NRW32 + C5-WROOM-1-N16R8 |
 | Memory | 16 MB flash, 16 or 32 MB PSRAM (N16R16 / N16R32) | 16 or 32 MB flash, 32 MB PSRAM | 32 MB flash, 32 MB PSRAM |
@@ -144,8 +145,7 @@ hand-solder. The Waveshare module is the fallback: the same circuit as the
 reference board (no firmware change at all), but 2.4 GHz only and 1.0 mm pitch.
 
 Exposed P4 GPIOs on the WT01P4C5-S1: 0–4, 6–11, 20–54 (**GPIO5 is not brought out**;
-12–19 are used inside for the C5). Effect on our allocation (`board_pins.h`, to
-change once Q26 is confirmed):
+12–19 are used inside for the C5). Changes made to `board_pins.h`:
 
 | Signal | Now | With the module |
 |--------|-----|-----------------|
@@ -160,8 +160,14 @@ same GPIO numbers. Board changes: the P4 + C5 sheets become one module sheet; a
 switched, monitored **5V_MCU** rail feeds the module; P4 VBAT/RTC goes to an
 external RTC (Q27); the Wi-Fi antenna is a U.FL pigtail to a small antenna on the
 digital edge (or a stick antenna through the case). The 360 MHz rating suggests
-P4 silicon below v3 (as on the reference board): use the `sdkconfig.rev1` overlay
-until the module's chip revision is read with esptool.
+P4 silicon below v3 (as on the reference board), so the test app now builds for
+v0.x/v1.x by default; `sdkconfig.rev3` is the overlay for v3 silicon. Read the
+module's revision with esptool at bring-up.
+
+Schematic: sheet 6 **MCU Module** (U601 + 5 V decoupling, 32.768 kHz crystal,
+I2C pull-ups, BOOT/RESET buttons, C5 GPIO26 pull-up, DNP C5 JTAG header, test
+pads on the spare pins) and sheet 7 **RTC** (DS3231M U701). Both generated by
+`hardware/gen/gen_mcu.py`; the symbol/footprint by `hardware/gen/gen_wt01p4c5.py`.
 
 ## ADSBee m1421 integration
 
@@ -335,9 +341,9 @@ User USB-C ──► STUSB4500 (PD sink: 15 V pref, 9 V, 5 V fallback)
      ▼                           ▼
   5V buck 3 A                 3V3 buck 3 A (TPS62933)
      ├► USB-A eFuse 1.5 A (TPS2596) [PM1 ch4 5V_SDR]
-     └► LCD + backlight (switch)     [PM2 ch1 5V_LCD]
-                                 ├► 3V3_P4     [PM2 ch2]  (+ reference-board core buck/LDOs)
-                                 ├► 3V3_C5     [PM2 ch3]
+     ├► LCD + backlight (switch)     [PM2 ch1 5V_LCD]
+     └► WT01P4C5-S1 module (P4 + C5) [PM2 ch2 5V_MCU]
+                                 ├► 3V3_SD     [PM2 ch3]  (microSD)
                                  ├► 3V3_ETH    [PM2 ch4]  (switch)
                                  ├► 3V3_GPS    [PM3 ch1]  (switch)
                                  ├► 3V3_M1421  [PM3 ch2]  (switch)
@@ -354,7 +360,7 @@ The USB-A eFuse limit drops to 1.5 A (1–2 SDRs + hub). Use a powered hub for
 | Device (I2C addr TBC) | Ch1 | Ch2 | Ch3 | Ch4 |
 |-----------------------|-----|-----|-----|-----|
 | PM1 — input/battery | VBUS_USER | VBAT (bidirectional) | VSYS | 5V_SDR (USB-A) |
-| PM2 — main loads | 5V_LCD | 3V3_P4 | 3V3_C5 | 3V3_ETH |
+| PM2 — main loads | 5V_LCD | 5V_MCU | 3V3_SD | 3V3_ETH |
 | PM3 — peripherals | 3V3_GPS | 3V3_M1421 | 3V3_PERIPH | spare (5V rail total) |
 
 The BQ25798's built-in ADC also reports VBUS/VBAT/IBAT/IBUS, which gives a
@@ -432,18 +438,18 @@ The source of truth is [`bsp/include/bsp/board_pins.h`](../bsp/include/bsp/board
 
 | GPIO | ADSB_Test | Reference board | Ref header |
 |------|-----------|-----------------|------------|
-| 0, 1 | 32.768 kHz crystal | same | |
+| 0, 1 | 32.768 kHz crystal (on our board) | same | |
 | 2 / 3 | GPS UART2 TX / RX | free | P3 |
 | 4 | GPS PPS | free | P3 |
-| 5 | PM ALERT (PAC1954, wired-OR) | free | P3 |
-| 6 | C5 GPIO (ref: C6 IO2) | same | |
+| 5 | **not on a module pad** | free | P3 |
+| 6 | **DS3231M RTC INT** (LP GPIO, wake) | C6 IO2 | |
 | 7 / 8 | I2C SDA / SCL | same | |
 | 9 | Charger INT + PD ALERT (wired-OR) | I2S DOUT | |
 | 10 / 11 | DBG_A / DBG_B (LA CH14/15) | I2S LRCK / DIN | |
-| 12, 13 | spare | I2S SCLK / MCLK | |
+| 12 / 13 | C5 GPIO0 wake / C5 CHIP_PU (inside the module) | I2S SCLK / MCLK | |
 | 14–17 | SDIO D0–D3 to C5 | same (C6) | |
 | 18 / 19 | SDIO CLK / CMD to C5 | same (C6) | |
-| 20 | spare (ADC) | battery sense | |
+| 20 | PM ALERT (PAC1954, wired-OR) | battery sense | |
 | 21 / 22 | User UART1 TX / RX (CP2102N) | CAN RX / TX | |
 | 23 | Touch reset | same | |
 | 24 / 25 | USB-Serial/JTAG → Dev hub | USB-C H2 | |
@@ -467,9 +473,9 @@ The source of truth is [`bsp/include/bsp/board_pins.h`](../bsp/include/bsp/board
 | 51 | PHY reset | free | P1 |
 | 52 | MDIO | free | P1 |
 | 53 | Expander INT | PA_CTRL | |
-| 54 | C5 CHIP_PU (reset) | same (C6) | |
+| 54 | spare (test pad) | C6 CHIP_PU | |
 
-**51 of 55 GPIOs used. Spare: 12, 13, 20, 36.** Slow outputs are on the
+**Spare: 36, 54 (test pads); GPIO5 not available on the module.** Slow outputs are on the
 TCA6408A: EN_LCD, EN_ETH, EN_GPS, EN_M1421, USBA_EN, GPS_RST, M1421_RESET,
 and one spare bit.
 
@@ -521,7 +527,7 @@ Consequences:
 | Board zoning | RF zone (m1421 + combiner + SMA, GNSS + bias-T + SMA) along the RF edge. Digital zone (P4, PSRAM/flash, MIPI-DSI, USB, Ethernet) and power zone (bucks, charger) away from it. Continuous ground plane, stitched along the zone boundary |
 | RF cans _(optional)_ | Two-piece shields (frame soldered, lid snaps on and off for probing), **frames DNP by default**: (1) **SH1401** Laird BMI-S-203-F frame (26.21 mm, 5.08 mm high) + BMI-S-203-C lid over the m1421 + SCN-2-11 combiner + ESD (on the M1421 sheet); (2) GNSS module + bias-T/LNA, size chosen with the GPS sheet (BMI-S-202-F 16.5 mm or BMI-S-209-F 29.4 × 18.5 mm); (3, optional) the switching regulators. Fit the frames, decide on lids after the first RF tests (Wi-Fi, screen, Ethernet noise). Stitch each frame's pad ring to GND; RF traces leave the can on an inner layer. Fit a frame only after the module under it is soldered and checked (the m1421 hand-solder pads need iron access) |
 | RF feeds | 50 Ω CPW from each module to its edge SMA, as short as possible, ground-via fenced. m1421 RF routing copied from the ADSBee 1421 carrier |
-| C5 antenna | **On-module PCB antenna (ESP32-C5-WROOM-1-N16R8)**: Wi-Fi is a backup and the unit normally runs offline (Q18). Place the module's antenna end in a **board margin strip outside the panel outline**, at the board edge, with the datasheet copper keep-out on all layers. Keep it away from the SMA/RF edge and the metal panel frame. The case must be non-metallic over the antenna. Expect reduced range, which is acceptable for a backup link |
+| Wi-Fi antenna | **IPEX on the WT01P4C5-S1** (Q26; replaces the WROOM PCB antenna of Q18) → U.FL pigtail → small 2.4/5 GHz antenna (adhesive flex or stick) at the **digital edge**, away from the RF SMAs and the metal panel frame; or an RP-SMA bulkhead through the case. Plastic case over the antenna. Leave room for the IPEX plug at the module's top-right corner. Wi-Fi is a backup and the unit normally runs offline |
 | Noise | MIPI-DSI and the bucks are the main digital noise sources near the 1090/978 and GNSS L1 inputs. Keep the switch-node copper small. The buck frequencies must not have harmonics landing on 978/1090/1575 MHz (check during part selection) |
 
 ### 7" panel: what we know (Q19)
@@ -581,7 +587,7 @@ Waveshare stack.
 |------|----------------|
 | **POWER switch** | SW401, right-angle through-hole slide switch (C&K OS102011MA1Q) on the case edge. **OFF** pulls the shared enable `PWR_EN` of both TPS62933 bucks low, so 5 V, 3V3 and every rail after them are off. One UVLO divider (100k/28k, ≈ 5.5 V on VSYS) feeds `PWR_EN` |
 | Still alive when OFF | VSYS (charger power path), the BQ25798 (**charges from USB while switched off**), the STUSB4500 (powered from VBUS) and the backup LDO |
-| **VBACKUP** (3.0 V) | MCP1703 (16 V input, ≈ 2 µA quiescent) from VSYS → BAT43W diode → `VBACKUP` → P4 **VDD_BAT** (RTC) and GPS **V_BCKP** (hot start). Present whenever a battery or USB is connected |
+| **VBACKUP** (3.0 V) | MCP1703 (16 V input, ≈ 2 µA quiescent) from VSYS → BAT43W diode → `VBACKUP` → **DS3231M VBAT** (RTC, Q27) and GPS **V_BCKP** (hot start). Present whenever a battery or USB is connected |
 | Optional coin cell | BT301 CR1220 holder + diode, **not fitted** by default. Fit it to keep RTC/GPS alive with the main battery removed. A primary cell is safe here: it's diode-OR'd, with no charge path |
 | Off-state drain (estimate) | MCP1703 ≈ 2 µA + BQ25798 battery-only quiescent + TPS62933 shutdown. Confirm from datasheets / measure in bring-up |
 
@@ -605,7 +611,8 @@ come from the part datasheets where we have them.
 |----------|----------|--------------|--------|
 | ADS-B receiver | ADSBee m1421 | — | User choice. Dual-band, < 60 mW, UART |
 | ADS-B RF combiner | MiniCircuits SCN-2-11+ | — | As on the ADSBee 1421 carrier |
-| Co-processor | ESP32-C5-WROOM-1-N16R8 | WROOM-1U-N16R8 (u.FL) if range is poor | Dual-band, esp_hosted, room for OTA. Wi-Fi is a backup. Antenna in a board margin outside the panel |
+| MCU + Wi-Fi | Wireless-Tag WT01P4C5-S1-N16R32 | Waveshare ESP32-P4-Module (C6, 2.4 GHz) | P4 + C5 on one hand-solderable module, no P4 core supplies. IPEX antenna. Q26 |
+| RTC | DS3231M (SO-8) | RV-3028-C7, PCF8563T + crystal | No crystal, ±5 ppm, on VBACKUP. Q27 |
 | PD sink | STUSB4500 | AP33772S, CH224K | Standalone (NVM), I2C status |
 | Charger | BQ25798 | BQ25792 (TI pages 404 since 2026-10-10), MP2762A | 1–4 cell buck-boost, power path, ADC, MPPT. Same family as BQ25792: check pin compatibility (Q21) |
 | Battery | 2S1P 18650 ≥ 3000 mAh, protected | 2S2P | ≈ 21.6 Wh, 1.5–2.7 h |

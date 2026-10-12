@@ -797,7 +797,7 @@
     {
       "id": "waveshare-esp32-p4-module_schematic",
       "part": "Waveshare ESP32-P4-Module",
-      "title": "Waveshare ESP32-P4-Module schematic (fallback module option)",
+      "title": "Waveshare ESP32-P4-Module schematic (fallback to WT01P4C5-S1)",
       "category": "waveshare",
       "boards": [
         "adsb"
@@ -826,6 +826,18 @@
       ],
       "type": "link",
       "url": "https://www.digikey.com/en/products/detail/laird-technologies-emi/BMI-S-203-F/2175890"
+    },
+    {
+      "id": "ds3231m_datasheet",
+      "part": "DS3231M",
+      "title": "Analog Devices (Maxim) DS3231M +/-5ppm I2C RTC",
+      "category": "interface",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231M.pdf",
+      "manual": true
     }
   ]
 }

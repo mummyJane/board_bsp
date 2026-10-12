@@ -5,6 +5,10 @@
  * Waveshare schematic). New blocks use pins freed by dropping audio, CAN,
  * RS485 and battery ADC, following the ESP32-P4 EMAC IOMUX table and the
  * ESP-IDF Ethernet defaults. Full table: boards/adsb-test/docs/architecture.md.
+ *
+ * MCU = Wireless-Tag WT01P4C5-S1 module (ESP32-P4 + ESP32-C5, Q26). Module pads and
+ * the P4<->C5 wiring inside it: WT01P4C5-S1 datasheet v1.3 sections 3.2 and 3.4.
+ * GPIO5 is not brought out; GPIO12-19 are used inside the module.
  */
 #pragma once
 
@@ -45,15 +49,15 @@
 #define BSP_SD_IO_LDO_CH        4       /* P4 internal LDO VO4 powers the SD I/O domain */
 #define BSP_SD_PWR_EN           (45)    /* LOW = card powered */
 
-/* ESP32-C5 co-processor over SDIO (same P4 pins as the reference C6) */
+/* ESP32-C5 co-processor over SDIO, inside the module (same P4 pins as the reference C6) */
 #define BSP_COPRO_SDIO_CLK      (18)
 #define BSP_COPRO_SDIO_CMD      (19)
 #define BSP_COPRO_SDIO_D0       (14)
 #define BSP_COPRO_SDIO_D1       (15)
 #define BSP_COPRO_SDIO_D2       (16)
 #define BSP_COPRO_SDIO_D3       (17)
-#define BSP_COPRO_RESET         (54)    /* C5 CHIP_PU */
-#define BSP_COPRO_IO            (6)     /* C5 GPIO (reference: C6 IO2) */
+#define BSP_COPRO_RESET         (13)    /* C5 CHIP_PU, inside the module (reference: GPIO54) */
+#define BSP_COPRO_IO            (12)    /* C5 GPIO0 (wake), inside the module (reference: GPIO6) */
 
 /* UART0 console -> Dev port FT2232H ch A */
 #define BSP_CONSOLE_UART_NUM    0
@@ -98,19 +102,20 @@
                                          * high at reset = ROM bootloader, high at run time = sleep.
                                          * Keep LOW in normal operation and before any reset. */
 
-/* USB-A host power (TPS25200 eFuse) */
+/* USB-A host power (TPS2596 eFuse) */
 #define BSP_USBA_FAULT          (27)
 
 /* Interrupts */
 #define BSP_CHG_PD_INT          (9)     /* BQ25798 INT + STUSB4500 ALERT, wired-OR */
-#define BSP_PM_ALERT            (5)     /* PAC1954 ALERT, wired-OR */
+#define BSP_PM_ALERT            (20)    /* PAC1954 ALERT, wired-OR (GPIO5 is not on a module pad) */
+#define BSP_RTC_INT             (6)     /* DS3231M INT/SQW, open drain; LP GPIO for deep-sleep wake */
 #define BSP_EXP_INT             (53)    /* TCA6408A INT */
 
 /* Debug GPIOs on the LA5016 header (CH14, CH15) for firmware timing markers */
 #define BSP_DBG_A               (10)
 #define BSP_DBG_B               (11)
 
-/* Spare: GPIO12, GPIO13, GPIO20 (ADC capable), GPIO36 (strap - keep unloaded) */
+/* Spare (test pads): GPIO36 (strap - keep unloaded), GPIO54 */
 
 /* TCA6408A I2C GPIO expander bit assignments */
 #define BSP_EXP_EN_LCD          0
@@ -129,3 +134,4 @@
 #define BSP_I2C_ADDR_PM1        0x10    /* PAC1954, ADDRSEL 0R  */
 #define BSP_I2C_ADDR_PM2        0x11    /* ADDRSEL 499R */
 #define BSP_I2C_ADDR_PM3        0x12    /* ADDRSEL 806R */
+#define BSP_I2C_ADDR_RTC        0x68    /* DS3231M (fixed) */

@@ -18,8 +18,8 @@ hardware exists:
 
 | ID | Requirement | Ref board |
 |----|-------------|-----------|
-| CORE-01 | ESP32-P4 main processor, same flash/PSRAM configuration as the reference board | Yes |
-| CORE-02 | ESP32-C5-WROOM-1-N16R8 (on-module antenna; Wi-Fi is a backup, normally offline) dual-band Wi-Fi 6 co-processor over SDIO (esp_hosted / esp_wifi_remote), same host-side wiring as the reference board's C6 | Yes (API on C6), Eval (C5 DevKit) |
+| CORE-01 | ESP32-P4 main processor on a **Wireless-Tag WT01P4C5-S1** module (P4 + C5, 16 MB flash, 32 MB PSRAM; Q26), hand-solderable castellated pads | Yes (P4) |
+| CORE-02 | ESP32-C5 dual-band Wi-Fi 6 co-processor **inside the WT01P4C5-S1** over SDIO (esp_hosted / esp_wifi_remote), same P4 SDIO pins as the reference board's C6. IPEX antenna on the module → U.FL pigtail (Wi-Fi is a backup, normally offline) | Yes (API on C6), Eval (C5 DevKit) |
 | CORE-03 | BSP and test firmware shared with the reference board where hardware is the same | Yes |
 
 ## Connectivity

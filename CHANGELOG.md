@@ -8,6 +8,22 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-10-12
+
+### Added
+- ADSB_Test: Wireless-Tag WT01P4C5-S1 (ESP32-P4 + ESP32-C5) symbol and hand-solder footprint (`gen_wt01p4c5.py`, from datasheet v1.3; land pattern to be checked on a real module).
+- ADSB_Test: generated MCU Module sheet (page 6: module, 5 V decoupling, 32.768 kHz crystal, I2C pull-ups, BOOT/RESET buttons, C5 strap pull-up, DNP C5 JTAG, spare-pin test pads) and RTC sheet (page 7: DS3231M on VBACKUP) via `gen_mcu.py`.
+- ADSB_Test BSP: DS3231M driver (`bsp_rtc_init/get_time/set_time/get_temperature`) and test `[rtc_ext]` (skips if no DS3231M is found).
+- ADSB_Test test plan: 1.15 (WTDKP4C5-S1 dev board: chip revision, esp_hosted, pad check) and 1.16 (DS3231M breakout).
+- DS3231M datasheet entry.
+
+### Changed
+- ADSB_Test adopts the WT01P4C5-S1 module (Q26) and a DS3231M RTC (Q27). Pins: PM_ALERT GPIO5 → 20, C5 reset 54 → 13 and C5 wake 6 → 12 (inside the module), RTC_INT on GPIO6; spares now 36 and 54.
+- ADSB_Test power: RS404 now feeds 5V_MCU (module, PM2 CH2); RS405 now 3V3_SD (PM2 CH3); 3V3_P4/3V3_C5 removed. VBACKUP feeds the DS3231M instead of the P4 VDD_BAT.
+- ADSB_Test sheets renamed: ESP32-P4 → MCU Module (`mcu_module.kicad_sch`), ESP32-C5 → RTC (`rtc.kicad_sch`).
+- ADSB_Test test app: 16 MB flash; builds for P4 silicon below v3 by default (`sdkconfig.rev3` overlay for v3; replaces `sdkconfig.rev1`).
+- Requirements CORE-01/02, architecture, open questions, READMEs and PCB-manufacturing rules updated for the module.
+
 ## [0.20.0] - 2026-10-12
 
 ### Added
@@ -369,7 +385,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - `.gitignore` rules for ESP-IDF build output and KiCad backups/lock files.
 - `CLAUDE.md` with project rules (changelog, versioning, commit workflow).
 
-[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/mummyJane/board_bsp/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/mummyJane/board_bsp/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/mummyJane/board_bsp/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/mummyJane/board_bsp/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/mummyJane/board_bsp/compare/v0.17.0...v0.18.0

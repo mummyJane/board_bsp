@@ -9,7 +9,8 @@ reference board while ADSB_Test is designed.
 
 ## Features
 
-- ESP32-P4NRW32, copied from the reference board, + **ESP32-C5-WROOM-1-N16R8** dual-band Wi-Fi 6 backup link over SDIO (esp_hosted), room for OTA, on-module antenna
+- **Wireless-Tag WT01P4C5-S1** module: ESP32-P4 + ESP32-C5 (dual-band Wi-Fi 6 backup link over SDIO, esp_hosted), 16 MB flash, 32 MB PSRAM, IPEX antenna; 1.4 mm castellated pads for hand soldering
+- DS3231M RTC on the always-on backup supply
 - **ADSBee m1421** dual-band ADS-B receiver (1090 MHz Mode S + 978 MHz UAT), RF front end copied from the ADSBee 1421 carrier
 - 10/100 Ethernet (IP101GRI RMII PHY, RJ45)
 - **User USB-C:** USB-PD sink (main power + charging) and a USB-UART to the P4 user UART

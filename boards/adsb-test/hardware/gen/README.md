@@ -16,8 +16,11 @@ How it works:
 |-------|--------|--------|
 | M1421 (page 14) | [gen_m1421.py](gen_m1421.py) | Generated (incl. optional RF can SH1401) |
 | Power Input, Charger Battery, Power Rails, Power Monitor (pages 2–5) | [gen_power.py](gen_power.py) | Generated |
+| MCU Module (page 6), RTC (page 7) | [gen_mcu.py](gen_mcu.py) | Generated (WT01P4C5-S1 + DS3231M) |
+| WT01P4C5-S1 symbol + `_HandSolder` footprint (library) | [gen_wt01p4c5.py](gen_wt01p4c5.py) | Generated from the datasheet v1.3 pin table and drawing |
+| `_HandSolder` copies of vendor footprints (library) | [gen_footprints.py](gen_footprints.py) | Generated |
 
-Whole-project ERC: 16 items, all cross-sheet signals whose drivers (P4, GPIO expander, Dev USB) are on sheets not generated yet. Footprints are checked on every run (`MISSING FOOTPRINTS:` is printed if a name doesn't exist). 154 parts, no duplicate references.
+Whole-project ERC: 56 items, all nets whose other end is on a sheet not generated yet (display, USB, Ethernet, GPS, storage, test/debug, GPIO expander): 50 single-ended global labels + 6 inputs waiting for their driver (expander enables, Dev-port C5_EN and m1421 TX). Footprints are checked on every run (`MISSING FOOTPRINTS:` is printed if a name doesn't exist). 193 parts, no duplicate references.
 
 ## Regenerate a sheet
 

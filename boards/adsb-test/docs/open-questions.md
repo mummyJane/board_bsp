@@ -7,8 +7,6 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
-| Q26 | Use a **P4 + C5 module** instead of the bare ESP32-P4 chip + ESP32-C5-WROOM? Candidate: **Wireless-Tag WT01P4C5-S1** (see architecture.md "P4 + C5 module option") | **Recommended**: removes the hardest hand-soldering job (P4 QFN-104 at 0.35 mm) and the P4 core supplies. Costs: IPEX-only Wi-Fi antenna (accepted 2026-10-12), no P4 VBAT pin (Q27), 5 V supply, a few pin moves |
-| Q27 | With the module the P4 has no VBAT pin, so the P4 RTC stops when the switch is off. Add a small I2C RTC on VBACKUP (e.g. DS3231M in SO-8: no crystal, hand-solderable), or rely on GPS time after a fix? | Proposed: **DS3231M on VBACKUP** (keeps time with the GPS unplugged or indoors) |
 | Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
 
 ## Answered
@@ -40,4 +38,6 @@ the CHANGELOG.
 | Q23 | RTC / GPS backup when off | **VBACKUP 3.0 V always-on LDO from VSYS** (MCP1703, ~2 µA) feeds the P4 VDD_BAT and GPS V_BCKP. Optional CR1220 holder (DNP), diode-OR'd, for battery-removed backup |
 | Q25 | On/off switch? | **Yes**: slide switch SW401 disables both bucks. The charger keeps charging from USB while off |
 | Q24 | Assembly | **Rev 1: all hand-soldered; PCBWay makes the PCB only** (+ stencil). Rev 2 may be PCBWay-assembled depending on Rev 1 errors. Hand-solder footprints everywhere (docs/pcb-manufacturing.md) |
+| Q26 | P4 + C5 module instead of the bare P4 + C5-WROOM? | **Yes (2026-10-12): Wireless-Tag WT01P4C5-S1-N16R32.** 1.4 mm castellated pads (hand-solderable), C5 dual-band kept, IPEX antenna accepted. 5 V supply (5V_MCU). Land pattern derived from the datasheet drawing: measure a real module before ordering PCBs |
+| Q27 | RTC with no P4 VBAT on the module | **DS3231M** (SO-8, I2C 0x68) on VBACKUP, INT → GPIO6. `bsp_rtc_*` + test `[rtc_ext]` |
 | Q11 | LA5016 header | **2×20 keyed header (40-way cable)**. The key-side row is CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is for the LA5032 (future) |

@@ -136,7 +136,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "4395b7c4-101c-4803-aa3a-82ca7ecbea00")
-		(property "Sheetname" "ESP32-C5"
+		(property "Sheetname" "RTC"
 			(at 125 102.3 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -147,7 +147,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "esp32c5.kicad_sch"
+		(property "Sheetfile" "rtc.kicad_sch"
 			(at 125 128.6 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -676,7 +676,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "fe1b518c-8232-4ec4-a5dc-9dfae6137a80")
-		(property "Sheetname" "ESP32-P4"
+		(property "Sheetname" "MCU Module"
 			(at 30 102.3 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -687,7 +687,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "esp32p4.kicad_sch"
+		(property "Sheetfile" "mcu_module.kicad_sch"
 			(at 30 128.6 0)
 			(show_name no)
 			(do_not_autoplace no)

@@ -1,11 +1,13 @@
-# ADSB_Test: same P4/flash/PSRAM as the reference board (ESP32-P4NRW32, 32 MB GD25Q256)
+# ADSB_Test: Wireless-Tag WT01P4C5-S1 module (ESP32-P4 + ESP32-C5, 16 MB flash, 32 MB PSRAM)
 CONFIG_IDF_TARGET="esp32p4"
-# New ADSB_Test boards will use current ESP32-P4 silicon (rev v3.x).
-# To run this app on the rev v1.3 reference unit build with
-#   idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.rev1" ...
-# CONFIG_ESP32P4_SELECTS_REV_LESS_V3 is not set
-CONFIG_ESP32P4_REV_MIN_300=y
-CONFIG_ESPTOOLPY_FLASHSIZE_32MB=y
+# The module is rated 360 MHz, i.e. P4 silicon below v3 (as the rev v1.3 reference unit), so
+# the default build targets v0.x/v1.x. Read the module's revision with `esptool chip_id`;
+# for rev v3.x silicon build with
+#   idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.rev3" ...
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_100=y
+# 16 MB on the module (also fine on the reference unit's 32 MB flash)
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
 CONFIG_SPI_FLASH_SUPPORT_GD_CHIP=y
 CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y

@@ -34,7 +34,7 @@ get them. "Local" shows whether the last run saved a copy.
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare dimension drawing + STEP (ZIP)](https://files.waveshare.com/wiki/ESP32-P4-WIFI6-Touch-LCD-7B/ESP32-P4-WIFI6-Touch-LCD-7B-3D.zip) | Waveshare 7B, ADSB_Test | yes (2026-10-10) |
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare product docs](https://docs.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-7B) | Waveshare 7B | link only |
 | ESP32-P4-WIFI6-Touch-LCD-7B | [Waveshare example code](https://github.com/waveshareteam/ESP32-P4-WIFI6-Touch-LCD-7B) | Waveshare 7B | link only |
-| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module schematic (fallback module option)](https://files.waveshare.com/wiki/ESP32-P4-Module/ESP32-P4-Module-datasheet.pdf) | ADSB_Test | yes (2026-10-12) |
+| Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module schematic (fallback to WT01P4C5-S1)](https://files.waveshare.com/wiki/ESP32-P4-Module/ESP32-P4-Module-datasheet.pdf) | ADSB_Test | yes (2026-10-12) |
 | Waveshare ESP32-P4-Module | [Waveshare ESP32-P4-Module wiki (pinout, land pattern, STEP)](https://www.waveshare.com/wiki/ESP32-P4-Module) | ADSB_Test | link only |
 
 ## display
@@ -79,6 +79,7 @@ get them. "Local" shows whether the last run saved a copy.
 | CH343P | [CH343 USB-UART (reference board)](https://www.wch-ic.com/products/CH343.html) | Waveshare 7B | link only |
 | RP2040 | [RP2040 datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | ADSB_Test | yes (2026-10-10) |
 | RP2040 | [Hardware design with RP2040](https://datasheets.raspberrypi.com/rp2040/hardware-design-with-rp2040.pdf) | ADSB_Test | yes (2026-10-10) |
+| DS3231M | [Analog Devices (Maxim) DS3231M +/-5ppm I2C RTC](https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231M.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
 
 ## memory
 

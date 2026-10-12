@@ -34,7 +34,14 @@ def new_sheet(file):
 
 
 STALE = [("5V buck 3A (part TBC)", "5V buck TPS62933 3A"), ("TPS25200 eFuse", "TPS2596 eFuse"),
-         ("TPS25200", "TPS2596"), ("BQ25792", "BQ25798")]
+         ("TPS25200", "TPS2596"), ("BQ25792", "BQ25798"),
+         # WT01P4C5-S1 module (Q26): 5 V module rail, no P4 core supplies on the board
+         ("3V3_P4, 3V3_C5, 3V3_ETH (sw)", "3V3_SD, 3V3_ETH (sw)"),
+         ("5V_LCD load switch.", "5V_LCD load switch, -> 5V_MCU (WT01P4C5-S1 module, shunt only)."),
+         ("- P4 core supplies (VDD_HP buck etc.): COPY FROM REFERENCE BOARD (MP1605/MP1658/RT9193 circuit).",
+          "- No P4 core supplies: they are inside the WT01P4C5-S1 module."),
+         ("5V_LCD, 3V3_P4, 3V3_C5, 3V3_ETH", "5V_LCD, 5V_MCU, 3V3_SD, 3V3_ETH"),
+         ("5V total", "3V3 total"), ("addresses set by ADDRSEL resistor (TBC)", "addresses 0x10/0x11/0x12 by ADDRSEL resistor")]
 
 
 def finish(s, notes, file, title):
@@ -229,7 +236,7 @@ s.connect(bat, "1", "BAT_PACK")
 s.connect(bat, "2", "GND")
 s.connect(bat, "3", "CHG_TS")
 
-# Always-on backup supply (VBACKUP, 3.0 V) for the P4 VDD_BAT (RTC) and the GPS V_BCKP.
+# Always-on backup supply (VBACKUP, 3.0 V) for the DS3231M RTC VBAT and the GPS V_BCKP.
 # Fed from VSYS, which is up whenever a battery or USB is present, regardless of the
 # POWER switch. Optional CR1220 holder (not fitted) keeps it alive with the battery removed.
 s.locals |= {"VBACKUP_LDO", "BKP_CELL"}
@@ -306,7 +313,7 @@ buck(s, 2, "B3V3", "3V3_BUCK", "31.6k 1%", (63.5, 157.48))
 
 # POWER switch: OFF pulls the shared buck enable low, so 5 V and 3V3 (and everything after them)
 # are off. VSYS stays up, so the charger still charges from USB and the always-on backup LDO
-# (Charger sheet, VBACKUP for the P4 RTC + GPS) keeps running.
+# (Charger sheet, VBACKUP for the DS3231M RTC + GPS) keeps running.
 sw = s.add("Switch:SW_SPDT", "SW401", "POWER (slide)", (38.1, 228.6),
            footprint="Button_Switch_THT:SW_Slide_SPDT_Angled_CK_OS102011MA1Q",
            props={"Positions": "B-C = OFF (enable to GND), B-A = ON"})
@@ -336,8 +343,8 @@ shunt(s, "RS401", "10m", (152.4, 30.48), "3V3_BUCK", "3V3", "PM3_CH4_P", "PM3_CH
 rails = [  # ref, value, src, mid/load, pm channel, switch enable or None, final rail
     ("RS402", "20m", "5V", "5V_SDR", "PM1_CH4", None, None),
     ("RS403", "50m", "5V", "5V_LCD_SH", "PM2_CH1", "EXP_EN_LCD", "5V_LCD"),
-    ("RS404", "50m", "3V3", "3V3_P4", "PM2_CH2", None, None),
-    ("RS405", "100m", "3V3", "3V3_C5", "PM2_CH3", None, None),
+    ("RS404", "20m", "5V", "5V_MCU", "PM2_CH2", None, None),        # WT01P4C5-S1 module (5 V in, <= 1.5 A)
+    ("RS405", "100m", "3V3", "3V3_SD", "PM2_CH3", None, None),      # microSD card supply
     ("RS406", "100m", "3V3", "3V3_ETH_SH", "PM2_CH4", "EXP_EN_ETH", "3V3_ETH"),
     ("RS407", "1R", "3V3", "3V3_GPS_SH", "PM3_CH1", "EXP_EN_GPS", "3V3_GPS"),
     ("RS408", "1R", "3V3", "3V3_M1421_SH", "PM3_CH2", "EXP_EN_M1421", "3V3_M1421"),
@@ -388,7 +395,7 @@ for n in ("1", "2", "3"):
     cap(s, f"C50{n}", "100nF", (x, y - 50.8), "3V3_PERIPH", "GND")
 res(s, "R504", "10k", (304.8, 50.8), "3V3_PERIPH", "PM_ALERT")
 s.text("PM1: CH1 VBUS_USER, CH2 VBAT (bidirectional), CH3 VSYS, CH4 5V_SDR\n"
-       "PM2: CH1 5V_LCD, CH2 3V3_P4, CH3 3V3_C5, CH4 3V3_ETH\n"
+       "PM2: CH1 5V_LCD, CH2 5V_MCU (P4+C5 module), CH3 3V3_SD, CH4 3V3_ETH\n"
        "PM3: CH1 3V3_GPS, CH2 3V3_M1421, CH3 3V3_PERIPH, CH4 3V3 total\n"
        "Sense lines: Kelvin from each shunt (pins 2/3), routed as pairs.", (25.4, 190.5))
 finish(s, notes, "power_monitor.kicad_sch", "ADSB_Test - Power Monitor")

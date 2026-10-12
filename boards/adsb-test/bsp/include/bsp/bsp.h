@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+#include <time.h>
 #include "esp_err.h"
 #include "driver/i2c_master.h"
 #include "esp_lcd_touch.h"
@@ -35,6 +37,16 @@ esp_err_t bsp_sdcard_unmount(void);
 
 /** Format the microSD card as FAT32 (ERASES IT) and leave it mounted. */
 esp_err_t bsp_sdcard_format(void);
+
+/** DS3231M RTC on the shared I2C bus (on VBACKUP, keeps time with the power switch off).
+ *  bsp_rtc_init() returns ESP_ERR_NOT_FOUND if nothing answers at BSP_I2C_ADDR_RTC. */
+esp_err_t bsp_rtc_init(void);
+/** Read the time (24 h, local as stored). *valid is false if the oscillator stopped since the last set. */
+esp_err_t bsp_rtc_get_time(struct tm *t, bool *valid);
+/** Set the time (tm_year 100..299 = 2000..2199) and clear the oscillator-stop flag. */
+esp_err_t bsp_rtc_set_time(const struct tm *t);
+/** DS3231M die temperature, 0.25 C steps. */
+esp_err_t bsp_rtc_get_temperature(float *celsius);
 
 #ifdef __cplusplus
 }
