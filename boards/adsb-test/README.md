@@ -58,7 +58,7 @@ reference board while ADSB_Test is designed.
 | 11 | USB Host | New |
 | 12 | GPS | New |
 | 13 | Display Touch | Copy of reference board connector |
-| 14 | M1421 (ADSBee m1421 + RF) | Copy of the ADSBee 1421 carrier |
+| 14 | M1421 (ADSBee m1421 + Dev Kit header + RF) | **Schematic generated** ([gen/](hardware/gen/)); RF copied from the ADSBee 1421 carrier |
 | 15 | Storage Misc (microSD, buttons, LEDs, GPIO expander) | Copy of reference board |
 | 16 | Test Debug (LA5016 header, test points) | New |
 

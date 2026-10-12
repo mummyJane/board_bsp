@@ -34,4 +34,5 @@ the CHANGELOG.
 | Q18 | C5 antenna | **On-module PCB antenna (WROOM-1-N16R8)**: Wi-Fi is a backup and the unit normally runs offline. Antenna in a board margin outside the panel |
 | Q19 | Panel stand-off / outline | **As short as possible.** No bare-panel datasheet is public. Use Waveshare's dimension drawing + STEP: lens 164.28 × 99.17 mm, panel 5.7 mm deep, ≈ 1.4 mm tape to the PCB, all parts on the bottom side, M2.5 holes at 156 × 89 mm |
 | Q20 | Margins and case | **≈ 12 mm margins on both short edges** (board ≈ 188 × 97 mm): digital connectors on one, RF SMAs on the other, C5 antenna at the digital edge away from RJ45/USB-A. **3D-printed plastic** case, ≈ 2 mm walls on the short edges, **thicker (≈ 3 mm) on the long edges** for strength. 2 × 18650 behind the board |
+| Q22 | m1421 fit for Rev A? | **Both supported**: footprint U1401 (solder later) + Dev Kit header J1402 (default for first boards). Pogo pins not recommended on the board (RF/ground; would need a separate jig) |
 | Q11 | LA5016 header | **2×20 keyed header (40-way cable)**. The key-side row is CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is for the LA5032 (future) |

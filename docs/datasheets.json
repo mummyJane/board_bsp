@@ -476,13 +476,24 @@
     {
       "id": "74lvc1g157_datasheet",
       "part": "74LVC1G157 (Nexperia)",
-      "title": "2:1 mux (m1421 UART RX); TI has no SN74LVC1G157",
+      "title": "2:1 mux alternative (not used: no KiCad symbol; 74LVC1G97 used instead)",
       "category": "logic",
       "boards": [
         "adsb"
       ],
       "type": "file",
       "url": "https://assets.nexperia.com/documents/data-sheet/74LVC1G157.pdf"
+    },
+    {
+      "id": "74lvc1g97_datasheet",
+      "part": "74LVC1G97 (Nexperia)",
+      "title": "Configurable gate used as 2:1 mux (m1421 UART RX); KiCad has no 74LVC1G157 symbol",
+      "category": "logic",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://assets.nexperia.com/documents/data-sheet/74LVC1G97.pdf"
     },
     {
       "id": "sn74lvc1g32_datasheet",

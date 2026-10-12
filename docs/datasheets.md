@@ -83,7 +83,8 @@ get them. "Local" shows whether the last run saved a copy.
 | Part | Document | Boards | Local |
 |------|----------|--------|-------|
 | TCA6408A | [TCA6408A I2C GPIO expander](https://www.ti.com/lit/ds/symlink/tca6408a.pdf) | ADSB_Test | yes (2026-10-10) |
-| 74LVC1G157 (Nexperia) | [2:1 mux (m1421 UART RX); TI has no SN74LVC1G157](https://assets.nexperia.com/documents/data-sheet/74LVC1G157.pdf) | ADSB_Test | yes (2026-10-10) |
+| 74LVC1G157 (Nexperia) | [2:1 mux alternative (not used: no KiCad symbol; 74LVC1G97 used instead)](https://assets.nexperia.com/documents/data-sheet/74LVC1G157.pdf) | ADSB_Test | yes (2026-10-10) |
+| 74LVC1G97 (Nexperia) | [Configurable gate used as 2:1 mux (m1421 UART RX); KiCad has no 74LVC1G157 symbol](https://assets.nexperia.com/documents/data-sheet/74LVC1G97.pdf) | ADSB_Test | yes (2026-10-12) |
 | SN74LVC1G32 | [OR gate (m1421 SYNC)](https://www.ti.com/lit/ds/symlink/sn74lvc1g32.pdf) | ADSB_Test | yes (2026-10-10) |
 | SN74LVC1G07 | [Open-drain buffer (resets)](https://www.ti.com/lit/ds/symlink/sn74lvc1g07.pdf) | ADSB_Test | yes (2026-10-10) |
 | SN74LVC1G125 | [3-state buffer (Dev isolation)](https://www.ti.com/lit/ds/symlink/sn74lvc1g125.pdf) | ADSB_Test | yes (2026-10-10) |

@@ -163,7 +163,7 @@ message-activity markers.
 |--------------|--------|----------------------|
 | 1, 4, 19, 22 | VCC | `3V3_M1421`: switched branch, PM3 ch2 |
 | 6, 18, 23, 25, 27, 34, 36, MP | GND | GND. **Filled and capped** thermal vias in both MP pads and under the GND pads next to the RF pins |
-| 20 / 21 | SURX / SUTX (console) | P4 UART3 at 1 Mbaud (≥ 921600 recommended). TX also goes to the Dev probe. RX comes from a 2:1 mux (74LVC1G157): P4 by default, Dev probe when selected |
+| 20 / 21 | SURX / SUTX (console) | P4 UART3 at 1 Mbaud (≥ 921600 recommended). TX also goes to the Dev probe. RX comes from a 2:1 mux (74LVC1G97): P4 by default, Dev probe when selected |
 | 28 | SYNC | `SYNC = P4_SYNC OR DEV_SYNC` (74LVC1G32, target-powered). DEV_SYNC is pulled low, so an unpowered Dev domain can't assert it. 100 kΩ pull-down on SYNC. LA CH6 |
 | 17 | ~SRST | Open-drain wired-AND: TCA6408A bit 7, Dev probe (74LVC1G07, Ioff), 10-pin JTAG header pin 10 |
 | 8–11 | JMSC / JCKC / JTDO / JTDI | 10-pin 1.27 mm Cortex debug header, as on the carrier: **Segger J-Link, target CC1314R10, JTAG 4 MHz** (the documented flow) |
@@ -172,6 +172,38 @@ message-activity markers.
 | 24 / 26 | SRF (978) / LRFL (1090) | SCN-2-11+ combiner (100 Ω across ports) → ESD7351 → SMA. Copy the carrier's RF layout. Keep the footprint's top-copper keep-outs |
 | 2, 3, 5, 7, 29–33 | LR2021 DIO / reset / SPI / BUSY | Test pads only (normal use: not connected). Leaves room for an optional LR2021 hand-off later |
 | 35 | LRFH (LR2021 2.4 GHz) | Not connected (test pad). Possible LoRa/mesh use later, but the module has no transmitter certification |
+
+### Fit options for Rev A: module or Dev Kit
+
+The m1421 is new, so Rev A supports **both**:
+
+| Option | How | When |
+|--------|-----|------|
+| **(b) ADSBee 1421 Dev Kit** _(default for first boards)_ | Leave U1401 unfitted. Plug the Dev Kit's comms connector into **J1402** (1×6 2.54 mm) with the JST-GH-to-DuPont harness in the kit. Pinout matches the Dev Kit: 1 VIN, 2 UART RX (into module), 3 UART TX, 4 SYNC, 5 RESET, 6 GND. VIN = `3V3_M1421` (switched and measured; the Dev Kit's AP2112K then gives ≈ 3.0 V, inside the module's 1.8–3.3 V range). The Dev Kit uses its own U.FL antenna; the board's SMA path is unused | Proving the module, firmware and host code with known-good RF |
+| **(a) Solder U1401** | Fit the module on the board; J1402 left empty. RF through the board's combiner to the edge SMA | Once the module is proven, and to test the board's own RF layout |
+
+Both options share the same nets (UART, SYNC, RESET, power), so the RX mux,
+SYNC OR gate, reset buffer and Dev-port RP2040 work the same either way. **Never
+fit U1401 and connect a Dev Kit at the same time.**
+
+The RX mux is a **74LVC1G97** configured as a 2:1 mux (KiCad has no
+74LVC1G157 symbol). Nexperia function table: C (pin 6) = 0 → Y = B (pin 1,
+P4 TX); C = 1 → Y = A (pin 3, Dev TX). Select is pulled low (P4 by default).
+
+**Pogo pins to an unsoldered module?** Possible, but not recommended on
+ADSB_Test:
+- **Fixture:** the module has 36 bottom-side pads at 1.27 mm pitch plus two
+  large ground/thermal pads underneath. A pogo fixture needs fine-pitch spring
+  pins (about 38 of them), an alignment pocket for the 23.4 × 14.5 mm body, and
+  a clamp lid. That's a separate jig board, not something to put on ADSB_Test.
+- **RF:** pads 24/26 are 50 Ω coplanar feeds, and the MP pads are the RF/thermal
+  ground. Spring pins add inductance and a weaker ground return, so receiver
+  sensitivity measured that way would not represent a soldered module. It's
+  fine for programming or a UART smoke test, not for judging 1090/978 MHz
+  performance.
+- **Simpler:** the Dev Kit header gives a known-good module + RF today. When
+  ready, solder a module on a second board. The module tolerates two reflow
+  passes, so hot-air/reflow fitting by hand is practical.
 
 ### Firmware updates and Dev-port access
 
