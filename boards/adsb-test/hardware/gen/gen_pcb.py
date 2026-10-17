@@ -16,6 +16,7 @@ Re-running OVERWRITES ADSB_Test.kicad_pcb. Once layout work starts in KiCad, sto
 (or only use it on a copy).
 """
 import collections
+import json
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -344,7 +345,15 @@ def main():
         if y > OY + 260:
             col_x, y = col_x + 80, OY
 
+    # SaveBoard also rewrites ADSB_Test.kicad_pro from this fresh board, which has no net classes: keep the
+    # project's net_settings (written by gen_netclasses.py) across the save
+    pro = PCB.with_suffix(".kicad_pro")
+    net_settings = json.loads(pro.read_text(encoding="utf-8")).get("net_settings")
     pcbnew.SaveBoard(str(PCB), board)
+    d = json.loads(pro.read_text(encoding="utf-8"))
+    if net_settings:
+        d["net_settings"] = net_settings
+        pro.write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {PCB.name}: {len(comps)} parts, {len(placed)} placed, {sum(len(v) for v in parked.values())} parked, "
           f"{len(nets)} nets")
 

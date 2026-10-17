@@ -9,6 +9,7 @@ project uses [Semantic Versioning](https://semver.org/) (see
 ## [Unreleased]
 
 ### Changed
+- ADSB_Test: Ethernet MDI nets renamed ETH_TX_P/_N, ETH_RX_P/_N (and the disabled hub port HUB_DN2_N) to match the `_P`/`_N` pair naming used for USB and MIPI; ETH_100R patterns updated.
 - ADSB_Test PCB: panel-cable slots moved in to 30 mm from the panel's bottom edge (tails fold behind the panel and come through past the chip section, as on the Waveshare board); J1301/J1302 7 mm inside them facing the slots; module moved up above the sockets, LA header along the bottom edge, JTAG/Dev Kit/RP2040 headers re-placed. Provisional until the tails are measured.
 
 ### Added
@@ -20,6 +21,7 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - ADSB_Test PCB generator: footprints now carry the symbol fields and exclude-from-BOM flags, and unconnected-pin net names are escaped as KiCad does. Schematic parity is 0.
 - ADSB_Test PCB: J602 RP-SMA was placed with its whole body (barrel included) inside the board, so its pads sat ~10 mm in, on the panel outline. Edge-mount footprints without a 'PCB Edge' marker now go with their pads 0.5 mm from the board edge and the barrel over it; J601 moved up behind it.
 - ADSB_Test: J602 used KiCad's Molex 73251-1153 footprint, whose pads don't match the 73251-3152 (centre pad 2.29 vs 1.78 mm, ground pads 1 mm further out, no plated holes). New `ADSB_Test:SMA_Molex_73251-3152_RP_EdgeMount` from Molex drawing SD-73251-315 (pads both sides, two 0.46 mm plated holes, 'PCB Edge' marker), pads 0.25 mm in from the edge with a 0.2 mm edge-clearance rule for J602.
+- ADSB_Test: net classes were lost from `ADSB_Test.kicad_pro` since the PCB start (pcbnew's SaveBoard in `gen_pcb.py` rewrote the project with an empty net_settings), so no USB/MIPI/Ethernet/RF net had its impedance class. `gen_pcb.py` now keeps the project's net_settings; all 29 controlled nets are back in USB_90R / MIPI_100R / ETH_100R / RF_50R.
 - ADSB_Test floorplan.png regenerated (it still showed the old layout; only the SVG had been updated).
 - Datasheets: hand-saved BQ25792 datasheet and Molex 0732513152 spec filed; Molex sales drawing added to the list. Q21 answered: BQ25792 and BQ25798 are pin-identical, the BQ25798 stays.
 - ADSB_Test PCB: panel-cable slots moved to the panel drawings' positions (they were taken from the Waveshare board drawing and were about 45 mm off). LCD slot 56–96 mm and touch slot 32–52 mm from the panel's left edge (front view); J1301/J1302 moved next to them, LA header moved up to clear J1301. Midas MDT070005 datasheet added to the datasheet list.

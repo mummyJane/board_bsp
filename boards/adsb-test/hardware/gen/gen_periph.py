@@ -87,7 +87,7 @@ def gate(s, kind, ref, at, a, y, vcc, oe_gnd=True):
 # =================================================================== Ethernet (page 8)
 s = new("ethernet.kicad_sch")
 s.locals |= {"ETH_AVDD", "ETH_1V2", "ETH_XI", "ETH_XO", "ETH_RBIAS", "ETH_LED1", "ETH_LED2", "ETH_RXER",
-             "ETH_TXP", "ETH_TXN", "ETH_RXP", "ETH_RXN", "ETH_REFCLKO", "ETH_LED1_K", "ETH_LED2_K"}
+             "ETH_TX_P", "ETH_TX_N", "ETH_RX_P", "ETH_RX_N", "ETH_REFCLKO", "ETH_LED1_K", "ETH_LED2_K"}
 u = s.add("Interface_Ethernet:LAN8720A", "U801", "LAN8720A", (165.1, 127.0),
           footprint=HS + "VQFN-24-1EP_4x4mm_P0.5mm_EP2.5x2.5mm_HandSolder",
           props={"MDIO address": "1 (RXER/PHYAD0 pulled up)", "REF_CLK": "nINTSEL=0: pin 14 outputs 50 MHz to the P4"})
@@ -111,10 +111,10 @@ s.connect(u, "15", "ETH_PHY_RST")
 s.connect(u, "16", "ETH_TX_EN")
 s.connect(u, "17", "ETH_TXD0")
 s.connect(u, "18", "ETH_TXD1_BOOT")
-s.connect(u, "21", "ETH_TXP")
-s.connect(u, "20", "ETH_TXN")
-s.connect(u, "23", "ETH_RXP")
-s.connect(u, "22", "ETH_RXN")
+s.connect(u, "21", "ETH_TX_P")
+s.connect(u, "20", "ETH_TX_N")
+s.connect(u, "23", "ETH_RX_P")
+s.connect(u, "22", "ETH_RX_N")
 fb = s.add("Device:FerriteBead_Small", "FB801", "600R@100MHz", (63.5, 76.2), footprint="Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
 s.connect(fb, "1", "3V3_ETH")
 s.connect(fb, "2", "ETH_AVDD")
@@ -139,15 +139,15 @@ R(s, "R806", "10k", (88.9, 190.5), "3V3_ETH", "ETH_PHY_RST")
 R(s, "R807", "33R", (241.3, 177.8), "ETH_REFCLKO", "ETH_REF_CLK")
 for i, n in enumerate(("ETH_RXD0", "ETH_RXD1", "ETH_CRS_DV")):   # MODE[2:0] = 111: the P4 pins load the straps (DS00002165 3.7)
     R(s, f"R{814 + i}", "10k", (101.6 + i * 12.7, 190.5), "3V3_ETH", n)
-for i, n in enumerate(("ETH_TXP", "ETH_TXN", "ETH_RXP", "ETH_RXN")):
+for i, n in enumerate(("ETH_TX_P", "ETH_TX_N", "ETH_RX_P", "ETH_RX_N")):
     R(s, f"R{808 + i}", "49.9R 1%", (241.3 + i * 12.7, 63.5), "ETH_AVDD", n)
 C(s, "C810", "22nF", (304.8, 63.5), "ETH_AVDD")              # transformer centre taps
 j = s.add("Connector:RJ45_Hanrun_HR911105A_Horizontal", "J801", "HR911105A", (330.2, 127.0),
           props={"Check": "LED pins 9-12 polarity against the HR911105A drawing before layout"})
-s.connect(j, "1", "ETH_TXP")
-s.connect(j, "2", "ETH_TXN")
-s.connect(j, "3", "ETH_RXP")
-s.connect(j, "6", "ETH_RXN")
+s.connect(j, "1", "ETH_TX_P")
+s.connect(j, "2", "ETH_TX_N")
+s.connect(j, "3", "ETH_RX_P")
+s.connect(j, "6", "ETH_RX_N")
 s.connect(j, ["4", "5"], "ETH_AVDD")
 s.connect(j, ["8", "SH"], "GND")
 s.nc(j, "7")
@@ -544,7 +544,7 @@ done(s, "test_debug.kicad_sch", "ADSB_Test - Test Debug")
 s = new("usb_dev.kicad_sch")
 s.locals |= {"DEV_D_P", "DEV_D_N", "DEV_CC1", "DEV_CC2", "HUB_XI", "HUB_XO", "HUB_RBIAS", "HUB_CRFILT",
              "HUB_PLLFILT", "HUB_RESET", "HUB_VBUS_DET", "HUB_CFG0", "HUB_CFG1", "HUB_NONREM0", "HUB_NONREM1",
-             "HUB_DN2_M", "HUB_DN2_P"}
+             "HUB_DN2_N", "HUB_DN2_P"}
 j = s.add("Connector:USB_C_Receptacle_USB2.0_16P", "J1001", "Dev USB-C", (38.1, 88.9),
           footprint="Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")
 s.connect(j, ["A4", "A9", "B4", "B9"], "VBUS_DEV")
@@ -579,7 +579,7 @@ s.connect(hub, "30", "DEV_D_N")
 s.connect(hub, "2", "P4_USJ_D_P")
 s.connect(hub, "1", "P4_USJ_D_N")
 s.connect(hub, "4", "HUB_DN2_P")
-s.connect(hub, "3", "HUB_DN2_M")
+s.connect(hub, "3", "HUB_DN2_N")
 s.connect(hub, "7", "FT_D_P")
 s.connect(hub, "6", "FT_D_N")
 s.connect(hub, "9", "RP_HUB_D_P")
@@ -600,7 +600,7 @@ s.connect(hub, "22", "HUB_NONREM1")
 for p in ("12", "13", "16", "17", "18", "19", "20", "21"):
     s.nc(hub, p)
 R(s, "R1003", "10k", (279.4, 38.1), "3V3_DEV", "HUB_DN2_P")     # both D+/D- high = port 2 disabled
-R(s, "R1004", "10k", (292.1, 38.1), "3V3_DEV", "HUB_DN2_M")
+R(s, "R1004", "10k", (292.1, 38.1), "3V3_DEV", "HUB_DN2_N")
 for i, n in enumerate(("HUB_CFG0", "HUB_CFG1", "HUB_NONREM0", "HUB_NONREM1")):   # strap: default config, bus powered
     R(s, f"R{1005 + i}", "10k", (317.5 + i * 12.7, 38.1), n, "GND")
 R(s, "R1009", "12k 1%", (279.4, 101.6), "HUB_RBIAS", "GND")

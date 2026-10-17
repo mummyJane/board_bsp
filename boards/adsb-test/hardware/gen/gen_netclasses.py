@@ -5,7 +5,7 @@ Run from the repo root:  python boards/adsb-test/hardware/gen/gen_netclasses.py
 Writes net_settings into ADSB_Test.kicad_pro and the custom rules file ADSB_Test.kicad_dru.
 
 Differential pairs are recognised by KiCad from the _P/_N (or P/N) name suffix, so USB pairs
-are named *_D_P / *_D_N, MIPI DSI_*_P / *_N, Ethernet ETH_TXP/TXN, ETH_RXP/RXN.
+are named *_D_P / *_D_N, MIPI DSI_*_P / *_N, Ethernet ETH_TX_P/_N, ETH_RX_P/_N.
 Widths/gaps are STARTING VALUES for a 4-layer 1.6 mm board with ~0.2 mm prepreg to the L2 ground:
 recalculate them with PCBWay's stack-up / impedance calculator before layout (docs/pcb-manufacturing.md).
 """
@@ -35,7 +35,7 @@ CLASSES = [
 PATTERNS = [
     ("USB_90R", "*_D_P"), ("USB_90R", "*_D_N"),
     ("MIPI_100R", "*DSI_*"),
-    ("ETH_100R", "*ETH_TX?"), ("ETH_100R", "*ETH_RX?"),
+    ("ETH_100R", "*ETH_TX_?"), ("ETH_100R", "*ETH_RX_?"),
     ("RF_50R", "*RF_ADSB_ANT"), ("RF_50R", "*M1421_RF_*"), ("RF_50R", "*GPS_RF"), ("RF_50R", "*WIFI_ANT"),
 ]
 
