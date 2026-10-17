@@ -26,3 +26,8 @@
 (rule "RF no vias"
   (condition "A.NetClass == 'RF_50R'")
   (constraint via_count (max 0)))
+
+# Edge-mount RP-SMA J602: Molex's pads run to the board edge; ours stop 0.25 mm short (PCBWay pull-back)
+(rule "J602 pads to the edge"
+  (condition "A.memberOfFootprint('J602') || B.memberOfFootprint('J602')")
+  (constraint edge_clearance (min 0.2mm)))

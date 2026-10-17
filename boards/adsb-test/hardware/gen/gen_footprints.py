@@ -80,3 +80,58 @@ def kelvin_1206():
 
 
 kelvin_1206()
+
+
+# Molex 73251-3152 RP-SMA edge mount (jam nut), 1.6 mm PCB, from sales drawing SD-73251-315 rev A2 "recommended
+# pad layout" (KiCad's 73251-1153 footprint has different pads). PCB edge at x = 0, barrel towards -x (12.45 mm
+# overhang), legs into the board (+x). Centre pad on one side; ground pads on both sides, joined by two
+# 0.46 mm plated holes 0.89 mm past the pad ends.
+def molex_73251_3152():
+    name = "SMA_Molex_73251-3152_RP_EdgeMount"
+
+    def smd(num, x, y, w, h, side):
+        return (f'\t(pad "{num}" smd rect\n\t\t(at {x:.4f} {y:.4f})\n\t\t(size {w:.4f} {h:.4f})\n'
+                f'\t\t(layers "{side}.Cu" "{side}.Mask" "{side}.Paste")\n\t)\n')
+
+    def line(x0, y0, x1, y1, layer, width):
+        return (f'\t(fp_line\n\t\t(start {x0} {y0})\n\t\t(end {x1} {y1})\n\t\t(stroke\n\t\t\t(width {width})\n'
+                f'\t\t\t(type solid)\n\t\t)\n\t\t(layer "{layer}")\n\t)\n')
+
+    def rect(x0, y0, x1, y1, layer, width):
+        return "".join(line(*a, layer, width) for a in
+                       ((x0, y0, x1, y0), (x1, y0, x1, y1), (x1, y1, x0, y1), (x0, y1, x0, y0)))
+
+    L = 4.19                       # pad end from the PCB edge (drawing)
+    E = 0.25                       # pads start 0.25 mm in: PCBWay copper pull-back from a routed edge
+    gnd_in, gnd_out = 4.32 / 2, 9.65 / 2
+    gy, gw = (gnd_in + gnd_out) / 2, gnd_out - gnd_in
+    hole_x, hole_y = L + 0.89, gnd_in + 0.46
+    pads = smd("1", (E + L) / 2, 0, L - E, 1.78, "F")
+    for side in ("F", "B"):
+        for s in (-1, 1):
+            pads += smd("2", (E + L) / 2, s * gy, L - E, gw, side)
+            pads += smd("2", (L + hole_x) / 2, s * hole_y, hole_x - L, 0.4, side)      # neck to the via
+    for s in (-1, 1):
+        pads += (f'\t(pad "2" thru_hole circle\n\t\t(at {hole_x:.4f} {s * hole_y:.4f})\n\t\t(size 0.97 0.97)\n'
+                 f'\t\t(drill 0.46)\n\t\t(layers "*.Cu" "*.Mask")\n\t)\n')
+    gfx = rect(-12.45, -3.13, 0, 3.13, "F.Fab", 0.1) + rect(0, -3.175, 3.81, 3.175, "F.Fab", 0.1)
+    gfx += rect(-12.7, -5.1, 5.85, 5.1, "F.CrtYd", 0.05) + rect(-12.7, -5.1, 5.85, 5.1, "B.CrtYd", 0.05)
+    gfx += line(0, -5.6, 0, 5.6, "Dwgs.User", 0.1)
+    gfx += line(0.3, -5.25, 5.6, -5.25, "F.SilkS", 0.12) + line(0.3, 5.25, 5.6, 5.25, "F.SilkS", 0.12)
+    t = (f'(footprint "{name}"\n\t(version 20260206)\n\t(generator "gen_footprints.py")\n\t(layer "F.Cu")\n'
+         f'\t(descr "Molex 73251-3152 RP-SMA jack, edge mount, 1.57 mm PCB, jam nut. Pads from SD-73251-315 rev A2. '
+         f'https://www.molex.com/pdm_docs/sd/732513152_sd.pdf")\n'
+         f'\t(tags "RP-SMA edge mount Molex 73251")\n'
+         f'\t(property "Reference" "REF**"\n\t\t(at 3 -6.3 0)\n\t\t(layer "F.SilkS")\n'
+         f'\t\t(effects\n\t\t\t(font\n\t\t\t\t(size 1 1)\n\t\t\t\t(thickness 0.15)\n\t\t\t)\n\t\t)\n\t)\n'
+         f'\t(property "Value" "{name}"\n\t\t(at -6 6.3 0)\n\t\t(layer "F.Fab")\n'
+         f'\t\t(effects\n\t\t\t(font\n\t\t\t\t(size 1 1)\n\t\t\t\t(thickness 0.15)\n\t\t\t)\n\t\t)\n\t)\n'
+         f'\t(attr smd)\n' + gfx +
+         f'\t(fp_text user "PCB Edge"\n\t\t(at 0.6 -6.3 90)\n\t\t(layer "Dwgs.User")\n'
+         f'\t\t(effects\n\t\t\t(font\n\t\t\t\t(size 0.8 0.8)\n\t\t\t\t(thickness 0.1)\n\t\t\t)\n\t\t)\n\t)\n'
+         + pads + '\t(embedded_fonts no)\n)\n')
+    (LIB / f"{name}.kicad_mod").write_text(t, encoding="utf-8", newline="\n")
+    print(f"{name}: from SD-73251-315")
+
+
+molex_73251_3152()

@@ -1,0 +1,326 @@
+(footprint "SMA_Molex_73251-3152_RP_EdgeMount"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Molex 73251-3152 RP-SMA jack, edge mount, 1.57 mm PCB, jam nut. Pads from SD-73251-315 rev A2. https://www.molex.com/pdm_docs/sd/732513152_sd.pdf")
+	(tags "RP-SMA edge mount Molex 73251")
+	(property "Reference" "REF**"
+		(at 3 -6.3 0)
+		(layer "F.SilkS")
+		(uuid "d62d665a-9577-493d-9883-6494e19ef35a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SMA_Molex_73251-3152_RP_EdgeMount"
+		(at -6 6.3 0)
+		(layer "F.Fab")
+		(uuid "138f16d6-04ce-4494-b1be-5e060b6e7f85")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "40a5c72b-4aee-4a37-83dd-696ad51ca231")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "1d48abb9-f75d-46b5-8299-38dbac727f72")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start 0.3 -5.25)
+		(end 5.6 -5.25)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "3a5ac553-2bc0-42a2-ab4d-92fe93bd561b")
+	)
+	(fp_line
+		(start 0.3 5.25)
+		(end 5.6 5.25)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "6e43a27f-cd99-4aee-b6dd-9b7cd5bffdd4")
+	)
+	(fp_line
+		(start 0 -5.6)
+		(end 0 5.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "9bd7424c-bbfc-474d-8552-b3224bf77784")
+	)
+	(fp_line
+		(start -12.7 -5.1)
+		(end 5.85 -5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "B.CrtYd")
+		(uuid "0a7270a6-e5e5-4d71-b543-42655b90cc65")
+	)
+	(fp_line
+		(start -12.7 5.1)
+		(end -12.7 -5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "B.CrtYd")
+		(uuid "21eb7831-9efc-425b-b793-009e268598da")
+	)
+	(fp_line
+		(start 5.85 -5.1)
+		(end 5.85 5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "B.CrtYd")
+		(uuid "bcc96651-2968-43b6-bccf-a90df6f9a9c7")
+	)
+	(fp_line
+		(start 5.85 5.1)
+		(end -12.7 5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "B.CrtYd")
+		(uuid "e28268e5-64a7-42e8-877d-33736e1f492d")
+	)
+	(fp_line
+		(start -12.7 -5.1)
+		(end 5.85 -5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "67f032f1-c7aa-4ffc-8422-7514b58c4dfd")
+	)
+	(fp_line
+		(start -12.7 5.1)
+		(end -12.7 -5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "6fc363aa-bddc-4f23-9544-e080d57f47dc")
+	)
+	(fp_line
+		(start 5.85 -5.1)
+		(end 5.85 5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "c554632b-6970-4a82-8e88-a956d50c3b63")
+	)
+	(fp_line
+		(start 5.85 5.1)
+		(end -12.7 5.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "21e2a026-d7ac-421c-8b7b-0933acc4fb0e")
+	)
+	(fp_line
+		(start -12.45 -3.13)
+		(end 0 -3.13)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "1fd33bac-122e-427f-917f-d0a25852a629")
+	)
+	(fp_line
+		(start -12.45 3.13)
+		(end -12.45 -3.13)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "4d986bc5-873c-4f3b-90db-1d71760e2f77")
+	)
+	(fp_line
+		(start 0 -3.175)
+		(end 3.81 -3.175)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "8473659a-ad62-4f4c-83b0-0f83e0032eee")
+	)
+	(fp_line
+		(start 0 -3.13)
+		(end 0 3.13)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "19d09a48-32f3-4134-96a8-24368b5f28a5")
+	)
+	(fp_line
+		(start 0 3.13)
+		(end -12.45 3.13)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "8bbadecc-662e-4315-bea9-44622d34aa6e")
+	)
+	(fp_line
+		(start 0 3.175)
+		(end 0 -3.175)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "e9bb973e-70dd-4c43-bd40-e1bc00b3a6d8")
+	)
+	(fp_line
+		(start 3.81 -3.175)
+		(end 3.81 3.175)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "ee0c8029-54ff-42a8-bedc-4efc051cc961")
+	)
+	(fp_line
+		(start 3.81 3.175)
+		(end 0 3.175)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "fcdab2ed-46a1-4ce4-8392-428a3bcbe0d8")
+	)
+	(fp_text user "PCB Edge"
+		(at 0.6 -6.3 90)
+		(layer "Dwgs.User")
+		(uuid "bfd710e0-4edd-43cf-ab4c-64e377e7119d")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.1)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at 2.22 0)
+		(size 3.94 1.78)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "fc5bdd90-38db-4277-93b6-f9eb431935db")
+	)
+	(pad "2" smd rect
+		(at 2.22 -3.4925)
+		(size 3.94 2.665)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "b42223ce-385f-4105-9975-c22fff43e127")
+	)
+	(pad "2" smd rect
+		(at 2.22 -3.4925)
+		(size 3.94 2.665)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(uuid "c481201f-ac51-4b28-b7db-8ac15edbfdfb")
+	)
+	(pad "2" smd rect
+		(at 2.22 3.4925)
+		(size 3.94 2.665)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "318c5194-6800-4252-8bf8-be1acdee1e12")
+	)
+	(pad "2" smd rect
+		(at 2.22 3.4925)
+		(size 3.94 2.665)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(uuid "87bd16a7-74e8-4800-9e1a-1869119deb46")
+	)
+	(pad "2" smd rect
+		(at 4.635 -2.62)
+		(size 0.89 0.4)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "e69b0e8f-f147-4161-8b00-860c6b8fde88")
+	)
+	(pad "2" smd rect
+		(at 4.635 -2.62)
+		(size 0.89 0.4)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(uuid "3adab58c-457f-400d-a6ac-3d7ad698f114")
+	)
+	(pad "2" smd rect
+		(at 4.635 2.62)
+		(size 0.89 0.4)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "37fa4c48-af6d-4720-9bb1-0e88636fa1f2")
+	)
+	(pad "2" smd rect
+		(at 4.635 2.62)
+		(size 0.89 0.4)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(uuid "1da870d5-1d91-4209-abc1-2c16ff5e67ae")
+	)
+	(pad "2" thru_hole circle
+		(at 5.08 -2.62)
+		(size 0.97 0.97)
+		(drill 0.46)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "d01f8f0e-4cb1-4d28-98ed-ebdb2be875c8")
+	)
+	(pad "2" thru_hole circle
+		(at 5.08 2.62)
+		(size 0.97 0.97)
+		(drill 0.46)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "df861720-388a-4ffd-9110-769dd4f142b0")
+	)
+	(embedded_fonts no)
+)

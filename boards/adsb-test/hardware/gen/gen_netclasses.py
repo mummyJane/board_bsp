@@ -75,6 +75,11 @@ DRU = """(version 1)
 (rule "RF no vias"
   (condition "A.NetClass == 'RF_50R'")
   (constraint via_count (max 0)))
+
+# Edge-mount RP-SMA J602: Molex's pads run to the board edge; ours stop 0.25 mm short (PCBWay pull-back)
+(rule "J602 pads to the edge"
+  (condition "A.memberOfFootprint('J602') || B.memberOfFootprint('J602')")
+  (constraint edge_clearance (min 0.2mm)))
 """
 (KICAD / "ADSB_Test.kicad_dru").write_text(DRU, encoding="utf-8", newline="\n")
 print("net classes:", ", ".join(c["name"] for c in CLASSES), "| rules: ADSB_Test.kicad_dru")

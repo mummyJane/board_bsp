@@ -90,7 +90,8 @@ Facts below are from the Waveshare schematic
   the Dev port. 8 MB PSRAM gives headroom for larger Wi-Fi buffers.
 - **Antenna (since Q26):** IPEX on the OSPTEK module → 100 mm U.FL-U.FL jumper →
   J601 (U.FL on the board) → a few mm of 50 Ω CPW → **J602 RP-SMA** (Molex
-  0732513152, bulkhead nut) on the **top long edge**, 96 mm from the digital end,
+  0732513152, jam nut; footprint `ADSB_Test:SMA_Molex_73251-3152_RP_EdgeMount` from
+  drawing SD-73251-315, pads 0.25 mm in from the edge) on the **top long edge**, 96 mm from the digital end,
   well away from the 1090/978 and GNSS SMAs on the RF edge. RP-SMA so the Wi-Fi
   antenna can't be swapped with the other two. Needs a dual-band 2.4/5 GHz RP-SMA
   antenna and a hole in the case's top side. Wi-Fi is a backup and the unit

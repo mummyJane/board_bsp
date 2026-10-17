@@ -119,8 +119,8 @@ uf = s.add("Connector:Conn_Coaxial", "J601", "U.FL Wi-Fi (from module IPEX)", (3
 s.connect(uf, "1", "WIFI_ANT")
 s.connect(uf, "2", "GND")
 sma = s.add("Connector:Conn_Coaxial", "J602", "RP-SMA Wi-Fi 2.4/5 GHz", (368.3, 243.84),
-            footprint="Connector_Coaxial:SMA_Molex_73251-1153_EdgeMount_Horizontal",
-            props={"Check": "Molex 0732513152 (RP, bulkhead nut): confirm pads vs PS-89675-346 before ordering"})
+            footprint="ADSB_Test:SMA_Molex_73251-3152_RP_EdgeMount",
+            props={"MPN": "Molex 0732513152 (RP-SMA, jam nut); footprint from SD-73251-315"})
 s.connect(sma, "1", "WIFI_ANT")
 s.connect(sma, "2", "GND")
 

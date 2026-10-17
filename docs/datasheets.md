@@ -162,7 +162,7 @@ get them. "Local" shows whether the last run saved a copy.
 | Molex 67643 | [Molex 67643 USB-A receptacle, through-hole (SDR host)](https://www.molex.com/en-us/products/part-detail/676432910) | ADSB_Test | yes (manual) |
 | SMA-J-P-H-ST-EM1 | [Samtec SMA-J-P-H-ST-EM1 edge-mount SMA (ADS-B, GNSS)](https://www.samtec.com/products/sma-j-p-h-st-em1) | ADSB_Test | link only |
 | 0732513152 | [Molex 73251-3152 RP-SMA edge-mount jack, bulkhead (Wi-Fi antenna)](https://tools.molex.com/pdm_docs/ps/PS-89675-346.pdf) | ADSB_Test | yes (manual) |
-| 0732513152 | [Molex 73251-3152 RP-SMA sales drawing (dimensions + PCB layout; check J602 footprint)](https://www.molex.com/pdm_docs/sd/732513152_sd.pdf) | ADSB_Test | no: site blocks scripts, save by hand |
+| 0732513152 | [Molex 73251-3152 RP-SMA sales drawing (dimensions + PCB layout; J602 footprint drawn from it)](https://www.molex.com/pdm_docs/sd/732513152_sd.pdf) | ADSB_Test | yes (manual) |
 | U.FL-R-SMT-1(10) | [Hirose U.FL series receptacles and cables (Wi-Fi jumper)](https://www.hirose.com/en/product/series/U.FL) | ADSB_Test | link only |
 | PTS645VL31-2 LFS | [C&K PTS645 tactile switch, right angle (SLEEP/WAKE)](https://www.ckswitches.com/products/switches/product-details/Tactile/PTS645/) | ADSB_Test | link only |
 | OS102011MA1Q | [C&K OS series slide switch (POWER)](https://www.ckswitches.com/media/1428/os.pdf) | ADSB_Test | yes (manual) |
