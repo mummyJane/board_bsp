@@ -8,7 +8,7 @@ the CHANGELOG.
 | # | Question | Current assumption |
 |---|----------|--------------------|
 | Q28 | Board outline after the floorplan check (docs/floorplan.md): panel centred with an even gap all round, cables through PCB slots, corner mounting holes, POWER switch on the digital edge | Proposed: **8 mm gap = 180.9 x 116 mm** (every zone <= 83 %). 6 mm (176.9 x 112) is borderline, 4 mm too tight |
-| Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **BQ25798** proposed (datasheet downloaded) |
+| Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **Answered 2026-10-17: keep the BQ25798.** The BQ25792 datasheet (SLUSDG1C, Aug 2022) was found by hand: same 29-pin 4 × 4 mm QFN (RQM) with an identical pin-out, so the footprint and schematic fit either part. The BQ25798 (rev. June 2026) adds MPPT and backup mode and is the one in the BOM |
 
 ## Answered
 

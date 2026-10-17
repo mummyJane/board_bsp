@@ -18,6 +18,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 ### Fixed
 - ADSB_Test: current shunts RS201-RS409 had the 4-pin Kelvin symbol on a 2-pad 1206 footprint, so on the PCB pad 2 took the sense net instead of the load (every shunt's power path broken). New `ADSB_Test:R_Shunt_1206_Kelvin_HandSolder` (pads 1/4 current, sense pads 2/3 net-tied on the inner corners).
 - ADSB_Test PCB generator: footprints now carry the symbol fields and exclude-from-BOM flags, and unconnected-pin net names are escaped as KiCad does. Schematic parity is 0.
+- ADSB_Test PCB: J602 RP-SMA was placed with its whole body (barrel included) inside the board, so its pads sat ~10 mm in, on the panel outline. Edge-mount footprints without a 'PCB Edge' marker now go with their pads 0.5 mm from the board edge and the barrel over it; J601 moved up behind it.
+- Datasheets: hand-saved BQ25792 datasheet and Molex 0732513152 spec filed; Molex sales drawing added to the list. Q21 answered: BQ25792 and BQ25798 are pin-identical, the BQ25798 stays.
 - ADSB_Test PCB: panel-cable slots moved to the panel drawings' positions (they were taken from the Waveshare board drawing and were about 45 mm off). LCD slot 56–96 mm and touch slot 32–52 mm from the panel's left edge (front view); J1301/J1302 moved next to them, LA header moved up to clear J1301. Midas MDT070005 datasheet added to the datasheet list.
 
 ### Added

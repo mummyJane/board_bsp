@@ -76,7 +76,7 @@ BIG = {
     "SW601": (110.0, 12.0, None),           # BOOT  (top band, clear of the battery)
     "SW602": (122.0, 12.0, None),           # RESET
     "SW1801": (40.0, 82.0, None),           # RP2040 BOOTSEL (Dev zone)
-    "J601": (96.0, 21.0, None),             # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
+    "J601": (96.0, 10.5, None),             # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
     "J1401": (150.0, 54.0, None),           # m1421 JTAG (below the m1421 can)
     "J1402": (140.0, 14.0, None),           # ADSBee Dev Kit header (1x6, vertical, above the module)
     "J1801": (70.0, 60.0, None),            # RP2040 GPIO header (DNP)
@@ -177,13 +177,25 @@ def turn_to(fp, want):
     raise RuntimeError(f"{fp.GetReference()}: could not orient")
 
 
+def front_box(fp):
+    """Box whose outer side goes on the board edge when the footprint has no 'PCB Edge' marker: the pads for
+    edge-mount (end-launch) connectors, whose barrel overhangs the edge; otherwise the body."""
+    if "EdgeMount" in fp.GetFPID().GetLibItemName().wx_str():
+        b = pcbnew.BOX2I()
+        for p in fp.Pads():
+            b.Merge(p.GetBoundingBox())
+        b.Inflate(mm(0.5), mm(0.5))            # pads 0.5 mm in from the edge (copper-to-edge clearance)
+        return b
+    return body_box(fp)
+
+
 def place_on_edge(fp, side, by):
     """side 'L' = digital edge (top-view right), 'R' = RF edge (top-view left), 'T' = top long edge
     (by is then the bottom-view x)."""
     if side == "T":
         turn_to(fp, (0, -1))
         em = edge_marker(fp)
-        b = body_box(fp)
+        b = front_box(fp)
         front = em[1] if em else b.GetTop()
         fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x, fp.GetPosition().y + int(mm(OY) - front)))
         b = body_box(fp)
@@ -196,8 +208,8 @@ def place_on_edge(fp, side, by):
     pos = fp.GetPosition()
     if em:                                   # put the marker line on the board edge
         fp.SetPosition(pcbnew.VECTOR2I(pos.x + int(target_x - em[0]), mm(OY + by)))
-    else:                                    # body front flush with the edge
-        b = body_box(fp)
+    else:                                    # body (or edge-mount pads) flush with the edge
+        b = front_box(fp)
         front = b.GetRight() if side == "L" else b.GetLeft()
         fp.SetPosition(pcbnew.VECTOR2I(pos.x + int(target_x - front), mm(OY + by)))
     # recentre along the edge on the body, not the origin

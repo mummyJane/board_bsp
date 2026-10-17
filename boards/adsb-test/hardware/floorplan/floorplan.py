@@ -35,7 +35,7 @@ EDGE_PARTS = [("J901", "L", 10.6, 8.9, "User USB-C"), ("J1001", "L", 10.6, 8.9, 
               ("J1201", "R", 8.2, 14.9, "SMA GNSS")]
 # Top (long) edge parts at a fixed x: (ref, centre x from the digital edge, along, depth, label). The Wi-Fi RP-SMA
 # sits here, well away from the 1090/978 and GNSS SMAs on the RF edge.
-TOP_PARTS = [("J602", 96.0, 12.2, 17.0, "Wi-Fi")]
+TOP_PARTS = [("J602", 96.0, 12.2, 7.5, "Wi-Fi")]   # pads 7.5 mm in, barrel overhangs the edge
 
 
 PANEL_W, PANEL_H = 164.9, 100.0   # 7" panel outline (AliExpress 1024x600 MIPI drawing; Waveshare 164.28 x 99.17 lens)
