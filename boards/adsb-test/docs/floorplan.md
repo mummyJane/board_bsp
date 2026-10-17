@@ -81,9 +81,10 @@ is 75 % overall but 100 % along the display strip.
      chip position) before ordering PCBs.
 3. **Mounting holes move to the board corners** (4 mm in). The Waveshare
    156 × 89 mm pattern would now be under the panel.
-4. **Digital edge:** User USB-C, Dev USB-C, USB-A, RJ45, microSD **and the POWER
-   switch** need 82.5 mm of the 101 mm between the corner holes. All user
-   connectors and the switch are on one edge again.
+4. **Digital edge:** User USB-C, Dev USB-C, USB-A, RJ45, microSD, **the POWER
+   switch and the SLEEP/WAKE button** need 92.1 mm of the 101 mm between the corner
+   holes (about 1.3 mm between parts). All user connectors and switches are on one
+   edge; if the case needs wider webs, the button can move to the RF edge (16 mm used).
 5. **RF edge:** only the two SMAs, far apart (GNSS and 1090/978).
 6. **LA header** (2 × 20 shrouded, 59.5 × 10.9 mm, 9.1 mm tall) stands vertically
    between the Dev USB and MCU zones, reachable with the back cover off.

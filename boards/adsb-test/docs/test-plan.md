@@ -32,6 +32,7 @@ uses a **C6**, not a C5. Those items use add-on boards.
 | 1.14 | KEEP-01 | Reference board microSD | Write/read throughput, logging while decoding |
 | 1.15 | CORE-01/02 (Q26) | OSPTEK ESP32-P4C5 Core (on its dev board if bought, else a breakout) | `esptool chip_id`: P4 rev v3.x, 16 MB flash, 32 MB PSRAM. Test app runs (default build). esp_hosted with the C5 (reset GPIO54, IO GPIO6, as the reference board) joins 2.4 and 5 GHz APs. C5 flashed from a USB-UART via pads 4/5/6/82. **Measure the module's pads** against `OSPTEK_ESP32-P4C5_Core_HandSolder` and OSPTEK's PcbLib |
 | 1.16 | Q27 | DS3231M breakout on the reference board I2C (GPIO7/8, 3V3) with a coin cell | `[rtc_ext]`: time read/set, temperature, 2 s step. Power off, wait, power on: time kept |
+| 1.17 | Sleep button | Push button from GPIO12 to GND (10k pull-up to 3V3) on the reference board | `[sleep]`: press within 10 s, board deep-sleeps (expander write fails harmlessly: no TCA6408A); press again, it restarts and reports the button wake. On Rev A also measure the battery current asleep |
 
 ## Phase 2 — on ADSB_Test Rev A
 

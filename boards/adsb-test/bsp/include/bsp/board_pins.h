@@ -116,7 +116,10 @@
 #define BSP_DBG_A               (10)
 #define BSP_DBG_B               (11)
 
-/* Spare (test pads): GPIO12, GPIO20 (ADC), GPIO36 (strap - keep unloaded) */
+/* SLEEP/WAKE button SW603 (edge, next to POWER): active low, 10k pull-up on 3V3_MCU; LP GPIO = deep-sleep wake (ext1) */
+#define BSP_SLEEP_BUTTON        (12)
+
+/* Spare (test pads): GPIO20 (ADC), GPIO36 (strap - keep unloaded) */
 
 /* TCA6408A I2C GPIO expander bit assignments */
 #define BSP_EXP_EN_LCD          0

@@ -34,7 +34,7 @@ def tp(s, ref, net, at, local=True):
 # =================================================================== MCU Module (page 6)
 s = Sheet(libs, "ADSB_Test", root_uuid, sheets["mcu_module.kicad_sch"], pwr_base=6000)
 s.locals |= {"XTAL32_P", "XTAL32_N", "C5_IO26", "C5_IO27", "C5_IO25", "C5_IO24", "C5_IO23", "C5_IO6",
-             "C5_IO5", "C5_IO4", "P4_GPIO12", "P4_GPIO20", "P4_GPIO36", "C5_PU"}
+             "C5_IO5", "C5_IO4", "SLEEP_WAKE", "SLEEP_BTN", "P4_GPIO20", "P4_GPIO36", "C5_PU"}
 u = s.add("ADSB_Test:OSPTEK_ESP32-P4C5_Core", "U601", "ESP32-P4C5 Core (OSPTEK)", (203.2, 142.24),
           footprint="ADSB_Test:OSPTEK_ESP32-P4C5_Core_HandSolder",
           props={"Source": "OSPTEK AliExpress 1005012626312933; docs github.com/osptek/esp32-p4c5-core-board",
@@ -47,7 +47,7 @@ nets = {
     # P4 side (module pad: net). GPIO numbers in board_pins.h (same as the reference board where reused).
     "87": "P4_EN", "88": "XTAL32_N", "16": "XTAL32_P", "17": "P4_GPS_TX", "18": "GPS_TX", "19": "GPS_PPS",
     "20": "PM_ALERT", "22": "I2C_SDA", "23": "I2C_SCL", "24": "CHG_PD_INT", "25": "DBG_A", "26": "DBG_B",
-    "27": "P4_GPIO12", "28": "RTC_INT", "29": "P4_GPIO20", "30": "P4_USER_TX", "31": "P4_USER_RX", "32": "TOUCH_RST",
+    "27": "SLEEP_WAKE", "28": "RTC_INT", "29": "P4_GPIO20", "30": "P4_USER_TX", "31": "P4_USER_RX", "32": "TOUCH_RST",
     "34": "DSI_D1_P", "35": "DSI_D1_N", "36": "DSI_CLK_N", "37": "DSI_CLK_P", "38": "DSI_D0_P", "39": "DSI_D0_N",
     "48": "USB_HS_D_N", "49": "USB_HS_D_P", "50": "P4_USJ_D_N", "51": "P4_USJ_D_P", "53": "TOUCH_INT",
     "54": "USBA_FAULT", "55": "ETH_CRS_DV", "56": "ETH_RXD0", "57": "ETH_RXD1", "58": "ETH_MDC",
@@ -93,6 +93,17 @@ for ref, name, net, x in (("SW601", "BOOT", "ETH_TXD1_BOOT", 38.1), ("SW602", "R
     s.connect(b, "1", net)
     s.connect(b, "2", "GND")
 
+# SLEEP/WAKE button on GPIO12 (LP GPIO, so it can wake the P4 from deep sleep: ext1, low level). Pull-up on
+# 3V3_MCU (stays on in sleep), 470R series + 100nF against ESD and bounce (edge-mounted button).
+b = s.add("Switch:SW_Push", "SW603", "SLEEP/WAKE", (101.6, 190.5),
+          footprint="Button_Switch_THT:SW_Tactile_SPST_Angled_PTS645Vx31-2LFS",
+          props={"Note": "Right-angle tactile on the digital edge next to the POWER switch"})
+s.connect(b, "1", "SLEEP_BTN")
+s.connect(b, "2", "GND")
+s.two_pin("Device:R", "R608", "10k", (88.9, 157.48), "3V3_MCU", "SLEEP_BTN", R0805)
+s.two_pin("Device:R", "R609", "470R", (101.6, 157.48), "SLEEP_BTN", "SLEEP_WAKE", R0805)
+s.two_pin("Device:C", "C609", "100nF", (114.3, 157.48), "SLEEP_WAKE", "GND", C0805)
+
 # C5 reset from the Dev port: C5 CHIP_PU is the P4 GPIO54 net inside the module (pad 82). 330R limits the
 # current if the P4 is driving it high; firmware drives GPIO54 open-drain so the Dev port can pull it low.
 s.two_pin("Device:R", "R606", "330R", (330.2, 76.2), "C5_PU", "C5_EN", R0805)
@@ -101,7 +112,7 @@ s.two_pin("Device:R", "R605", "10k", (330.2, 50.8), "3V3", "C5_IO26", R0805)
 
 # spare pins to test pads
 for i, net in enumerate(("C5_IO27", "C5_IO25", "C5_IO24", "C5_IO23", "C5_IO6", "C5_IO5", "C5_IO4",
-                         "P4_GPIO12", "P4_GPIO20", "P4_GPIO36", "C5_PU")):
+                         "SLEEP_WAKE", "P4_GPIO20", "P4_GPIO36", "C5_PU")):
     tp(s, f"TP{601 + i}", net, (309.88 + (i % 4) * 15.24, 152.4 + (i // 4) * 25.4))
 
 s.text("MCU MODULE: OSPTEK ESP32-P4C5 Core (ESP32-P4 rev v3.x + ESP32-C5HF4, 16 MB flash, 32 MB PSRAM).\n"
@@ -111,7 +122,8 @@ s.text("MCU MODULE: OSPTEK ESP32-P4C5 Core (ESP32-P4 rev v3.x + ESP32-C5HF4, 16 
        "CHIP_PU has no RC inside the module: R607/C607 here. C5 reset from the Dev port via R606 onto the GPIO54 net.\n"
        "Wi-Fi: IPEX on the module -> U.FL pigtail -> antenna (case must be plastic there). LAN_OUT pad unused.\n"
        "Hand solder: 1.0 mm stamp holes; no exposed copper/untented vias under the module.\n"
-       "GPIO35 = BOOT strap + RMII TXD1 (4.7k pull-up, PHY must not pull it low at reset).",
+       "GPIO35 = BOOT strap + RMII TXD1 (4.7k pull-up, PHY must not pull it low at reset).\n"
+       "SW603 SLEEP/WAKE -> GPIO12 (LP GPIO): press = expander rails off + P4 deep sleep; press again = wake (ext1).",
        (25.4, 233.68))
 s.write(KICAD / "mcu_module.kicad_sch", "ADSB_Test - MCU Module", "Requirements: boards/adsb-test/docs/requirements.md")
 print("wrote mcu_module.kicad_sch")

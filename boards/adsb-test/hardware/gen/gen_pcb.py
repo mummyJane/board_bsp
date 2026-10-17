@@ -47,7 +47,7 @@ def top(bx, by):
 # ---------------------------------------------------------------- placements (bottom view, mm)
 def edge_positions():
     """Same spread as floorplan.py: connectors evenly spaced between the corner-hole keep-outs."""
-    left = [("J901", 10.6), ("J1001", 10.6), ("J1101", 17.2), ("J801", 19.0), ("J1501", 13.7), ("SW401", 11.4)]
+    left = [("J901", 10.6), ("J1001", 10.6), ("J1101", 17.2), ("J801", 19.0), ("J1501", 13.7), ("SW401", 11.4), ("SW603", 9.6)]
     right = [("J1403", 8.2), ("J1201", 8.2)]
     out = {}
     for side, items in (("L", left), ("R", right)):

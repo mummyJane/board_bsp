@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Added
+- ADSB_Test: SLEEP/WAKE button SW603 (right-angle tactile, digital edge next to POWER) on GPIO12 (LP GPIO) with 10k pull-up, 470R + 100 nF; BSP `bsp_sleep()` / `bsp_sleep_button_pressed()` (expander rails off, C5 held in reset, P4 deep sleep, ext1 wake on the button and optionally the DS3231M alarm); `[sleep]` test; BOM line (CKN9094-ND); test plan 1.17.
+
 ### Changed
 - ADSB_Test PCB: panel-cable slots moved in to 30 mm from the panel's bottom edge (tails fold behind the panel and come through past the chip section, as on the Waveshare board); J1301/J1302 7 mm inside them facing the slots; module moved up above the sockets, LA header along the bottom edge, JTAG/Dev Kit/RP2040 headers re-placed. Provisional until the tails are measured.
 

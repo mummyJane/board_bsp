@@ -48,6 +48,16 @@ esp_err_t bsp_rtc_set_time(const struct tm *t);
 /** DS3231M die temperature, 0.25 C steps. */
 esp_err_t bsp_rtc_get_temperature(float *celsius);
 
+/** SLEEP/WAKE button (SW603, GPIO12): true while pressed. */
+bool bsp_sleep_button_pressed(void);
+/** Sleep: switched rails off (LCD, Ethernet, GPS, m1421, USB-A via the expander), C5 held in reset, P4 into
+ *  deep sleep. Waits for the button to be released first. SLEEP/WAKE wakes it (also the DS3231M alarm if
+ *  wake_on_rtc); waking is a reset. Only returns on error. VSYS, charger, bucks, 3V3_PERIPH and the P4 LP
+ *  domain stay on; the POWER switch is the full off. */
+esp_err_t bsp_sleep(bool wake_on_rtc);
+/** Release the C5 reset hold left by bsp_sleep() (called by bsp_init()). */
+void bsp_sleep_release_holds(void);
+
 #ifdef __cplusplus
 }
 #endif

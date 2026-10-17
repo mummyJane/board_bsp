@@ -30,6 +30,7 @@ HOLE_KEEPOUT = 3.5             # mm radius (M2.5 screw head + clearance)
 EDGE_PARTS = [("J901", "L", 10.6, 8.9, "User USB-C"), ("J1001", "L", 10.6, 8.9, "Dev USB-C"),
               ("J1101", "L", 17.2, 16.3, "USB-A"), ("J801", "L", 19.0, 22.3, "RJ45"),
               ("J1501", "L", 13.7, 13.1, "microSD"), ("SW401", "L", 11.4, 9.4, "POWER"),
+              ("SW603", "L", 9.6, 7.3, "SLEEP"),
               ("J1403", "R", 8.2, 14.9, "SMA 1090/978"),
               ("J1201", "R", 8.2, 14.9, "SMA GNSS")]
 

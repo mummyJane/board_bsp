@@ -16,6 +16,8 @@ esp_err_t bsp_init(void)
         return ESP_OK;
     }
 
+    bsp_sleep_release_holds();      /* C5 reset held through deep sleep */
+
     esp_chip_info_t info;
     esp_chip_info(&info);
     ESP_LOGI(TAG, "%s: %d core(s), silicon rev v%d.%d",
