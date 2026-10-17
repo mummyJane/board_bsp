@@ -97,6 +97,8 @@ Conn_ARM_JTAG_SWD_10,m1421 JTAG (J-Link),,Samtec,FTSH-105-01-L-DV-K,DigiKey,SAM8
 Conn_ARM_JTAG_SWD_10,C5 JTAG (DNP),,Samtec,FTSH-105-01-L-DV-K,DigiKey,SAM8799-ND,1.37,70k,1.27 mm 2x5 SMD
 Conn_Coaxial,SMA 1090/978,,Samtec,SMA-J-P-H-ST-EM1,DigiKey,SAM8857-ND,2.65,42k,edge mount
 Conn_Coaxial,SMA GNSS (active antenna),,Samtec,SMA-J-P-H-ST-EM1,DigiKey,SAM8857-ND,2.65,42k,edge mount
+Conn_Coaxial,U.FL Wi-Fi (from module IPEX),,Hirose,U.FL-R-SMT-1(10),DigiKey,H11891CT-ND,1.67,334k,"plus a 100 mm U.FL-U.FL jumper (Hirose U.FL-2LP-066J1-A-(100), or generic) to the module IPEX"
+Conn_Coaxial,RP-SMA Wi-Fi 2.4/5 GHz,,Molex,0732513152,DigiKey,WM9523-ND,6.95,14k,"RP-SMA edge mount, bulkhead nut; dual-band 2.4/5 GHz RP-SMA antenna not included"
 RJ45_Hanrun_HR911105A_Horizontal,HR911105A,,HanRun,HR911105A,LCSC,C12074,1.73,check live stock,RJ45 MagJack with LEDs
 USB_A,USB-A (SDR hub),,Molex,0676432910,DigiKey,WM11258-ND,1.91,0 (2017 on Marketplace),through-hole USB-A
 USB_C_Receptacle_USB2.0_16P,Dev USB-C,,GCT,USB4105-GF-A,DigiKey,2073-USB4105-GF-ACT-ND,0.80,102k,

@@ -88,9 +88,13 @@ Facts below are from the Waveshare schematic
   the C5 slave firmware. OTA is a nice-to-have: the P4 can push new C5 firmware
   over SDIO (esp_hosted host-driven slave OTA) or the C5 can be reflashed over
   the Dev port. 8 MB PSRAM gives headroom for larger Wi-Fi buffers.
-- **Antenna (since Q26):** IPEX on the OSPTEK module → U.FL pigtail → small
-  2.4/5 GHz antenna at the digital edge (or a stick antenna through the case).
-  Wi-Fi is a backup and the unit normally runs offline.
+- **Antenna (since Q26):** IPEX on the OSPTEK module → 100 mm U.FL-U.FL jumper →
+  J601 (U.FL on the board) → a few mm of 50 Ω CPW → **J602 RP-SMA** (Molex
+  0732513152, bulkhead nut) on the **top long edge**, 96 mm from the digital end,
+  well away from the 1090/978 and GNSS SMAs on the RF edge. RP-SMA so the Wi-Fi
+  antenna can't be swapped with the other two. Needs a dual-band 2.4/5 GHz RP-SMA
+  antenna and a hole in the case's top side. Wi-Fi is a backup and the unit
+  normally runs offline.
 - _This section was written for the C5-WROOM; the module's C5 has its own
   flash (C5 GPIO numbers below are unchanged; see the module section)._
 
@@ -388,7 +392,9 @@ Design rules for the Dev domain:
 ## Test points and logic-analyser header
 
 - Every power rail gets a test point (and a 0 Ω link for staged bring-up).
-- Every PAC1954 shunt gets Kelvin test pads.
+- Every PAC1954 shunt gets Kelvin pads: footprint `ADSB_Test:R_Shunt_1206_Kelvin_HandSolder`
+  (pads 1/4 current, small sense pads 2/3 on the inner corners, net-tied), matching the
+  4-pin `Device:R_Shunt` symbol.
 - Key digital signals go to **one 2×20 2.54 mm keyed box header** that the
   **Kingst LA5016** 40-way cable plugs straight into. The LA5016 uses only the
   row on the key side: CH0–7, GND, CH8–15, GND, PWM1, PWM2. The other row is
@@ -515,7 +521,7 @@ Outline and case (Q20, decided 2026-10-10):
 | Board outline | ~~188 × 97 mm~~. **Proposed (Q28, floorplan check): 180.9 × 116 mm**, panel centred with an 8 mm gap all round, panel cables through PCB slots, mounting holes in the board corners. See [floorplan.md](floorplan.md) |
 | Digital edge (one short edge) | User USB-C, Dev USB-C, USB-A, RJ45, microSD (mid-mount/sink-in parts, ≈ 70 mm of the 97 mm edge) |
 | RF edge (other short edge) | GNSS SMA and m1421 SMA, spaced apart |
-| C5 antenna | In the digital-edge margin, at the end **furthest from the RJ45 and USB-A metal shells** |
+| C5 antenna | ~~In the digital-edge margin~~ (edge is full). **J602 RP-SMA on the top long edge** (96 mm from the digital end), U.FL jumper from the module |
 | Case | **3D-printed plastic** for the prototypes (RF-friendly for the on-module Wi-Fi antenna). ≈ 2 mm walls on the **short edges** so the connectors reach through. **Thicker walls (≈ 3 mm, optionally ribbed) on the long edges** for stiffness, since nothing passes through them |
 | Battery | 2 × 18650 (2S1P) in the case behind the board. Expected overall depth ≈ 33–35 mm. A 2S flat pouch pack (≈ 22–25 mm total) is a later option needing no PCB change |
 
@@ -527,7 +533,7 @@ Consequences:
 | Board zoning | RF zone (m1421 + combiner + SMA, GNSS + bias-T + SMA) along the RF edge. Digital zone (P4, PSRAM/flash, MIPI-DSI, USB, Ethernet) and power zone (bucks, charger) away from it. Continuous ground plane, stitched along the zone boundary |
 | RF cans _(optional)_ | Two-piece shields (frame soldered, lid snaps on and off for probing), **frames DNP by default**: (1) **SH1401** Laird BMI-S-203-F frame (26.21 mm, 5.08 mm high) + BMI-S-203-C lid over the m1421 + SCN-2-11 combiner + ESD (on the M1421 sheet); (2) GNSS module + bias-T/LNA, size chosen with the GPS sheet (BMI-S-202-F 16.5 mm or BMI-S-209-F 29.4 × 18.5 mm); (3, optional) the switching regulators. Fit the frames, decide on lids after the first RF tests (Wi-Fi, screen, Ethernet noise). Stitch each frame's pad ring to GND; RF traces leave the can on an inner layer. Fit a frame only after the module under it is soldered and checked (the m1421 hand-solder pads need iron access) |
 | RF feeds | 50 Ω CPW from each module to its edge SMA, as short as possible, ground-via fenced. m1421 RF routing copied from the ADSBee 1421 carrier |
-| Wi-Fi antenna | **IPEX on the OSPTEK module** (Q26; replaces the WROOM PCB antenna of Q18) → U.FL pigtail → small 2.4/5 GHz antenna (adhesive flex or stick) at the **digital edge**, away from the RF SMAs and the metal panel frame; or an RP-SMA bulkhead through the case. Plastic case over the antenna. Leave room for the IPEX plug at the module's top-right corner. Wi-Fi is a backup and the unit normally runs offline |
+| Wi-Fi antenna | **IPEX on the OSPTEK module** → U.FL-U.FL jumper → J601 → J602 **RP-SMA on the top long edge**, away from the RF-edge SMAs and the metal panel frame. Dual-band 2.4/5 GHz RP-SMA antenna through the case. Wi-Fi is a backup and the unit normally runs offline |
 | Noise | MIPI-DSI and the bucks are the main digital noise sources near the 1090/978 and GNSS L1 inputs. Keep the switch-node copper small. The buck frequencies must not have harmonics landing on 978/1090/1575 MHz (check during part selection) |
 
 ### 7" panel: what we know (Q19)

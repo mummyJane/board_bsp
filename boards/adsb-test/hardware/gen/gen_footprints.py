@@ -50,3 +50,33 @@ for j in jobs:
     n = make_handsolder(j["src"], LIB / f"{j['name']}.kicad_mod", j["name"], extend=j["extend"],
                         holes=j.get("holes"), only_pads=j.get("only"), descr_note=j.get("note", ""))
     print(f"{j['name']}: {n} pads lengthened")
+
+
+# 4-terminal (Kelvin) 1206 shunt for the Device:R_Shunt symbol: pads 1/4 = current lands (pin 1 source, pin 4
+# load), pads 2/3 = small sense pads on the INNER corner of each land (where the resistor element starts), so the
+# PAC1954 sees the shunt voltage without the land/solder drop. Net-tie groups 1-2 and 3-4 let the touching pads
+# carry different nets without a DRC short. Sense pads have no paste (nothing sits on them).
+def kelvin_1206():
+    name = "R_Shunt_1206_Kelvin_HandSolder"
+    t = (KIFP / "Resistor_SMD.pretty/R_1206_3216Metric_Pad1.30x1.75mm_HandSolder.kicad_mod").read_text(encoding="utf-8")
+    t = t.replace('(footprint "R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"', f'(footprint "{name}"')
+    t = t.replace('"R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"', f'"{name}"')
+    t = t.replace('(tags "resistor handsolder")',
+                  '(tags "resistor shunt kelvin 4-terminal handsolder")')
+    t = t.replace('(descr "', '(descr "ADSB_Test: 4-terminal Kelvin version (pads 2/3 = sense, net-tied to 1/4). ', 1)
+    t = t.replace('(at 0 -1.83 0)', '(at 0 -2.3 0)', 1)
+    t = t.replace('(start -2.45 -1.13)', '(start -2.45 -1.7)')
+    t = t.replace('(pad "2" smd roundrect\n\t\t(at 1.55 0)', '(pad "4" smd roundrect\n\t\t(at 1.55 0)')
+    sense = ""
+    for num, x in (("2", -1.15), ("3", 1.15)):
+        sense += (f'\t(pad "{num}" smd rect\n\t\t(at {x} -1.1)\n\t\t(size 0.5 0.6)\n'
+                  f'\t\t(layers "F.Cu" "F.Mask")\n\t)\n')
+    t = t.replace('\t(embedded_fonts no)', sense + '\t(embedded_fonts no)')
+    t = t.replace('\t(duplicate_pad_numbers_are_jumpers no)',
+                  '\t(duplicate_pad_numbers_are_jumpers no)\n\t(net_tie_pad_groups "1, 2" "3, 4")')
+    assert t.count('(pad "') == 4 and '(pad "4"' in t, "Kelvin footprint: pad edit failed"
+    (LIB / f"{name}.kicad_mod").write_text(t, encoding="utf-8", newline="\n")
+    print(f"{name}: 4 pads (Kelvin)")
+
+
+kelvin_1206()

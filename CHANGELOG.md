@@ -8,13 +8,16 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
-### Added
-- ADSB_Test: SLEEP/WAKE button SW603 (right-angle tactile, digital edge next to POWER) on GPIO12 (LP GPIO) with 10k pull-up, 470R + 100 nF; BSP `bsp_sleep()` / `bsp_sleep_button_pressed()` (expander rails off, C5 held in reset, P4 deep sleep, ext1 wake on the button and optionally the DS3231M alarm); `[sleep]` test; BOM line (CKN9094-ND); test plan 1.17.
-
 ### Changed
 - ADSB_Test PCB: panel-cable slots moved in to 30 mm from the panel's bottom edge (tails fold behind the panel and come through past the chip section, as on the Waveshare board); J1301/J1302 7 mm inside them facing the slots; module moved up above the sockets, LA header along the bottom edge, JTAG/Dev Kit/RP2040 headers re-placed. Provisional until the tails are measured.
 
+### Added
+- ADSB_Test: SLEEP/WAKE button SW603 (right-angle tactile, digital edge next to POWER) on GPIO12 (LP GPIO) with 10k pull-up, 470R + 100 nF; BSP `bsp_sleep()` / `bsp_sleep_button_pressed()` (expander rails off, C5 held in reset, P4 deep sleep, ext1 wake on the button and optionally the DS3231M alarm); `[sleep]` test; BOM line (CKN9094-ND); test plan 1.17.
+- ADSB_Test: Wi-Fi antenna connector. Module IPEX -> 100 mm U.FL jumper -> J601 U.FL -> J602 RP-SMA (Molex 0732513152, bulkhead) on the top long edge, away from the RF-edge SMAs; WIFI_ANT in the RF_50R class; BOM, datasheets, overview text and docs updated. Floorplan and PCB generator support top-edge parts.
+
 ### Fixed
+- ADSB_Test: current shunts RS201-RS409 had the 4-pin Kelvin symbol on a 2-pad 1206 footprint, so on the PCB pad 2 took the sense net instead of the load (every shunt's power path broken). New `ADSB_Test:R_Shunt_1206_Kelvin_HandSolder` (pads 1/4 current, sense pads 2/3 net-tied on the inner corners).
+- ADSB_Test PCB generator: footprints now carry the symbol fields and exclude-from-BOM flags, and unconnected-pin net names are escaped as KiCad does. Schematic parity is 0.
 - ADSB_Test PCB: panel-cable slots moved to the panel drawings' positions (they were taken from the Waveshare board drawing and were about 45 mm off). LCD slot 56–96 mm and touch slot 32–52 mm from the panel's left edge (front view); J1301/J1302 moved next to them, LA header moved up to clear J1301. Midas MDT070005 datasheet added to the datasheet list.
 
 ### Added

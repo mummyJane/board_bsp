@@ -4,11 +4,11 @@
 <rect x="40.0" y="40.0" width="824.5" height="500.0" fill="none" stroke="#999" stroke-dasharray="6,4"/>
 <rect x="512.74" y="100.0" width="200.0" height="365.0" fill="none" stroke="#c60" stroke-width="2" stroke-dasharray="10,5"/><text x="516.74" y="461.0" fill="#c60">2 x 18650 behind (parts here &lt;= 4 mm)</text>
 <rect x="120.0" y="0.0" width="132.99" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="124.0" y="14.0" font-weight="bold">Power in + User UART</text><text x="124.0" y="28.0">56 % full</text>
+<text x="124.0" y="14.0" font-weight="bold">Power in + User UART</text><text x="124.0" y="28.0">57 % full</text>
 <rect x="252.99" y="0.0" width="181.34999999999997" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="256.99" y="14.0" font-weight="bold">Charger + RTC</text><text x="256.99" y="28.0">68 % full</text>
+<text x="256.99" y="14.0" font-weight="bold">Charger + RTC</text><text x="256.99" y="28.0">69 % full</text>
 <rect x="434.34" y="0.0" width="290.1600000000001" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="438.34" y="14.0" font-weight="bold">Bucks + switches + monitors</text><text x="438.34" y="28.0">49 % full</text>
+<text x="438.34" y="14.0" font-weight="bold">Bucks + switches + monitors</text><text x="438.34" y="28.0">51 % full</text>
 <rect x="724.5" y="0.0" width="170.0" height="290.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
 <text x="728.5" y="14.0" font-weight="bold">m1421 + RF (can 27.5)</text><text x="728.5" y="28.0">63 % full</text>
 <rect x="724.5" y="290.0" width="170.0" height="290.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
@@ -18,7 +18,7 @@
 <rect x="392.74" y="179.3814432989691" width="80.0" height="400.6185567010309" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
 <text x="396.74" y="193.3814432989691" font-weight="bold">LA header (vertical)</text><text x="396.74" y="207.3814432989691">74 % full</text>
 <rect x="472.74" y="179.3814432989691" width="251.76000000000002" height="263.0927835051546" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="476.74" y="193.3814432989691" font-weight="bold">MCU module</text><text x="476.74" y="207.3814432989691">55 % full</text>
+<text x="476.74" y="193.3814432989691" font-weight="bold">MCU module</text><text x="476.74" y="207.3814432989691">56 % full</text>
 <rect x="120.0" y="442.4742268041237" width="177.281" height="137.5257731958763" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
 <text x="124.0" y="456.4742268041237" font-weight="bold">Ethernet + USB host</text><text x="124.0" y="470.4742268041237">75 % full</text>
 <rect x="297.281" y="442.4742268041237" width="95.459" height="137.5257731958763" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
@@ -34,6 +34,7 @@
 <rect x="0.0" y="492.0" width="36.5" height="48.0" fill="#69c" stroke="#036"/><text x="3.0" y="520.0" fill="white" font-size="10">SLEEP</text>
 <rect x="830.0" y="40.0" width="74.5" height="41.0" fill="#69c" stroke="#036"/><text x="833.0" y="64.5" fill="white" font-size="10">SMA 1090/978</text>
 <rect x="830.0" y="499.0" width="74.5" height="41.0" fill="#69c" stroke="#036"/><text x="833.0" y="523.5" fill="white" font-size="10">SMA GNSS</text>
+<rect x="449.5" y="0.0" width="61.0" height="85.0" fill="#69c" stroke="#036"/><text x="452.5" y="46.5" fill="white" font-size="10">Wi-Fi</text>
 <rect x="384.5" y="385.0" width="200.0" height="10.0" fill="#a3c" fill-opacity="0.9"/><text x="384.5" y="380.0" fill="#a3c" font-weight="bold">LCD FPC slot (approx.)</text>
 <rect x="604.5" y="385.0" width="100.0" height="10.0" fill="#a3c" fill-opacity="0.9"/><text x="604.5" y="380.0" fill="#a3c" font-weight="bold">Touch FPC slot (approx.)</text>
 <circle cx="20.0" cy="20.0" r="17.5" fill="#ccc" stroke="#555"/>

@@ -57,6 +57,7 @@ def edge_positions():
         for ref, along in items:
             out[ref] = (side, y + along / 2)
             y += along + gap
+    out["J602"] = ("T", 96.0)     # Wi-Fi RP-SMA on the top long edge, away from the RF-edge SMAs (by = bx here)
     return out
 
 
@@ -75,6 +76,7 @@ BIG = {
     "SW601": (110.0, 12.0, None),           # BOOT  (top band, clear of the battery)
     "SW602": (122.0, 12.0, None),           # RESET
     "SW1801": (40.0, 82.0, None),           # RP2040 BOOTSEL (Dev zone)
+    "J601": (96.0, 21.0, None),             # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
     "J1401": (150.0, 54.0, None),           # m1421 JTAG (below the m1421 can)
     "J1402": (140.0, 14.0, None),           # ADSBee Dev Kit header (1x6, vertical, above the module)
     "J1801": (70.0, 60.0, None),            # RP2040 GPIO header (DNP)
@@ -105,11 +107,17 @@ def netlist():
         sp = c.find("sheetpath")
         comps.append(dict(ref=c.get("ref"), value=c.findtext("value"), fp=c.findtext("footprint") or "",
                           path=sp.get("tstamps") + c.findtext("tstamps"), sheet=sp.get("names").strip("/") or "Top",
-                          dnp=any(p.get("name") == "dnp" for p in c.findall("property"))))
+                          dnp=any(p.get("name") == "dnp" for p in c.findall("property")),
+                          no_bom=any(p.get("name") == "exclude_from_bom" for p in c.findall("property")),
+                          fields={f.get("name"): f.text or "" for f in c.iterfind("fields/field")
+                                  if f.get("name") not in ("Footprint", "Datasheet", "Description")}))
     pins = {}
     for n in r.find("nets").findall("net"):
         for node in n.findall("node"):
-            pins[(node.get("ref"), node.get("pin"))] = n.get("name")
+            name = n.get("name")
+            if name.startswith("unconnected-("):       # KiCad escapes '/' in pin names inside these net names
+                name = "unconnected-(" + name[len("unconnected-("):].replace("/", "{slash}")
+            pins[(node.get("ref"), node.get("pin"))] = name
     return comps, pins
 
 
@@ -170,7 +178,17 @@ def turn_to(fp, want):
 
 
 def place_on_edge(fp, side, by):
-    """side 'L' = digital edge (top-view right), 'R' = RF edge (top-view left)."""
+    """side 'L' = digital edge (top-view right), 'R' = RF edge (top-view left), 'T' = top long edge
+    (by is then the bottom-view x)."""
+    if side == "T":
+        turn_to(fp, (0, -1))
+        em = edge_marker(fp)
+        b = body_box(fp)
+        front = em[1] if em else b.GetTop()
+        fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x, fp.GetPosition().y + int(mm(OY) - front)))
+        b = body_box(fp)
+        fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x + int(top(by, 0).x - b.GetCenter().x), fp.GetPosition().y))
+        return
     want = (1, 0) if side == "L" else (-1, 0)
     turn_to(fp, want)
     target_x = mm(OX + W) if side == "L" else mm(OX)
@@ -252,6 +270,10 @@ def main():
         fp.SetPath(pcbnew.KIID_PATH(c["path"]))
         if hasattr(fp, "SetDNP"):
             fp.SetDNP(c["dnp"])
+        fp.SetExcludedFromBOM(c["no_bom"])
+        for name, text in c["fields"].items():         # symbol fields (Check, Note, ...) as hidden footprint fields
+            fp.SetField(name, text)
+            fp.GetField(name).SetVisible(False)
         board.Add(fp)
         for pad in fp.Pads():
             net = pins.get((c["ref"], pad.GetNumber()))

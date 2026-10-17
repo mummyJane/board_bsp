@@ -36,7 +36,7 @@ PATTERNS = [
     ("USB_90R", "*_D_P"), ("USB_90R", "*_D_N"),
     ("MIPI_100R", "*DSI_*"),
     ("ETH_100R", "*ETH_TX?"), ("ETH_100R", "*ETH_RX?"),
-    ("RF_50R", "*RF_ADSB_ANT"), ("RF_50R", "*M1421_RF_*"), ("RF_50R", "*GPS_RF"),
+    ("RF_50R", "*RF_ADSB_ANT"), ("RF_50R", "*M1421_RF_*"), ("RF_50R", "*GPS_RF"), ("RF_50R", "*WIFI_ANT"),
 ]
 
 pro = KICAD / "ADSB_Test.kicad_pro"

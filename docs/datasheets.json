@@ -985,6 +985,40 @@
       "url": "https://www.samtec.com/products/sma-j-p-h-st-em1"
     },
     {
+      "id": "molex_0732513152",
+      "part": "0732513152",
+      "title": "Molex 73251-3152 RP-SMA edge-mount jack, bulkhead (Wi-Fi antenna)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "file",
+      "url": "https://tools.molex.com/pdm_docs/ps/PS-89675-346.pdf",
+      "manual": true
+    },
+    {
+      "id": "hirose_ufl",
+      "part": "U.FL-R-SMT-1(10)",
+      "title": "Hirose U.FL series receptacles and cables (Wi-Fi jumper)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.hirose.com/en/product/series/U.FL"
+    },
+    {
+      "id": "ck_pts645",
+      "part": "PTS645VL31-2 LFS",
+      "title": "C&K PTS645 tactile switch, right angle (SLEEP/WAKE)",
+      "category": "connectors",
+      "boards": [
+        "adsb"
+      ],
+      "type": "link",
+      "url": "https://www.ckswitches.com/products/switches/product-details/Tactile/PTS645/"
+    },
+    {
       "id": "ck_os102011ma1q",
       "part": "OS102011MA1Q",
       "title": "C&K OS series slide switch (POWER)",

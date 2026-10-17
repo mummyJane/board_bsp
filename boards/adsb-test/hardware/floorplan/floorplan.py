@@ -33,6 +33,9 @@ EDGE_PARTS = [("J901", "L", 10.6, 8.9, "User USB-C"), ("J1001", "L", 10.6, 8.9, 
               ("SW603", "L", 9.6, 7.3, "SLEEP"),
               ("J1403", "R", 8.2, 14.9, "SMA 1090/978"),
               ("J1201", "R", 8.2, 14.9, "SMA GNSS")]
+# Top (long) edge parts at a fixed x: (ref, centre x from the digital edge, along, depth, label). The Wi-Fi RP-SMA
+# sits here, well away from the 1090/978 and GNSS SMAs on the RF edge.
+TOP_PARTS = [("J602", 96.0, 12.2, 17.0, "Wi-Fi")]
 
 
 PANEL_W, PANEL_H = 164.9, 100.0   # 7" panel outline (AliExpress 1024x600 MIPI drawing; Waveshare 164.28 x 99.17 lens)
@@ -56,6 +59,8 @@ def layout(w, h):
         for ref, sd, along, depth, label in items:
             EDGE.append((ref, sd, y + along / 2, along, depth, label))
             y += along + gap
+    for ref, cx_, along, depth, label in TOP_PARTS:
+        EDGE.append((ref, "T", cx_, along, depth, label))
     top = 30 * H / 97                                      # bands grow in proportion
     bot = 23 * H / 97
     rf0 = W - 36
@@ -213,7 +218,9 @@ def svg(rows, ps, sizes):
         out.append(f'<text x="{x0 * s + 4}" y="{y0 * s + 14}" font-weight="bold">{name}</text>'
                    f'<text x="{x0 * s + 4}" y="{y0 * s + 28}">{100 * fill:.0f} % full</text>')
     for ref, side, c, along, depth, label in EDGE:
-        if side == "L":
+        if side == "T":
+            x, y, w, h = c - along / 2, 0, along, depth
+        elif side == "L":
             x, y, w, h = 0, c - along / 2, depth, along
         else:
             x, y, w, h = W - depth, c - along / 2, depth, along

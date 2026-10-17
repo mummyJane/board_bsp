@@ -34,11 +34,11 @@ def tp(s, ref, net, at, local=True):
 # =================================================================== MCU Module (page 6)
 s = Sheet(libs, "ADSB_Test", root_uuid, sheets["mcu_module.kicad_sch"], pwr_base=6000)
 s.locals |= {"XTAL32_P", "XTAL32_N", "C5_IO26", "C5_IO27", "C5_IO25", "C5_IO24", "C5_IO23", "C5_IO6",
-             "C5_IO5", "C5_IO4", "SLEEP_WAKE", "SLEEP_BTN", "P4_GPIO20", "P4_GPIO36", "C5_PU"}
+             "C5_IO5", "C5_IO4", "WIFI_ANT", "SLEEP_WAKE", "SLEEP_BTN", "P4_GPIO20", "P4_GPIO36", "C5_PU"}
 u = s.add("ADSB_Test:OSPTEK_ESP32-P4C5_Core", "U601", "ESP32-P4C5 Core (OSPTEK)", (203.2, 142.24),
           footprint="ADSB_Test:OSPTEK_ESP32-P4C5_Core_HandSolder",
           props={"Source": "OSPTEK AliExpress 1005012626312933; docs github.com/osptek/esp32-p4c5-core-board",
-                 "Antenna": "IPEX (U.FL) on the module: pigtail to a 2.4/5 GHz antenna"})
+                 "Antenna": "IPEX (U.FL) on the module: jumper to J601 -> J602 RP-SMA"})
 s.connect(u, ["85", "86"], "3V3_MCU")
 s.connect(u, ["1", "3", "15", "33", "40", "47", "52", "83"], "GND")
 for p in ("2", "21", "41", "42", "43", "44", "45", "46"):   # LAN_OUT (use the IPEX), GPIO6 = C5 IO2 inside, CSI unused
@@ -110,6 +110,20 @@ s.two_pin("Device:R", "R606", "330R", (330.2, 76.2), "C5_PU", "C5_EN", R0805)
 # C5 straps: GPIO26 floats by default and 26 = 27 = 28 = 0 selects SDIO download, so pull it up
 s.two_pin("Device:R", "R605", "10k", (330.2, 50.8), "3V3", "C5_IO26", R0805)
 
+# Wi-Fi antenna: module IPEX -> U.FL-U.FL jumper (Hirose U.FL-2LP-066J1-A-(100), ~100 mm) -> J601 -> short 50R
+# CPW -> J602 RP-SMA on the RF edge (bulkhead nut through the case). RP-SMA so it can't be swapped with the
+# 1090/978 and GNSS SMAs. Alternative: a U.FL-to-RP-SMA bulkhead pigtail straight from the module (J601/J602 DNP).
+uf = s.add("Connector:Conn_Coaxial", "J601", "U.FL Wi-Fi (from module IPEX)", (330.2, 243.84),
+           footprint="Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+           props={"Cable": "U.FL-U.FL 100 mm jumper to the module IPEX"})
+s.connect(uf, "1", "WIFI_ANT")
+s.connect(uf, "2", "GND")
+sma = s.add("Connector:Conn_Coaxial", "J602", "RP-SMA Wi-Fi 2.4/5 GHz", (368.3, 243.84),
+            footprint="Connector_Coaxial:SMA_Molex_73251-1153_EdgeMount_Horizontal",
+            props={"Check": "Molex 0732513152 (RP, bulkhead nut): confirm pads vs PS-89675-346 before ordering"})
+s.connect(sma, "1", "WIFI_ANT")
+s.connect(sma, "2", "GND")
+
 # spare pins to test pads
 for i, net in enumerate(("C5_IO27", "C5_IO25", "C5_IO24", "C5_IO23", "C5_IO6", "C5_IO5", "C5_IO4",
                          "SLEEP_WAKE", "P4_GPIO20", "P4_GPIO36", "C5_PU")):
@@ -120,7 +134,7 @@ s.text("MCU MODULE: OSPTEK ESP32-P4C5 Core (ESP32-P4 rev v3.x + ESP32-C5HF4, 16 
        "- the same wiring as the Waveshare reference board. Pins: bsp/include/bsp/board_pins.h.\n"
        "3.3 V supply (3V3_MCU, shunt RS404 / PM2 CH2). RTC_VBAT from VBACKUP (always on): P4 RTC keeps time when off.\n"
        "CHIP_PU has no RC inside the module: R607/C607 here. C5 reset from the Dev port via R606 onto the GPIO54 net.\n"
-       "Wi-Fi: IPEX on the module -> U.FL pigtail -> antenna (case must be plastic there). LAN_OUT pad unused.\n"
+       "Wi-Fi: module IPEX -> U.FL-U.FL jumper -> J601 -> J602 RP-SMA on the RF edge (50R). LAN_OUT pad unused.\n"
        "Hand solder: 1.0 mm stamp holes; no exposed copper/untented vias under the module.\n"
        "GPIO35 = BOOT strap + RMII TXD1 (4.7k pull-up, PHY must not pull it low at reset).\n"
        "SW603 SLEEP/WAKE -> GPIO12 (LP GPIO): press = expander rails off + P4 deep sleep; press again = wake (ext1).",

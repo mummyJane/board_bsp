@@ -86,6 +86,11 @@ is 75 % overall but 100 % along the display strip.
    holes (about 1.3 mm between parts). All user connectors and switches are on one
    edge; if the case needs wider webs, the button can move to the RF edge (16 mm used).
 5. **RF edge:** only the two SMAs, far apart (GNSS and 1090/978).
+   **Wi-Fi antenna:** J602 RP-SMA (bulkhead, 12.2 × 17 mm) on the **top long edge**,
+   96 mm from the digital end, between the battery connector and BOOT/RESET, so the
+   2.4/5 GHz transmitter is well away from the GNSS and 1090/978 antennas. J601 U.FL
+   just behind it takes a 100 mm jumper from the module's IPEX. Leave a case hole and
+   room for the antenna above that edge.
 6. **LA header** (2 × 20 shrouded, 59.5 × 10.9 mm, 9.1 mm tall) stands vertically
    between the Dev USB and MCU zones, reachable with the back cover off.
 7. **Battery:** two 18650 cells across the board over the MCU and power area.

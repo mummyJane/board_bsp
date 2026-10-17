@@ -1,0 +1,158 @@
+(footprint "R_Shunt_1206_Kelvin_HandSolder"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "ADSB_Test: 4-terminal Kelvin version (pads 2/3 = sense, net-tied to 1/4). Resistor SMD 1206 (3216 Metric), square (rectangular) end terminal, IPC-7351 nominal with elongated pad for handsoldering. (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
+	(tags "resistor shunt kelvin 4-terminal handsolder")
+	(property "Reference" "REF**"
+		(at 0 -2.3 0)
+		(layer "F.SilkS")
+		(uuid "7831f7be-3a3a-4b70-88d2-0e17061d2ea9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "R_Shunt_1206_Kelvin_HandSolder"
+		(at 0 1.83 0)
+		(layer "F.Fab")
+		(uuid "5e12b26d-a870-4b42-a70a-b817a2c94315")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d2e77a08-a277-4a44-83ab-baedd54962d7")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "51f7f1de-9236-44b6-a22c-ed4cd7c6cab5")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "KiLib_Generator" "SMD_2terminal_chip_molded"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "97cda72b-5039-4c72-b8ac-4f8ce15bf084")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(net_tie_pad_groups "1, 2" "3, 4")
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -0.727064 -0.91)
+		(end 0.727064 -0.91)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "9301d470-6eff-41a8-bc89-c42a2f4b33ac")
+	)
+	(fp_line
+		(start -0.727064 0.91)
+		(end 0.727064 0.91)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "70d65145-7408-4414-b219-3283138c6ac7")
+	)
+	(fp_rect
+		(start -2.45 -1.7)
+		(end 2.45 1.13)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "d1a16822-8f6c-4fe1-a720-462811e00bd9")
+	)
+	(fp_rect
+		(start -1.6 -0.8)
+		(end 1.6 0.8)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "ce5f551d-1c7b-4147-85bb-a2a8115787f1")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "ce4d2746-5a0c-4c46-b164-589958f2d77e")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -1.55 0)
+		(size 1.3 1.75)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.192308)
+		(uuid "6ddab7ee-c90c-462c-89d6-946869f04b9f")
+	)
+	(pad "2" smd rect
+		(at -1.15 -1.1)
+		(size 0.5 0.6)
+		(layers "F.Cu" "F.Mask")
+		(uuid "5ff35d40-f0b3-4e9e-8bf3-3deba3ab878b")
+	)
+	(pad "3" smd rect
+		(at 1.15 -1.1)
+		(size 0.5 0.6)
+		(layers "F.Cu" "F.Mask")
+		(uuid "89592608-8d12-4213-9470-607306e4cfef")
+	)
+	(pad "4" smd roundrect
+		(at 1.55 0)
+		(size 1.3 1.75)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.192308)
+		(uuid "ead77f2c-1c63-433d-8841-d6c5c8a97f84")
+	)
+	(embedded_fonts no)
+	(model "${KICAD10_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_1206_3216Metric.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)

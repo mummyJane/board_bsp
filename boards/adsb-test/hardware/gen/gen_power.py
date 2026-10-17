@@ -24,7 +24,7 @@ C0402 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 C0603 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 C0805 = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 C1206 = "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder"
-RSHUNT = "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"   # 4-terminal Kelvin layout done on the PCB
+RSHUNT = "ADSB_Test:R_Shunt_1206_Kelvin_HandSolder"   # 4 pads: 1/4 current, 2/3 Kelvin sense (gen_footprints.py)
 TP = "TestPoint:TestPoint_Pad_D1.5mm"
 
 
@@ -86,7 +86,7 @@ def testpoint(s, ref, net, at):
 
 def shunt(s, ref, val, at, src, load, sense_p, sense_n):
     """4-terminal shunt: current src (pin 1) -> load (pin 4); Kelvin sense pins 2 (+) and 3 (-)."""
-    r = s.add("Device:R_Shunt", ref, val, at, footprint=RSHUNT, props={"Check": "Kelvin-route pins 2/3 to the PAC1954"})
+    r = s.add("Device:R_Shunt", ref, val, at, footprint=RSHUNT, props={"Check": "Route sense pads 2/3 to the PAC1954 as a pair"})
     s.connect(r, "1", src)
     s.connect(r, "4", load)
     s.connect(r, "2", sense_p)
