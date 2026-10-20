@@ -69,16 +69,21 @@ is 75 % overall but 100 % along the display strip.
 
 1. **Board 180.9 × 116 mm**, panel centred with an 8 mm border. Shorter than the
    earlier 188 mm, 19 mm taller.
-2. **Panel cable slots** (front-view mm from the panel's left edge; revised 2026-10-12):
-   - The tails fold back behind the panel and pass through the PCB **past the wide section with the chip**,
-     as on the Waveshare board (slots and sockets near the middle). Slot centres **30 mm in from the panel's
-     bottom edge** (`SLOT_IN` in `gen_pcb.py`); sockets 7 mm further in, openings facing the slot.
-   - **LCD 30-pin:** Midas MDT070005 tail at 72.88 ± 0.5 mm, ~17 mm wide, 44.97 mm long (first ~19.5 mm wide
-     with the chip). Slot **56–96 mm** wide until measured; socket J1301.
-   - **Touch 6-pin:** tail from 37.5 mm, ~10–14 mm wide, 101 mm long. Slot **32–52 mm**; socket J1302.
-   - The module now sits above the sockets, the LA header runs along the bottom edge.
-   - PROVISIONAL: confirm on the Waveshare board / real panel (tail length to the neck, neck width,
-     chip position) before ordering PCBs.
+2. **Panel cable slots: measured on the Waveshare board (2026-10-20).** The tails fold back behind the panel
+   and pass through the PCB past the wide section with the chip, into sockets 7 mm further in.
+   - Measured (back view, from the Waveshare PCB's bottom edge and USB side): **LCD 22 × 3 mm**, bottom of the
+     hole 41 mm up, near side 68 mm from the USB side; **touch 8 × 3 mm**, 48 mm up, 122 mm from the USB side.
+   - In panel coordinates (front view from the panel's left edge, the USB side being its right edge; +1.58 mm
+     because the Waveshare PCB edge is that far in from the lens edge):
+
+     | Slot | Across (from left) | Up from the panel's bottom edge | Socket |
+     |------|--------------------|---------------------------------|--------|
+     | LCD 30-pin | 74–96 mm | 42.6–45.6 mm | J1301 |
+     | Touch 6-pin | 34–42 mm | 49.6–52.6 mm | J1302 |
+
+   - They agree with the panel drawings (touch tail from 37.5 mm; Midas LCD tail at ~73–90 mm).
+   - The module sits **between the two sockets** (short MIPI run to J1301); the LA header runs along the
+     bottom edge. Values live in `SLOTS_FRONT` in `gen_pcb.py`.
 3. **Mounting holes move to the board corners** (4 mm in). The Waveshare
    156 × 89 mm pattern would now be under the panel.
 4. **Digital edge:** User USB-C, Dev USB-C, USB-A, RJ45, microSD, **the POWER

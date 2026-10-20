@@ -65,7 +65,7 @@ def edge_positions():
 EDGE = edge_positions()
 # interior big parts: ref -> (bx, by, mouth) ; mouth = direction the connector opening faces (bottom view)
 BIG = {
-    "U601": (124.0, 44.0, None),            # OSPTEK ESP32-P4C5 module, above the panel-cable sockets
+    "U601": (114.3, 46.0, None),            # OSPTEK ESP32-P4C5 module, between the LCD and touch sockets (short MIPI)
     "U1401": (158.0, 30.0, None),           # m1421, under can SH1401
     "SH1401": (158.0, 30.0, None),
     "U1201": (160.0, 94.0, None),           # MAX-M10S, under can SH1201
@@ -82,18 +82,23 @@ BIG = {
     "J1402": (140.0, 14.0, None),           # ADSBee Dev Kit header (1x6, vertical, above the module)
     "J1801": (70.0, 60.0, None),            # RP2040 GPIO header (DNP)
 }
-# Panel-cable slots, given in FRONT-VIEW mm from the panel's left edge (as the panel drawings are dimensioned):
-#   LCD 30-pin tail: Midas MDT070005 drawing 72.88 +/-0.5 mm (tail ~17 mm wide), AliExpress panel ~71 mm to the tail
-#   centre -> slot 56..96 mm covers both readings. Touch tail: 37.5 mm to its left edge, ~10-14 mm wide -> 32..52 mm.
-# The tails fold back behind the panel and come through the PCB past the wide part with the chip (as on the
-# Waveshare board, where both slots/sockets are near the middle). SLOT_IN = distance of the slot centre in from
-# the panel's bottom edge; the LCD tail is ~45 mm long with ~19.5 mm of wide (chip) section first.
-SLOTS_FRONT = [("LCD FPC slot", 56.0, 96.0), ("Touch FPC slot", 32.0, 52.0)]
-SLOT_IN, SLOT_W, SOCKET_GAP = 30.0, 2.5, 7.0
-SLOT_Y = (H + PH) / 2 - SLOT_IN
-SLOTS = [(n, W - (W - PW) / 2 - (a + b) / 2, b - a) for n, a, b in SLOTS_FRONT]   # (name, bottom-view x, length)
-for _r in ("J1301", "J1302"):          # sockets just inside their slots, openings facing the slot
-    BIG[_r] = (BIG[_r][0], SLOT_Y - SOCKET_GAP, BIG[_r][2])
+# Panel-cable slots, measured on the Waveshare ESP32-P4-WIFI6-Touch-LCD-7B (2026-10-20), back view, from its
+# bottom edge and its USB side:
+#   LCD   22 x 3 mm, bottom of hole 41 mm up, near (right) side 68 mm from the USB side
+#   touch  8 x 3 mm, bottom of hole 48 mm up, near (right) side 122 mm from the USB side
+# Converted to FRONT-VIEW mm from the panel's left edge (the USB side is the panel's right edge, front view; the
+# Waveshare PCB is 164 mm wide, as the panel) and mm up from the panel's bottom edge (+1.58 mm: the Waveshare PCB
+# edge sits that far in from the lens edge). They agree with the panel drawings (touch tail from 37.5 mm, LCD
+# tail ~73-90 mm). Each: (name, left, right, bottom of hole up from the panel bottom, slot height).
+WS_W, WS_EDGE = 164.0, 1.58
+SLOTS_FRONT = [("LCD FPC slot", WS_W - 90.0, WS_W - 68.0, 41.0 + WS_EDGE, 3.0),
+               ("Touch FPC slot", WS_W - 130.0, WS_W - 122.0, 48.0 + WS_EDGE, 3.0)]
+SOCKET_GAP = 7.0                       # slot centre -> socket centre, further in (towards the panel's middle)
+PANEL_BOTTOM = (H + PH) / 2            # bottom-view y of the panel's bottom edge
+# (name, bottom-view x centre, length, bottom-view y centre, height)
+SLOTS = [(n, W - (W - PW) / 2 - (a + b) / 2, b - a, PANEL_BOTTOM - (up + h / 2), h) for n, a, b, up, h in SLOTS_FRONT]
+for _r, (_n, _x, _l, _y, _h) in zip(("J1301", "J1302"), SLOTS):   # sockets just inside their slots, facing them
+    BIG[_r] = (_x, _y - SOCKET_GAP, BIG[_r][2])
 
 
 # ---------------------------------------------------------------- netlist
@@ -242,12 +247,12 @@ def outline(board):
     # panel outline (top side) for reference, on User.1-like drawing layer
     px0, py0 = OX + (W - PW) / 2, OY + (H - PH) / 2
     rect(px0, py0, px0 + PW, py0 + PH, layer=pcbnew.Dwgs_User, width=0.15)
-    for name, bx, length in SLOTS:
+    for name, bx, length, by, height in SLOTS:
         cx = OX + W - bx
-        rect(cx - length / 2, OY + SLOT_Y - SLOT_W / 2, cx + length / 2, OY + SLOT_Y + SLOT_W / 2)
+        rect(cx - length / 2, OY + by - height / 2, cx + length / 2, OY + by + height / 2)
     t = pcbnew.PCB_TEXT(board)
     t.SetText("ADSB_Test Rev A - ALL COMPONENTS ON THE BOTTOM SIDE (panel bonded to the top).\n"
-              "Dwgs.User rectangle = panel outline. Slots = panel FPC pass-throughs (check against the real panel).")
+              "Dwgs.User rectangle = panel outline. Slots = panel FPC pass-throughs (from the Waveshare board).")
     t.SetPosition(pcbnew.VECTOR2I(mm(OX), mm(OY - 8)))
     t.SetLayer(pcbnew.Dwgs_User)
     t.SetTextSize(pcbnew.VECTOR2I(mm(1.5), mm(1.5)))
