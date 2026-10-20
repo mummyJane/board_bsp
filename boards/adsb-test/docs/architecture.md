@@ -91,7 +91,7 @@ Facts below are from the Waveshare schematic
 - **Antenna (since Q26):** IPEX on the OSPTEK module → 100 mm U.FL-U.FL jumper →
   J601 (U.FL on the board) → a few mm of 50 Ω CPW → **J602 RP-SMA** (Molex
   0732513152, jam nut; footprint `ADSB_Test:SMA_Molex_73251-3152_RP_EdgeMount` from
-  drawing SD-73251-315, pads 0.25 mm in from the edge) on the **top long edge**, 96 mm from the digital end,
+  drawing SD-73251-315, pads 0.25 mm in from the edge) on the **top long edge**, 96 mm from the RF end,
   well away from the 1090/978 and GNSS SMAs on the RF edge. RP-SMA so the Wi-Fi
   antenna can't be swapped with the other two. Needs a dual-band 2.4/5 GHz RP-SMA
   antenna and a hole in the case's top side. Wi-Fi is a backup and the unit
@@ -520,9 +520,9 @@ Outline and case (Q20, decided 2026-10-10):
 | Item | Decision |
 |------|----------|
 | Board outline | ~~188 × 97 mm~~. **Proposed (Q28, floorplan check): 180.9 × 116 mm**, panel centred with an 8 mm gap all round, panel cables through PCB slots, mounting holes in the board corners. See [floorplan.md](floorplan.md) |
-| Digital edge (one short edge) | User USB-C, Dev USB-C, USB-A, RJ45, microSD (mid-mount/sink-in parts, ≈ 70 mm of the 97 mm edge) |
-| RF edge (other short edge) | GNSS SMA and m1421 SMA, spaced apart |
-| C5 antenna | ~~In the digital-edge margin~~ (edge is full). **J602 RP-SMA on the top long edge** (96 mm from the digital end), U.FL jumper from the module |
+| Digital edge (short edge nearer the module; right in bottom view since 2026-10-20) | User USB-C, Dev USB-C, USB-A, RJ45, microSD, POWER, SLEEP/WAKE (92 mm of the 101 mm between the corner holes) |
+| RF edge (other short edge, left in bottom view) | GNSS SMA and m1421 SMA, spaced apart, with the m1421 and GNSS cans behind them |
+| C5 antenna | ~~In the digital-edge margin~~ (edge is full). **J602 RP-SMA on the top long edge** (96 mm from the RF end), U.FL jumper from the module |
 | Case | **3D-printed plastic** for the prototypes (RF-friendly for the on-module Wi-Fi antenna). ≈ 2 mm walls on the **short edges** so the connectors reach through. **Thicker walls (≈ 3 mm, optionally ribbed) on the long edges** for stiffness, since nothing passes through them |
 | Battery | 2 × 18650 (2S1P) in the case behind the board. Expected overall depth ≈ 33–35 mm. A 2S flat pouch pack (≈ 22–25 mm total) is a later option needing no PCB change |
 

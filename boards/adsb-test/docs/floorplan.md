@@ -16,10 +16,11 @@ python boards\adsb-test\hardware\floorplan\floorplan.py --size 196x97    # any o
 
 ![Floorplan, 180.9 x 116 mm](../hardware/floorplan/floorplan.png)
 
-_Component (bottom) side; the panel is on the other side. Left = digital
-edge, right = RF edge. Orange box = where the 2 × 18650 cells sit behind the
-board (parts there ≤ 4 mm). Purple = slots for the panel cables (Waveshare
-panel positions, approximate). Grey circles = corner mounting holes._
+_Component (bottom) side; the panel is on the other side. Left = RF edge,
+right = digital edge (swapped 2026-10-20 so the digital connectors sit next to
+the module). Orange box = where the 2 × 18650 cells sit behind the board (parts
+there ≤ 4 mm). Purple = slots for the panel cables (measured on the Waveshare
+board). Grey circles = corner mounting holes._
 
 ## Method
 
@@ -49,21 +50,22 @@ sides** gives an even border in the case. The panel cables then fold through
 For comparison, the earlier plan (188 × 97, the panel flush with the long edges)
 is 75 % overall but 100 % along the display strip.
 
-**Recommended: 8 mm gap, board 180.9 × 116 mm** (Q28). Zones:
+**Recommended: 8 mm gap, board 180.9 × 116 mm** (Q28). Zones, left to right
+(layout of 2026-10-20: RF edge left, digital edge right, module kept in place):
 
 | Zone | Size (mm) | Fill |
 |------|-----------|------|
-| Power in + User USB-C | 27 × 36 | 56 % |
-| Charger + RTC | 36 × 36 | 68 % |
-| Bucks + load switches + monitors | 58 × 36 | 49 % |
-| m1421 + RF (can 27.5 mm) | 34 × 58 | 63 % |
-| GNSS (can 17.8 mm) | 34 × 58 | 25 % (keep it quiet) |
-| Dev USB (hub, FT2232H, RP2040 + GPIO header) | 54 × 53 | 88 % |
-| LA header (vertical) | 16 × 80 | 74 % |
-| MCU module (OSPTEK 25 × 25 mm) | 50 × 53 | 54 % |
-| Ethernet + USB host | 34 × 28 | 78 % |
-| Storage + expander + touch FPC | 18 × 28 | 58 % |
-| Display supplies + LCD FPC | 50 × 28 | 86 % |
+| m1421 + RF (can 27.5 mm), left edge top | 34 × 58 | 63 % |
+| GNSS (can 17.8 mm), left edge bottom | 34 × 58 | 25 % (keep it quiet) |
+| Bucks + load switches + monitors (top band) | 58 × 36 | 51 % |
+| Charger + RTC (top band) | 36 × 36 | 69 % |
+| Power in + User USB-C (top band, digital end) | 27 × 36 | 57 % |
+| Dev UARTs (FT2232H) + m1421 programmer (RP2040) | 58 × 41 | 86 % |
+| Display supplies + LCD FPC | 58 × 25 | 82 % |
+| MCU module (OSPTEK 25 × 25 mm) + touch FPC | 36 × 66 | 63 % |
+| LA header (along the bottom) | 94 × 14 | 72 % |
+| Dev hub + Ethernet + USB host (digital edge) | 27 × 60 | 78 % |
+| Storage + expander (digital edge) | 27 × 20 | 54 % |
 
 ## Findings
 
@@ -86,23 +88,26 @@ is 75 % overall but 100 % along the display strip.
      bottom edge. Values live in `SLOTS_FRONT` in `gen_pcb.py`.
 3. **Mounting holes move to the board corners** (4 mm in). The Waveshare
    156 × 89 mm pattern would now be under the panel.
-4. **Digital edge:** User USB-C, Dev USB-C, USB-A, RJ45, microSD, **the POWER
-   switch and the SLEEP/WAKE button** need 92.1 mm of the 101 mm between the corner
-   holes (about 1.3 mm between parts). All user connectors and switches are on one
-   edge; if the case needs wider webs, the button can move to the RF edge (16 mm used).
-5. **RF edge:** only the two SMAs, far apart (GNSS and 1090/978).
+4. **Digital edge (right, bottom view; since 2026-10-20):** User USB-C, Dev USB-C, USB-A,
+   RJ45, microSD, **the POWER switch and the SLEEP/WAKE button** need 92.1 mm of the 101 mm
+   between the corner holes (about 1.3 mm between parts). It is the edge nearer the
+   module (about 30 mm from it instead of about 100 mm), so the USB, RMII and SD runs are
+   short and the digital traffic stays on the far side of the board from the RF. If the
+   case needs wider webs, the SLEEP/WAKE button can move to the top edge.
+5. **RF edge (left):** the two SMAs, far apart (1090/978 at the top, GNSS at the bottom),
+   with the m1421 and GNSS cans behind them.
    **Wi-Fi antenna:** J602 RP-SMA (bulkhead, 12.2 mm wide, pads 7.5 mm in, barrel over the edge) on the **top long edge**,
-   96 mm from the digital end, between the battery connector and BOOT/RESET, so the
-   2.4/5 GHz transmitter is well away from the GNSS and 1090/978 antennas. J601 U.FL
-   just behind it takes a 100 mm jumper from the module's IPEX. Leave a case hole and
-   room for the antenna above that edge.
-6. **LA header** (2 × 20 shrouded, 59.5 × 10.9 mm, 9.1 mm tall) stands vertically
-   between the Dev USB and MCU zones, reachable with the back cover off.
+   96 mm from the RF end, so the 2.4/5 GHz transmitter is well away from the GNSS and
+   1090/978 antennas. J601 U.FL just behind it takes a 100 mm jumper from the module's
+   IPEX. Leave a case hole and room for the antenna above that edge.
+6. **LA header** (2 × 20 shrouded, 59.5 × 10.9 mm, 9.1 mm tall) lies along the bottom
+   edge, reachable with the back cover off.
 7. **Battery:** two 18650 cells across the board over the MCU and power area.
    Tall parts stay out from under them: RJ45 (13.5 mm, at the edge), JST battery
    connector (9.8 mm), LA header (9.1 mm), USB-A (7 mm), the 150 µF electrolytic
-   (6 mm), the RF cans (5.1 mm). The BOOT/RESET buttons (B3F-1000, 4.3 mm) are in
-   the MCU zone: use low-profile tactile switches or place them at the zone edge.
+   (6 mm), the RF cans (5.1 mm). The BOOT/RESET buttons (B3F-1000, 4.3 mm) now sit
+   in the top band near the digital edge, and J301 at the top of the charger zone,
+   both outside the cells. The USB-A bulk capacitor C1103 must also go outside them.
 8. **RJ45:** the BOM's HR911105A is full-height (13.5 mm), not mid-mount. Fine as
    long as the battery isn't over it.
 9. **GNSS corner** has room to spare (25 %): good for noise, and the place to move

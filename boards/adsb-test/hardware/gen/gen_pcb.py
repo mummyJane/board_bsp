@@ -6,7 +6,7 @@ Run with KiCad's own Python (it needs the pcbnew module):
 
 * Board 180.9 x 116 mm (Q28: panel 164.9 x 100 centred with an 8 mm border), 4 layers, 1.6 mm.
 * ALL parts are on the BOTTOM side (the panel is bonded to the top). Placements below are given in
-  BOTTOM VIEW (looking at the component side, digital edge on the left), as in docs/floorplan.md;
+  BOTTOM VIEW (looking at the component side, RF edge on the left, digital edge on the right), as in docs/floorplan.md;
   the script mirrors them into KiCad's top-view coordinates.
 * Every footprint gets its schematic link (KIID path) and pad nets, so "Update PCB from Schematic"
   keeps working and the ratsnest shows. Parts not placed here are parked beside the board, grouped
@@ -47,9 +47,10 @@ def top(bx, by):
 
 # ---------------------------------------------------------------- placements (bottom view, mm)
 def edge_positions():
-    """Same spread as floorplan.py: connectors evenly spaced between the corner-hole keep-outs."""
-    left = [("J901", 10.6), ("J1001", 10.6), ("J1101", 17.2), ("J801", 19.0), ("J1501", 13.7), ("SW401", 11.4), ("SW603", 9.6)]
-    right = [("J1403", 8.2), ("J1201", 8.2)]
+    """Same spread as floorplan.py: connectors evenly spaced between the corner-hole keep-outs.
+    Bottom view: RF edge on the left, digital edge on the right (nearer the module) since 2026-10-20."""
+    left = [("J1403", 8.2), ("J1201", 8.2)]
+    right = [("J901", 10.6), ("J1001", 10.6), ("J1101", 17.2), ("J801", 19.0), ("J1501", 13.7), ("SW401", 11.4), ("SW603", 9.6)]
     out = {}
     for side, items in (("L", left), ("R", right)):
         lo, hi = HOLE_IN + 4.0, H - HOLE_IN - 4.0
@@ -66,21 +67,21 @@ EDGE = edge_positions()
 # interior big parts: ref -> (bx, by, mouth) ; mouth = direction the connector opening faces (bottom view)
 BIG = {
     "U601": (114.3, 46.0, None),            # OSPTEK ESP32-P4C5 module, between the LCD and touch sockets (short MIPI)
-    "U1401": (158.0, 30.0, None),           # m1421, under can SH1401
-    "SH1401": (158.0, 30.0, None),
-    "U1201": (160.0, 94.0, None),           # MAX-M10S, under can SH1201
-    "SH1201": (160.0, 94.0, None),
+    "U1401": (22.9, 30.0, None),            # m1421, under can SH1401 (RF column, left edge)
+    "SH1401": (22.9, 30.0, None),
+    "U1201": (20.9, 94.0, None),            # MAX-M10S, under can SH1201
+    "SH1201": (20.9, 94.0, None),
     "J1601": (95.0, 104.0, "rot90"),        # LA5016 2x20 header, horizontal along the bottom edge
     "J1301": (W - (W - PW) / 2 - 76.0, None, "+y"),    # LCD 30-pin FPC, opening towards its slot (y set below)
     "J1302": (W - (W - PW) / 2 - 42.0, None, "+y"),    # touch 6-pin FPC, opening towards its slot (y set below)
-    "J301": (64.0, 9.0, None),              # battery connector (outside the battery footprint)
-    "SW601": (110.0, 12.0, None),           # BOOT  (top band, clear of the battery)
-    "SW602": (122.0, 12.0, None),           # RESET
-    "SW1801": (40.0, 82.0, None),           # RP2040 BOOTSEL (Dev zone)
+    "J301": (114.0, 9.0, None),             # battery connector, charger zone (outside the battery footprint)
+    "SW601": (142.0, 12.0, None),           # BOOT  (top band near the digital edge, clear of the battery)
+    "SW602": (153.0, 12.0, None),           # RESET
+    "SW1801": (62.0, 45.0, None),           # RP2040 BOOTSEL (Dev zone)
     "J601": (96.0, 10.5, None),             # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
-    "J1401": (150.0, 54.0, None),           # m1421 JTAG (below the m1421 can)
-    "J1402": (140.0, 14.0, None),           # ADSBee Dev Kit header (1x6, vertical, above the module)
-    "J1801": (70.0, 60.0, None),            # RP2040 GPIO header (DNP)
+    "J1401": (30.9, 54.0, None),            # m1421 JTAG (below the m1421 can)
+    "J1402": (40.9, 14.0, None),            # ADSBee Dev Kit header (1x6, vertical, next to the m1421)
+    "J1801": (45.0, 56.0, None),            # RP2040 GPIO header (DNP)
 }
 # Panel-cable slots, measured on the Waveshare ESP32-P4-WIFI6-Touch-LCD-7B (2026-10-20), back view, from its
 # bottom edge and its USB side:
@@ -196,7 +197,7 @@ def front_box(fp):
 
 
 def place_on_edge(fp, side, by):
-    """side 'L' = digital edge (top-view right), 'R' = RF edge (top-view left), 'T' = top long edge
+    """side 'L' = bottom-view left edge (RF; top-view right), 'R' = bottom-view right edge (digital), 'T' = top long edge
     (by is then the bottom-view x)."""
     if side == "T":
         turn_to(fp, (0, -1))

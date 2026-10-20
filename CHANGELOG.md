@@ -9,6 +9,7 @@ project uses [Semantic Versioning](https://semver.org/) (see
 ## [Unreleased]
 
 ### Changed
+- ADSB_Test PCB/floorplan: RF and digital edges swapped (bottom view: RF edge left, digital edge right) with the module kept in place, so the USB/Ethernet/microSD/power connectors sit ~30 mm from the module instead of ~100 mm and the digital traffic stays away from the RF. m1421 + GNSS cans, their SMAs, JTAG and Dev Kit headers moved to the left; BOOT/RESET and the battery connector re-placed outside the cells; zones re-planned (all under 90 %; Dev hub now in the digital-edge column next to the Dev USB-C).
 - ADSB_Test PCB: panel-cable slots set from measurements of the Waveshare board (LCD 22 × 3 mm at 74–96 mm across, 42.6–45.6 mm up; touch 8 × 3 mm at 34–42 mm, 49.6–52.6 mm up, panel front-view coordinates); J1301/J1302 7 mm inside them; module moved between the two sockets. Floorplan markers updated.
 - ADSB_Test sleep: `bsp_sleep()` now also puts the three PAC1954 monitors into their 5 µA sleep mode and the GT911 touch controller to sleep (INT held low); `bsp_init()` wakes the monitors after a button wake-up (`bsp_power_after_wake()`, `bsp_power_monitors_sleep()`).
 - ADSB_Test Dev programmer: J1802 3-pin SWD header for the RP2040 (SWCLK, GND, SWDIO in the Pico order, for the Raspberry Pi Debug Probe); the test pads stay.

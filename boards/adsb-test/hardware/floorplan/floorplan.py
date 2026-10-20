@@ -27,14 +27,16 @@ BIG = 150.0                    # courtyard mm2 above which a part is "fixed"
 HOLE_KEEPOUT = 3.5             # mm radius (M2.5 screw head + clearance)
 
 # Edge connectors: (ref, edge, along-edge size, depth, label); spread evenly between the hole keep-outs
-EDGE_PARTS = [("J901", "L", 10.6, 8.9, "User USB-C"), ("J1001", "L", 10.6, 8.9, "Dev USB-C"),
-              ("J1101", "L", 17.2, 16.3, "USB-A"), ("J801", "L", 19.0, 22.3, "RJ45"),
-              ("J1501", "L", 13.7, 13.1, "microSD"), ("SW401", "L", 11.4, 9.4, "POWER"),
-              ("SW603", "L", 9.6, 7.3, "SLEEP"),
-              ("J1403", "R", 8.2, 14.9, "SMA 1090/978"),
-              ("J1201", "R", 8.2, 14.9, "SMA GNSS")]
-# Top (long) edge parts at a fixed x: (ref, centre x from the digital edge, along, depth, label). The Wi-Fi RP-SMA
-# sits here, well away from the 1090/978 and GNSS SMAs on the RF edge.
+# Since 2026-10-20 the RF edge is on the LEFT (bottom view) and the digital edge on the RIGHT, the side nearer
+# the module, so the digital runs are shorter and further from the RF.
+EDGE_PARTS = [("J901", "R", 10.6, 8.9, "User USB-C"), ("J1001", "R", 10.6, 8.9, "Dev USB-C"),
+              ("J1101", "R", 17.2, 16.3, "USB-A"), ("J801", "R", 19.0, 22.3, "RJ45"),
+              ("J1501", "R", 13.7, 13.1, "microSD"), ("SW401", "R", 11.4, 9.4, "POWER"),
+              ("SW603", "R", 9.6, 7.3, "SLEEP"),
+              ("J1403", "L", 8.2, 14.9, "SMA 1090/978"),
+              ("J1201", "L", 8.2, 14.9, "SMA GNSS")]
+# Top (long) edge parts at a fixed x: (ref, centre x from the left (RF) edge, along, depth, label). The Wi-Fi
+# RP-SMA sits here, well away from the 1090/978 and GNSS SMAs on the RF edge.
 TOP_PARTS = [("J602", 96.0, 12.2, 7.5, "Wi-Fi")]   # pads 7.5 mm in, barrel overhangs the edge
 
 
@@ -42,9 +44,10 @@ PANEL_W, PANEL_H = 164.9, 100.0   # 7" panel outline (AliExpress 1024x600 MIPI d
 
 
 def layout(w, h):
-    """Zone rectangles for a w x h board with the panel centred on the other side.
-    Bands: power on top, logic in the middle, display + Ethernet at the bottom (panel cables fold
-    through slots at the panel's bottom edge), RF column at the RF edge."""
+    """Zone rectangles for a w x h board with the panel centred on the other side (bottom view).
+    RF column on the left edge; power band along the top (power-in at the digital end); the module stays right
+    of centre between the panel-cable sockets; Dev UARTs/programmer and the display supplies left of it; the
+    digital-edge column (Dev hub, Ethernet, USB host, storage) on the right; LA header along the bottom."""
     global W, H, HOLES, EDGE, BATTERY, FPC
     W, H = w, h
     x0p, y0p = (W - PANEL_W) / 2, (H - PANEL_H) / 2
@@ -61,29 +64,30 @@ def layout(w, h):
             y += along + gap
     for ref, cx_, along, depth, label in TOP_PARTS:
         EDGE.append((ref, "T", cx_, along, depth, label))
-    top = 30 * H / 97                                      # bands grow in proportion
-    bot = 23 * H / 97
-    rf0 = W - 36
-    span = rf0 - 24
-    la0 = 24 + 0.52 * (span - 16)                          # Dev USB vs MCU split (both under 90 %)
-    la1 = la0 + 16
-    # panel cable tails (Waveshare drawing, back view, digital edge on the left) through slots at the
-    # panel's bottom edge: LCD 30-pin and touch 6-pin
-    # measured on the Waveshare board (gen_pcb.py SLOTS_FRONT): LCD 74-96 mm, 42.6-45.6 mm up; touch 34-42 mm, 49.6-52.6 mm up
+    top = 30 * H / 97                                      # power band
+    rf1 = 36.0                                             # RF column: left edge .. rf1
+    dig0 = W - 24                                          # digital-edge column: dig0 .. right edge
+    mcu0, mcu1 = 94.0, 130.0                               # module stays at x 100-128 (gen_pcb.py)
+    la_h = 14.0                                            # LA header strip along the bottom
+    span = dig0 - rf1
+    dev_h = 41.0                                           # Dev UARTs/programmer above the display supplies
+    col = top + 0.75 * (H - top)                           # digital-edge column split
+    # panel cable slots, measured on the Waveshare board (gen_pcb.py SLOTS_FRONT): LCD 74-96 mm, 42.6-45.6 mm
+    # up; touch 34-42 mm, 49.6-52.6 mm up (front view from the panel's left edge)
     FPC = [("LCD FPC", W - x0p - 85.0, 22, y0p + PANEL_H - 44.08), ("Touch FPC", W - x0p - 38.0, 8, y0p + PANEL_H - 51.08)]
-    BATTERY = (la1 + 8, y0p + 12, la1 + 48, y0p + 85)     # 2 x 18650 across the board, over the MCU area
+    BATTERY = (mcu0 + 2, y0p + 12, mcu0 + 42, y0p + 85)   # 2 x 18650 across the board, over the MCU area
     return {
-        "Power in + User UART": (24, 0, 24 + 0.22 * span, top, ["Power Input", "User USB-C"]),
-        "Charger + RTC": (24 + 0.22 * span, 0, 24 + 0.52 * span, top, ["Charger Battery", "RTC"]),
-        "Bucks + switches + monitors": (24 + 0.52 * span, 0, rf0, top, ["Power Rails", "Power Monitor"]),
-        "m1421 + RF (can 27.5)": (rf0, 0, W - 2, H / 2, ["M1421"]),
-        "GNSS (can 17.8)": (rf0, H / 2, W - 2, H, ["GPS"]),
-        "Dev USB (hub, FT2232H, RP2040)": (24, top, la0, H - bot, ["Dev USB Hub", "Dev UARTs", "Dev m1421 Programmer"]),
-        "LA header (vertical)": (la0, top, la1, H, ["Test Debug"]),
-        "MCU module": (la1, top, rf0, H - bot, ["MCU Module"]),
-        "Ethernet + USB host": (24, H - bot, 24 + 0.65 * (la0 - 24), H, ["Ethernet", "USB Host"]),
-        "Storage + expander + touch FPC": (24 + 0.65 * (la0 - 24), H - bot, la0, H, ["Storage Misc"]),
-        "Display supplies + LCD FPC": (la1, H - bot, rf0, H, ["Display Touch"]),
+        "Bucks + switches + monitors": (rf1, 0, rf1 + 0.48 * span, top, ["Power Rails", "Power Monitor"]),
+        "Charger + RTC": (rf1 + 0.48 * span, 0, rf1 + 0.78 * span, top, ["Charger Battery", "RTC"]),
+        "Power in + User UART": (rf1 + 0.78 * span, 0, dig0, top, ["Power Input", "User USB-C"]),
+        "m1421 + RF (can 27.5)": (2, 0, rf1, H / 2, ["M1421"]),
+        "GNSS (can 17.8)": (2, H / 2, rf1, H, ["GPS"]),
+        "Dev UARTs + m1421 programmer": (rf1, top, mcu0, top + dev_h, ["Dev UARTs", "Dev m1421 Programmer"]),
+        "Display supplies + LCD FPC": (rf1, top + dev_h, mcu0, H - la_h, ["Display Touch"]),
+        "MCU module + touch FPC": (mcu0, top, mcu1, H - la_h, ["MCU Module"]),
+        "LA header (along the bottom)": (rf1, H - la_h, mcu1, H, ["Test Debug"]),
+        "Dev hub + Ethernet + USB host": (mcu1, top, dig0, col, ["Dev USB Hub", "Ethernet", "USB Host"]),
+        "Storage + expander": (mcu1, col, dig0, H, ["Storage Misc"]),
     }
 
 
@@ -233,7 +237,7 @@ def svg(rows, ps, sizes):
     for hx, hy in HOLES:
         out.append(f'<circle cx="{hx * s}" cy="{hy * s}" r="{HOLE_KEEPOUT * s}" fill="#ccc" stroke="#555"/>')
     out.append(f'<text x="0" y="{H * s + 20}">ADSB_Test floorplan, component (bottom) side, {W:.0f} x {H:.0f} mm. '
-               f'Left = digital edge, right = RF edge. Dashed grey = panel outline on the other side. '
+               f'Left = RF edge, right = digital edge. Dashed grey = panel outline on the other side. '
                f'Fill = ({K} x small-part courtyards + {FIXED} x big parts) / zone area.</text>')
     out.append(f'<text x="0" y="{H * s + 36}">Green &lt; 75 %, yellow 75-90 %, red &gt; 90 %.</text></g></svg>')
     p = HERE / "floorplan.svg"

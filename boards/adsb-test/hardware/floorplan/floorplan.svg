@@ -2,38 +2,38 @@
 <g transform="translate(30,30)">
 <rect x="0" y="0" width="904.5" height="580.0" fill="#e8f3e8" stroke="#060" stroke-width="2"/>
 <rect x="40.0" y="40.0" width="824.5" height="500.0" fill="none" stroke="#999" stroke-dasharray="6,4"/>
-<rect x="512.74" y="100.0" width="200.0" height="365.0" fill="none" stroke="#c60" stroke-width="2" stroke-dasharray="10,5"/><text x="516.74" y="461.0" fill="#c60">2 x 18650 behind (parts here &lt;= 4 mm)</text>
-<rect x="120.0" y="0.0" width="132.99" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="124.0" y="14.0" font-weight="bold">Power in + User UART</text><text x="124.0" y="28.0">57 % full</text>
-<rect x="252.99" y="0.0" width="181.34999999999997" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="256.99" y="14.0" font-weight="bold">Charger + RTC</text><text x="256.99" y="28.0">69 % full</text>
-<rect x="434.34" y="0.0" width="290.1600000000001" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="438.34" y="14.0" font-weight="bold">Bucks + switches + monitors</text><text x="438.34" y="28.0">51 % full</text>
-<rect x="724.5" y="0.0" width="170.0" height="290.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="728.5" y="14.0" font-weight="bold">m1421 + RF (can 27.5)</text><text x="728.5" y="28.0">63 % full</text>
-<rect x="724.5" y="290.0" width="170.0" height="290.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="728.5" y="304.0" font-weight="bold">GNSS (can 17.8)</text><text x="728.5" y="318.0">25 % full</text>
-<rect x="120.0" y="179.3814432989691" width="272.74" height="263.0927835051546" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
-<text x="124.0" y="193.3814432989691" font-weight="bold">Dev USB (hub, FT2232H, RP2040)</text><text x="124.0" y="207.3814432989691">90 % full</text>
-<rect x="392.74" y="179.3814432989691" width="80.0" height="400.6185567010309" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="396.74" y="193.3814432989691" font-weight="bold">LA header (vertical)</text><text x="396.74" y="207.3814432989691">74 % full</text>
-<rect x="472.74" y="179.3814432989691" width="251.76000000000002" height="263.0927835051546" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="476.74" y="193.3814432989691" font-weight="bold">MCU module</text><text x="476.74" y="207.3814432989691">56 % full</text>
-<rect x="120.0" y="442.4742268041237" width="177.281" height="137.5257731958763" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
-<text x="124.0" y="456.4742268041237" font-weight="bold">Ethernet + USB host</text><text x="124.0" y="470.4742268041237">75 % full</text>
-<rect x="297.281" y="442.4742268041237" width="95.459" height="137.5257731958763" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
-<text x="301.281" y="456.4742268041237" font-weight="bold">Storage + expander + touch FPC</text><text x="301.281" y="470.4742268041237">56 % full</text>
-<rect x="472.74" y="442.4742268041237" width="251.76000000000002" height="137.5257731958763" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
-<text x="476.74" y="456.4742268041237" font-weight="bold">Display supplies + LCD FPC</text><text x="476.74" y="470.4742268041237">86 % full</text>
-<rect x="0.0" y="40.0" width="44.5" height="53.0" fill="#69c" stroke="#036"/><text x="3.0" y="70.5" fill="white" font-size="10">User USB-C</text>
-<rect x="0.0" y="99.58333333333334" width="44.5" height="53.0" fill="#69c" stroke="#036"/><text x="3.0" y="130.08333333333334" fill="white" font-size="10">Dev USB-C</text>
-<rect x="0.0" y="159.16666666666669" width="81.5" height="86.0" fill="#69c" stroke="#036"/><text x="3.0" y="206.16666666666669" fill="white" font-size="10">USB-A</text>
-<rect x="0.0" y="251.75" width="111.5" height="95.0" fill="#69c" stroke="#036"/><text x="3.0" y="303.25" fill="white" font-size="10">RJ45</text>
-<rect x="0.0" y="353.33333333333337" width="65.5" height="68.5" fill="#69c" stroke="#036"/><text x="3.0" y="391.5833333333333" fill="white" font-size="10">microSD</text>
-<rect x="0.0" y="428.4166666666667" width="47.0" height="57.0" fill="#69c" stroke="#036"/><text x="3.0" y="460.9166666666667" fill="white" font-size="10">POWER</text>
-<rect x="0.0" y="492.0" width="36.5" height="48.0" fill="#69c" stroke="#036"/><text x="3.0" y="520.0" fill="white" font-size="10">SLEEP</text>
-<rect x="830.0" y="40.0" width="74.5" height="41.0" fill="#69c" stroke="#036"/><text x="833.0" y="64.5" fill="white" font-size="10">SMA 1090/978</text>
-<rect x="830.0" y="499.0" width="74.5" height="41.0" fill="#69c" stroke="#036"/><text x="833.0" y="523.5" fill="white" font-size="10">SMA GNSS</text>
+<rect x="480.0" y="100.0" width="200.0" height="365.0" fill="none" stroke="#c60" stroke-width="2" stroke-dasharray="10,5"/><text x="484.0" y="461.0" fill="#c60">2 x 18650 behind (parts here &lt;= 4 mm)</text>
+<rect x="180.0" y="0.0" width="290.1600000000001" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="184.0" y="14.0" font-weight="bold">Bucks + switches + monitors</text><text x="184.0" y="28.0">51 % full</text>
+<rect x="470.1600000000001" y="0.0" width="181.35000000000005" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="474.1600000000001" y="14.0" font-weight="bold">Charger + RTC</text><text x="474.1600000000001" y="28.0">69 % full</text>
+<rect x="651.5100000000001" y="0.0" width="132.98999999999992" height="179.3814432989691" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="655.5100000000001" y="14.0" font-weight="bold">Power in + User UART</text><text x="655.5100000000001" y="28.0">57 % full</text>
+<rect x="10.0" y="0.0" width="170.0" height="290.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="14.0" y="14.0" font-weight="bold">m1421 + RF (can 27.5)</text><text x="14.0" y="28.0">63 % full</text>
+<rect x="10.0" y="290.0" width="170.0" height="290.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="14.0" y="304.0" font-weight="bold">GNSS (can 17.8)</text><text x="14.0" y="318.0">25 % full</text>
+<rect x="180.0" y="179.3814432989691" width="290.0" height="205.0" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
+<text x="184.0" y="193.3814432989691" font-weight="bold">Dev UARTs + m1421 programmer</text><text x="184.0" y="207.3814432989691">86 % full</text>
+<rect x="180.0" y="384.3814432989691" width="290.0" height="125.61855670103093" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
+<text x="184.0" y="398.3814432989691" font-weight="bold">Display supplies + LCD FPC</text><text x="184.0" y="412.3814432989691">82 % full</text>
+<rect x="470.0" y="179.3814432989691" width="180.0" height="330.6185567010309" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="474.0" y="193.3814432989691" font-weight="bold">MCU module + touch FPC</text><text x="474.0" y="207.3814432989691">63 % full</text>
+<rect x="180.0" y="510.0" width="470.0" height="70.0" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="184.0" y="524.0" font-weight="bold">LA header (along the bottom)</text><text x="184.0" y="538.0">72 % full</text>
+<rect x="650.0" y="179.3814432989691" width="134.50000000000003" height="300.46391752577324" fill="#fd7" fill-opacity="0.55" stroke="#333"/>
+<text x="654.0" y="193.3814432989691" font-weight="bold">Dev hub + Ethernet + USB host</text><text x="654.0" y="207.3814432989691">78 % full</text>
+<rect x="650.0" y="479.8453608247423" width="134.50000000000003" height="100.15463917525771" fill="#9d9" fill-opacity="0.55" stroke="#333"/>
+<text x="654.0" y="493.8453608247423" font-weight="bold">Storage + expander</text><text x="654.0" y="507.8453608247423">54 % full</text>
+<rect x="0.0" y="40.0" width="74.5" height="41.0" fill="#69c" stroke="#036"/><text x="3.0" y="64.5" fill="white" font-size="10">SMA 1090/978</text>
+<rect x="0.0" y="499.0" width="74.5" height="41.0" fill="#69c" stroke="#036"/><text x="3.0" y="523.5" fill="white" font-size="10">SMA GNSS</text>
+<rect x="860.0" y="40.0" width="44.5" height="53.0" fill="#69c" stroke="#036"/><text x="863.0" y="70.5" fill="white" font-size="10">User USB-C</text>
+<rect x="860.0" y="99.58333333333334" width="44.5" height="53.0" fill="#69c" stroke="#036"/><text x="863.0" y="130.08333333333334" fill="white" font-size="10">Dev USB-C</text>
+<rect x="823.0" y="159.16666666666669" width="81.5" height="86.0" fill="#69c" stroke="#036"/><text x="826.0" y="206.16666666666669" fill="white" font-size="10">USB-A</text>
+<rect x="793.0" y="251.75" width="111.5" height="95.0" fill="#69c" stroke="#036"/><text x="796.0" y="303.25" fill="white" font-size="10">RJ45</text>
+<rect x="839.0" y="353.33333333333337" width="65.5" height="68.5" fill="#69c" stroke="#036"/><text x="842.0" y="391.5833333333333" fill="white" font-size="10">microSD</text>
+<rect x="857.5" y="428.4166666666667" width="47.0" height="57.0" fill="#69c" stroke="#036"/><text x="860.5" y="460.9166666666667" fill="white" font-size="10">POWER</text>
+<rect x="868.0" y="492.0" width="36.5" height="48.0" fill="#69c" stroke="#036"/><text x="871.0" y="520.0" fill="white" font-size="10">SLEEP</text>
 <rect x="449.5" y="0.0" width="61.0" height="37.5" fill="#69c" stroke="#036"/><text x="452.5" y="22.75" fill="white" font-size="10">Wi-Fi</text>
 <rect x="384.5" y="314.6" width="110.0" height="10.0" fill="#a3c" fill-opacity="0.9"/><text x="384.5" y="309.6" fill="#a3c" font-weight="bold">LCD FPC slot (approx.)</text>
 <rect x="654.5" y="279.6" width="40.0" height="10.0" fill="#a3c" fill-opacity="0.9"/><text x="654.5" y="274.6" fill="#a3c" font-weight="bold">Touch FPC slot (approx.)</text>
@@ -41,5 +41,5 @@
 <circle cx="884.5" cy="20.0" r="17.5" fill="#ccc" stroke="#555"/>
 <circle cx="20.0" cy="560.0" r="17.5" fill="#ccc" stroke="#555"/>
 <circle cx="884.5" cy="560.0" r="17.5" fill="#ccc" stroke="#555"/>
-<text x="0" y="600.0">ADSB_Test floorplan, component (bottom) side, 181 x 116 mm. Left = digital edge, right = RF edge. Dashed grey = panel outline on the other side. Fill = (1.6 x small-part courtyards + 1.15 x big parts) / zone area.</text>
+<text x="0" y="600.0">ADSB_Test floorplan, component (bottom) side, 181 x 116 mm. Left = RF edge, right = digital edge. Dashed grey = panel outline on the other side. Fill = (1.6 x small-part courtyards + 1.15 x big parts) / zone area.</text>
 <text x="0" y="616.0">Green &lt; 75 %, yellow 75-90 %, red &gt; 90 %.</text></g></svg>
