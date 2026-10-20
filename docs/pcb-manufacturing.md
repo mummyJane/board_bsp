@@ -27,25 +27,31 @@ and recheck them against PCBWay's page at that point.
 Net classes are in `ADSB_Test.kicad_pro` and pair rules in `ADSB_Test.kicad_dru`, both written by
 `boards/adsb-test/hardware/gen/gen_netclasses.py`. KiCad finds the pairs from the `_P`/`_N` suffix.
 
-| Class | Nets | Target | In-pair skew | Other |
-|-------|------|--------|--------------|-------|
-| USB_90R | USB_HS, USER, DEV, P4_USJ, FT, RP, RP_HUB `_D_P/_D_N` | 90 Ω differential | 0.15 mm | uncoupled ≤ 3 mm |
-| MIPI_100R | DSI_CLK, DSI_D0, DSI_D1 `_P/_N` | 100 Ω differential | 0.1 mm | lanes matched to 1 mm, uncoupled ≤ 2 mm |
-| ETH_100R | ETH_TXP/TXN, ETH_RXP/RXN | 100 Ω differential | 0.5 mm | |
-| RF_50R | RF_ADSB_ANT, M1421_RF_978/1090, GPS_RF | 50 Ω CPW | — | no vias |
+| Class | Nets | Target | Width / gap | In-pair skew | Other |
+|-------|------|--------|-------------|--------------|-------|
+| USB_90R | USB_HS, USER, DEV, P4_USJ, FT, RP, RP_HUB `_D_P/_D_N` | 90 Ω differential | 0.22 / 0.15 mm | 0.15 mm | uncoupled ≤ 3 mm |
+| MIPI_100R | DSI_CLK, DSI_D0, DSI_D1 `_P/_N` | 100 Ω differential | 0.18 / 0.15 mm | 0.1 mm | lanes matched to 1 mm, uncoupled ≤ 2 mm |
+| ETH_100R | ETH_TX_P/_N, ETH_RX_P/_N | 100 Ω differential | 0.18 / 0.15 mm | 0.5 mm | |
+| RF_50R | RF_ADSB_ANT, M1421_RF_978/1090, GPS_RF, WIFI_ANT | 50 Ω CPWG | 0.32 mm, 0.20 mm gap to the ground pour | — | no vias; stitch the pour along both sides |
+| (single-ended RMII, ~50 Ω) | ETH_TXD/RXD/REF_CLK… | 50 Ω | 0.29 mm if it matters; short runs at 0.15 mm are fine | | |
 
-The widths/gaps in the net classes are starting values (4-layer 1.6 mm, about 0.2 mm prepreg to the
-L2 ground). **Recalculate them with PCBWay's stack-up before layout** and order impedance control.
+**Stack-up (PCBWay standard 4-layer 1.6 mm, <https://www.pcbway.com/multi-layer-laminated-structure.html>
+entry #1, read 2026-10-20):** 1 oz outer copper (0.5 oz + plating), **7628 prepreg 0.1855 mm** (Dk 4.74),
+1.1 mm core with 1 oz inner copper (Dk 4.6), 1 oz, 7628 0.1855 mm, 1 oz. Finished 1.61 mm. It is written into
+the board by `gen_pcb.py`. The widths above come from `python tools/impedance.py` (IPC-2141 microstrip /
+edge-coupled pair and Wadell CPWG closed forms, about ±10 %; solder mask takes off another 2–3 Ω). **Order
+impedance control** and give PCBWay the targets: they adjust the widths to their process. The routing layer
+is the bottom (B.Cu, component side) over In2.Cu, or the top over In1.Cu; both are the same geometry.
 
 ## Our design rules (start values, slightly conservative)
 
 | Rule | Value |
 |------|-------|
-| Default track / clearance | 0.15 mm / 0.15 mm (fine-pitch escape down to 0.1 / 0.1) |
+| Default track / clearance | 0.15 mm / 0.15 mm (fine-pitch escape down to the DRC minimum 0.127 / 0.127) |
 | Power tracks | sized for current; copper pours for VSYS / 5V / 3V3 |
-| Vias | 0.3 mm drill / 0.6 mm pad (0.25 / 0.5 for the P4 fan-out if needed) |
+| Vias | 0.3 mm drill / 0.6 mm pad (0.25 / 0.5 for the P4 fan-out if needed; DRC minimum 0.25 / 0.5) |
 | Silkscreen | 0.15 mm line, 1.0 mm text |
-| Board edge to copper | 0.3 mm |
+| Board edge to copper | 0.5 mm (DRC); 0.2 mm for the edge-mount RP-SMA J602 (custom rule) |
 
 ## Build plan: Rev 1 hand-assembled, PCBWay makes the bare PCB
 

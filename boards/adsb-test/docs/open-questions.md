@@ -7,7 +7,10 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
-| Q28 | Board outline after the floorplan check (docs/floorplan.md): panel centred with an even gap all round, cables through PCB slots, corner mounting holes, POWER switch on the digital edge | Proposed: **8 mm gap = 180.9 x 116 mm** (every zone <= 83 %). 6 mm (176.9 x 112) is borderline, 4 mm too tight |
+| Q28 | Board outline after the floorplan check (docs/floorplan.md): panel centred with an even gap all round, cables through PCB slots, corner mounting holes, POWER switch on the digital edge | Proposed: **8 mm gap = 180.9 x 116 mm** (every zone < 90 % in the 2026-10-20 layout). 6 mm (176.9 x 112) is borderline, 4 mm too tight. Layout has started on it: confirm |
+| Q29 | Panel FPC sockets: top- or bottom-contact? The tails fold back behind the panel and come up through the slots to sockets on the bottom side, so the contact side decides which part works | Assumed: J1302 FH12 **bottom contact** (as in the BOM), J1301 as in the schematic. Check the Waveshare board's two sockets (contact side, which way the latch opens) while the glass is off |
+| Q30 | Out-of-stock parts that set a footprint: FT2232HL (DigiKey due 2027-02), USB-A 0676432910 (marketplace only), ESD7351XV2T1G (no date) | Before routing those areas: check Mouser/LCSC, or pick an in-stock part with the same footprint (any LQFP-64 FT2232HL stock is fine; another through-hole USB-A with the same pattern; another SOD-523 low-capacitance RF ESD) |
+| Q31 | OSPTEK module footprint | Ours is drawn from OSPTEK's pin table and dimension drawing. Compare pad positions with OSPTEK's own PcbLib (github.com/osptek/esp32-p4c5-core-board) before ordering |
 | Q21 | Charger: TI's BQ25792 product page and datasheet return 404 (checked 2026-10-10), while the BQ25798 (same family, adds solar MPPT) is live. Switch to BQ25798? Confirm pin/register compatibility and I2C address from its datasheet | **Answered 2026-10-17: keep the BQ25798.** The BQ25792 datasheet (SLUSDG1C, Aug 2022) was found by hand: same 29-pin 4 × 4 mm QFN (RQM) with an identical pin-out, so the footprint and schematic fit either part. The BQ25798 (rev. June 2026) adds MPPT and backup mode and is the one in the BOM |
 
 ## Answered

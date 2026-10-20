@@ -6,8 +6,9 @@ Writes net_settings into ADSB_Test.kicad_pro and the custom rules file ADSB_Test
 
 Differential pairs are recognised by KiCad from the _P/_N (or P/N) name suffix, so USB pairs
 are named *_D_P / *_D_N, MIPI DSI_*_P / *_N, Ethernet ETH_TX_P/_N, ETH_RX_P/_N.
-Widths/gaps are STARTING VALUES for a 4-layer 1.6 mm board with ~0.2 mm prepreg to the L2 ground:
-recalculate them with PCBWay's stack-up / impedance calculator before layout (docs/pcb-manufacturing.md).
+Widths/gaps are for PCBWay's standard 4-layer 1.6 mm stack-up (outer layer over 0.1855 mm 7628 prepreg,
+Dk 4.74, 1 oz; stack-up written into the board by gen_pcb.py), from tools/impedance.py (IPC-2141 / CPWG closed
+forms, about +-10 %). Order impedance control: PCBWay trims the widths to hit the targets.
 """
 import json
 from pathlib import Path
@@ -27,10 +28,10 @@ def nc(name, track, clearance, dp_w=None, dp_gap=None, colour="rgba(0, 0, 0, 0.0
 
 CLASSES = [
     nc("Default", 0.15, 0.15, prio=2147483647),
-    nc("USB_90R", 0.20, 0.15, 0.20, 0.15, "rgb(0, 102, 204)", 1),      # USB 2.0 HS, 90 ohm differential
-    nc("MIPI_100R", 0.15, 0.15, 0.15, 0.20, "rgb(170, 0, 170)", 2),    # MIPI-DSI, 100 ohm differential
-    nc("ETH_100R", 0.15, 0.15, 0.15, 0.20, "rgb(210, 105, 0)", 3),     # 10/100 Ethernet MDI, 100 ohm differential
-    nc("RF_50R", 0.35, 0.20, colour="rgb(200, 0, 0)", prio=4),       # 50 ohm CPW to the SMAs (gap = CPW gap)
+    nc("USB_90R", 0.22, 0.15, 0.22, 0.15, "rgb(0, 102, 204)", 1),      # USB 2.0 HS, 90 ohm diff (W 0.22 / S 0.15)
+    nc("MIPI_100R", 0.18, 0.15, 0.18, 0.15, "rgb(170, 0, 170)", 2),    # MIPI-DSI, 100 ohm diff (W 0.18 / S 0.15)
+    nc("ETH_100R", 0.18, 0.15, 0.18, 0.15, "rgb(210, 105, 0)", 3),     # Ethernet MDI, 100 ohm diff (W 0.18 / S 0.15)
+    nc("RF_50R", 0.32, 0.20, colour="rgb(200, 0, 0)", prio=4),       # 50 ohm CPWG: W 0.32, gap 0.20 to ground pour
 ]
 PATTERNS = [
     ("USB_90R", "*_D_P"), ("USB_90R", "*_D_N"),

@@ -261,12 +261,50 @@ def outline(board):
     board.Add(t)
 
 
+# PCBWay standard 4-layer 1.6 mm stack-up (pcbway.com/multi-layer-laminated-structure.html, #1, read 2026-10-20):
+# 1 oz outer (0.5 oz + plating), 7628 prepreg 0.1855 mm after lamination (Dk 4.74), 1.1 mm core with 1 oz copper
+# (Dk 4.6). The pcbnew Python API cannot edit the stack-up, so it goes into the file's (setup) after saving.
+# Impedance widths for this stack-up: tools/impedance.py, net classes in gen_netclasses.py.
+STACKUP = """\t\t(stackup
+\t\t\t(layer "F.SilkS" (type "Top Silk Screen"))
+\t\t\t(layer "F.Paste" (type "Top Solder Paste"))
+\t\t\t(layer "F.Mask" (type "Top Solder Mask") (thickness 0.01))
+\t\t\t(layer "F.Cu" (type "copper") (thickness 0.035))
+\t\t\t(layer "dielectric 1" (type "prepreg") (thickness 0.1855) (material "7628") (epsilon_r 4.74) (loss_tangent 0.02))
+\t\t\t(layer "In1.Cu" (type "copper") (thickness 0.035))
+\t\t\t(layer "dielectric 2" (type "core") (thickness 1.03) (material "FR4") (epsilon_r 4.6) (loss_tangent 0.02))
+\t\t\t(layer "In2.Cu" (type "copper") (thickness 0.035))
+\t\t\t(layer "dielectric 3" (type "prepreg") (thickness 0.1855) (material "7628") (epsilon_r 4.74) (loss_tangent 0.02))
+\t\t\t(layer "B.Cu" (type "copper") (thickness 0.035))
+\t\t\t(layer "B.Mask" (type "Bottom Solder Mask") (thickness 0.01))
+\t\t\t(layer "B.Paste" (type "Bottom Solder Paste"))
+\t\t\t(layer "B.SilkS" (type "Bottom Silk Screen"))
+\t\t\t(copper_finish "ENIG")
+\t\t\t(dielectric_constraints yes)
+\t\t)
+"""
+
+
+def add_stackup():
+    text = PCB.read_bytes().decode("utf-8").replace("\r\n", "\n")
+    if "(stackup" not in text:
+        assert "\t(setup\n" in text, "no (setup) section in the board file"
+        text = text.replace("\t(setup\n", "\t(setup\n" + STACKUP, 1)
+    PCB.write_text(text, encoding="utf-8", newline="\n")
+
+
 def main():
     comps, pins = netlist()
     board = pcbnew.CreateEmptyBoard() if hasattr(pcbnew, "CreateEmptyBoard") else pcbnew.BOARD()
     board.SetCopperLayerCount(4)
     ds = board.GetDesignSettings()
     ds.SetBoardThickness(mm(1.6))
+    # PCBWay standard capabilities (docs/pcb-manufacturing.md): 0.127 mm track/space, 0.25 mm drill / 0.5 mm via
+    ds.m_TrackMinWidth = mm(0.127)
+    ds.m_MinClearance = mm(0.127)
+    ds.m_MinThroughDrill = mm(0.25)
+    ds.m_ViasMinSize = mm(0.5)
+    ds.m_ViasMinAnnularWidth = mm(0.125)
     outline(board)
 
     nets = {}
@@ -360,6 +398,7 @@ def main():
     if net_settings:
         d["net_settings"] = net_settings
         pro.write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8", newline="\n")
+    add_stackup()
     print(f"wrote {PCB.name}: {len(comps)} parts, {len(placed)} placed, {sum(len(v) for v in parked.values())} parked, "
           f"{len(nets)} nets")
 
