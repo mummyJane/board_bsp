@@ -90,6 +90,7 @@ Crystal,25MHz,,Abracon,ABM3-25.000MHZ-D2Y-T,DigiKey,535-10645-1-ND,0.56,13k,CL 1
 Crystal,32.768kHz,,Abracon,AB26TRB-32.768KHZ-T,DigiKey,535-AB26TRB-32.768KHZ-TCT-ND,0.65,23k,CL 12.5 pF -> 22 pF caps
 Conn_01x03,"2S Li-ion pack (BAT+, GND, NTC)",,JST,B3B-XH-A(LF)(SN),DigiKey,455-2248-ND,0.13,73k,mating: XHP-3 housing + SXH-001T-P0.6 crimps
 Conn_01x06,ADSBee 1421 Dev Kit,,Sullins,PRPC040SAAN-RC,DigiKey,S1011EC-40-ND,1.23,46k,40-pin breakaway strip: cut 6
+Conn_01x03,RP2040 SWD,,Sullins,PRPC040SAAN-RC,DigiKey,S1011EC-40-ND,1.23,46k,40-pin breakaway strip: cut 3 (or use the Dev Kit strip's offcut)
 Conn_01x06_MountingPin,Touch FPC 6p 0.5mm,,Hirose,FH12-6S-0.5SH(55),DigiKey,HFJ106CT-ND,1.91,0 (2000 due 2026-10-20),bottom contact
 Conn_01x30_MountingPin,LCD FPC 30p 0.5mm,,Hirose,FH12-30S-0.5SH(55),DigiKey,HFJ130CT-ND,2.64,7.6k,bottom contact (as reference P2)
 Conn_02x20_Odd_Even,Kingst LA5016 (2x20 keyed),,TE Connectivity,5103308-8,DigiKey,A33170-ND,3.80,495,40-pin shrouded (keyed) header

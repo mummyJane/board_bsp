@@ -9,6 +9,8 @@ project uses [Semantic Versioning](https://semver.org/) (see
 ## [Unreleased]
 
 ### Changed
+- ADSB_Test sleep: `bsp_sleep()` now also puts the three PAC1954 monitors into their 5 µA sleep mode and the GT911 touch controller to sleep (INT held low); `bsp_init()` wakes the monitors after a button wake-up (`bsp_power_after_wake()`, `bsp_power_monitors_sleep()`).
+- ADSB_Test Dev programmer: J1802 3-pin SWD header for the RP2040 (SWCLK, GND, SWDIO in the Pico order, for the Raspberry Pi Debug Probe); the test pads stay.
 - ADSB_Test: Ethernet MDI nets renamed ETH_TX_P/_N, ETH_RX_P/_N (and the disabled hub port HUB_DN2_N) to match the `_P`/`_N` pair naming used for USB and MIPI; ETH_100R patterns updated.
 - ADSB_Test PCB: panel-cable slots moved in to 30 mm from the panel's bottom edge (tails fold behind the panel and come through past the chip section, as on the Waveshare board); J1301/J1302 7 mm inside them facing the slots; module moved up above the sockets, LA header along the bottom edge, JTAG/Dev Kit/RP2040 headers re-placed. Provisional until the tails are measured.
 

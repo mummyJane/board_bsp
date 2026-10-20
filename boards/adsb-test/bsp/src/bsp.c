@@ -16,7 +16,7 @@ esp_err_t bsp_init(void)
         return ESP_OK;
     }
 
-    bsp_sleep_release_holds();      /* C5 reset held through deep sleep */
+    bsp_power_after_wake();         /* pin holds from bsp_sleep(), monitors back on */
 
     esp_chip_info_t info;
     esp_chip_info(&info);

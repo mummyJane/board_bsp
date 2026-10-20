@@ -804,10 +804,20 @@ for i in range(4):     # one 100 nF per buffer
     C(s, f"C{1811 + i}", "100nF", (393.7, 25.4 + i * 38.1), "3V3_DEV")
 for i, n in enumerate(("RP_SWCLK", "RP_SWDIO", "RP_RUN")):
     TP(s, f"TP{1801 + i}", n, (139.7 + i * 15.24, 228.6))
+# SWD header in the Raspberry Pi Pico order (SWCLK, GND, SWDIO): Raspberry Pi Debug Probe / Picoprobe plug straight on
+sw = s.add("Connector_Generic:Conn_01x03", "J1802", "RP2040 SWD", (165.1, 248.92),
+           footprint="Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+           props={"Pinout": "1 SWCLK, 2 GND, 3 SWDIO (Pico debug order); RUN on TP1803"})
+s.connect(sw, "1", "RP_SWCLK", kind="label")
+s.connect(sw, "3", "RP_SWDIO", kind="label")
+_end, _ = s._stub(sw, "2")         # middle GND: run the wire out past the label text so the symbol clears them
+s.wire(_end, (_end[0] - 20.32, _end[1]))
+s.power("GND", (_end[0] - 20.32, _end[1]))
 s.text("DEV PORT, page 3 of 3: RP2040 + W25Q16 on hub port DN4, running the STOCK ADSBee 1421 Programmer\n"
        "(RP2040-Zero pin-out: GPIO26 ~SRST, 27 SYNC, 28 TX, 29 RX, 16 WS2812 status). The m1421 lines go through\n"
        "Dev-powered 74LVC1G125s into the target's LVC logic (no back-powering). Remove R1808/R1809 for a console-only\n"
-       "port. Spare GPIOs on J1801 (holes = test points); R1812/R1813 (DNP) put I2C0 on the board I2C bus.",
+       "port. Spare GPIOs on J1801 (holes = test points); R1812/R1813 (DNP) put I2C0 on the board I2C bus.\n"
+       "J1802 SWD (SWCLK, GND, SWDIO as on the Pico) for the Raspberry Pi Debug Probe; RUN on TP1803.",
        (25.4, 266.7))
 done(s, "dev_prog.kicad_sch", "ADSB_Test - Dev m1421 Programmer")
 
