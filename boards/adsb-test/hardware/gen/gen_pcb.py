@@ -12,8 +12,21 @@ Run with KiCad's own Python (it needs the pcbnew module):
   keeps working and the ratsnest shows. Parts not placed here are parked beside the board, grouped
   by sheet, for manual placement.
 
-Re-running OVERWRITES ADSB_Test.kicad_pcb. Once layout work starts in KiCad, stop re-running it
-(or only use it on a copy).
+All placement data is in the arrays at the top of this file:
+  EDGE_LEFT / EDGE_RIGHT / EDGE_TOP   connectors and switches on the board edges (spread automatically)
+  BIG                                 big parts (module, cans, sockets, headers), body centred on (bx, by)
+  SLOTS_FRONT                         panel-cable slots (panel front-view coordinates)
+  PLACE                               one list per schematic page: ("REF", bx, by, rotation)
+      * bx, by = footprint ORIGIN in bottom-view mm from the board corner (bx from the left/RF edge,
+        by down from the top edge); rotation = the orientation KiCad shows for the (bottom-side) part.
+      * Uncommented lines are placed; commented lines are parked beside the board.
+      * In KiCad the grid/aux origin is set to that corner, so with "relative to grid origin"
+        coordinates X reads -bx and Y reads by.
+      * dump_placement.py (KiCad's Python) reads the saved PCB and rewrites the PLACE block, so parts moved
+        in KiCad can be kept: `... python.exe boards/adsb-test/hardware/gen/dump_placement.py --write`.
+
+Re-running OVERWRITES ADSB_Test.kicad_pcb. Before re-running after moving parts in KiCad, run
+dump_placement.py --write so the moves are kept.
 """
 import collections
 import json
@@ -39,35 +52,15 @@ PAPER = ("A2", 594.0, 420.0)        # page: board centred, parked parts in colum
 OX, OY = (PAPER[1] - W) / 2, (PAPER[2] - H) / 2   # board top-left corner on the KiCad page
 HOLE_IN = 4.0                       # corner hole centres, mm in from both edges
 
+# ================================================================ PLACEMENT ARRAYS (bottom view, mm)
+# Edge parts: (ref, size along the edge). Spread evenly between the corner-hole keep-outs (same as floorplan.py).
+# Bottom view: RF edge on the left, digital edge on the right (nearer the module) since 2026-10-20.
+EDGE_LEFT = [("J1403", 50), ("J1201", 25)]
+EDGE_RIGHT = [("J901", 10.6), ("J1001", 10.6), ("J1101", 17.2), ("J801", 19.0), ("J1501", 13.7), ("SW401", 11.4),
+              ("SW603", 9.6)]
+# Top long edge: (ref, bottom-view x of the part's centre)
+EDGE_TOP = [("J602", PX0 + 88.0)]     # Wi-Fi RP-SMA, away from the RF-edge SMAs
 
-def mm(v):
-    return pcbnew.FromMM(v)
-
-
-def top(bx, by):
-    """bottom-view (bx, by) -> KiCad top-view point (mirror in x)."""
-    return pcbnew.VECTOR2I(mm(OX + W - bx), mm(OY + by))
-
-
-# ---------------------------------------------------------------- placements (bottom view, mm)
-def edge_positions():
-    """Same spread as floorplan.py: connectors evenly spaced between the corner-hole keep-outs.
-    Bottom view: RF edge on the left, digital edge on the right (nearer the module) since 2026-10-20."""
-    left = [("J1403", 8.2), ("J1201", 8.2)]
-    right = [("J901", 10.6), ("J1001", 10.6), ("J1101", 17.2), ("J801", 19.0), ("J1501", 13.7), ("SW401", 11.4), ("SW603", 9.6)]
-    out = {}
-    for side, items in (("L", left), ("R", right)):
-        lo, hi = HOLE_IN + 4.0, H - HOLE_IN - 4.0
-        gap = (hi - lo - sum(a for _, a in items)) / (len(items) - 1)
-        y = lo
-        for ref, along in items:
-            out[ref] = (side, y + along / 2)
-            y += along + gap
-    out["J602"] = ("T", PX0 + 88.0)   # Wi-Fi RP-SMA on the top long edge, away from the RF-edge SMAs (by = bx here)
-    return out
-
-
-EDGE = edge_positions()
 # interior big parts: ref -> (bx, by, mouth) ; mouth = direction the connector opening faces (bottom view).
 # Parts tied to the panel (module, sockets) are given from the panel corner (PX0, PY0); parts tied to an edge
 # keep their distance from that edge.
@@ -86,7 +79,7 @@ BIG = {
     "SW1801": (PX0 + 54.0, PY0 + 37.0, None),  # RP2040 BOOTSEL (Dev zone)
     "J601": (PX0 + 88.0, 10.5, None),       # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
     "J1401": (30.9, 56.0, None),            # m1421 JTAG (below the m1421 can)
-    "J1402": (40.9, 14.0, None),            # ADSBee Dev Kit header (1x6, vertical, next to the m1421)
+    "J1402": (40.9, 30.0, None),            # ADSBee Dev Kit header (1x6, vertical, next to the m1421)
     "J1801": (PX0 + 37.0, PY0 + 48.0, None),   # RP2040 GPIO header (DNP)
 }
 # Panel-cable slots, measured on the Waveshare ESP32-P4-WIFI6-Touch-LCD-7B (2026-10-20), back view, from its
@@ -101,11 +94,605 @@ WS_W, WS_EDGE = 164.0, 1.58
 SLOTS_FRONT = [("LCD FPC slot", WS_W - 90.0, WS_W - 68.0, 41.0 + WS_EDGE, 3.0),
                ("Touch FPC slot", WS_W - 130.0, WS_W - 122.0, 48.0 + WS_EDGE, 3.0)]
 SOCKET_GAP = 7.0                       # slot centre -> socket centre, further in (towards the panel's middle)
+
+# Zone packer (floorplan.py zones): off now that PLACE lists every part. Set True to pack the key parts that are
+# still commented out in PLACE into their zones (handy to seed a new layout, then dump_placement.py --write).
+AUTO_ZONES = False
+AUTO_PREFIX = ("U", "J", "SW", "Y", "BT")   # + LEDs
+SPACE = 1.25                         # mm kept clear round each courtyard (2.5 mm between parts: room for the iron)
+
+# One list per schematic page: ("REF", bx, by, rotation). Uncommented = placed, commented = parked.
+# Parts placed by EDGE_* / BIG and the corner holes are listed as comments for reference only.
+# >>> PLACE (rewritten by dump_placement.py --write; edit freely, keep the markers)
+PLACE = {
+    # ------------------------------------------------ page 2: Power Input
+    "Power Input": [
+        ("U201", 156.48, 4.42, 180),         # STUSB4500QTR
+        # ("Q201", -50.41, 79.82, 180),      # FDS9435A
+        # ("D202", -36.76, 78.74, 180),      # SS34
+        # ("RS201", -79.11, 78.69, 180),     # 20m
+        # ("R201", -57.51, 77.94, 180),      # 1k
+        # ("R202", -62.76, 77.94, 180),      # 10k
+        # ("R203", -68.01, 77.94, 180),      # 100k
+        # ("R204", -73.26, 77.94, 180),      # 10k
+        # ("C202", -13.90, 77.97, 180),      # 1uF
+        # ("C203", -19.21, 77.97, 180),      # 1uF
+        # ("C204", -24.52, 77.97, 180),      # 1uF 25V
+        # ("C205", -29.83, 77.97, 180),      # 10uF 25V
+        # ("TP201", -13.27, 85.32, 180),     # PD_ATTACH
+        # ("TP202", -17.32, 85.32, 180),     # VBUS_USER
+        # ("JP201", -43.51, 78.24, 180),     # Dev VBUS -> charger (default open)
+    ],
+    # ------------------------------------------------ page 3: Charger Battery
+    "Charger Battery": [
+        ("U301", 116.66, 9.75, 180),         # BQ25798
+        ("U302", 145.91, 10.04, 180),        # MCP1703 3.0V (2 uA Iq)
+        ("D301", 130.76, 2.25, 180),         # CHG (amber)
+        # ("D302", -56.85, -116.31, 180),    # BAT43W
+        # ("D303", -63.15, -116.31, 180),    # BAT43W
+        # ("L301", -71.54, -113.92, 180),    # 2.2uH
+        # J301: placed by BIG  (2S Li-ion pack (BAT+, GND, NTC))
+        ("BT301", 140.43, 4.68, 180),        # CR1220 (optional)
+        # ("RS301", -40.72, -107.12, 180),   # 10m
+        # ("RS302", -47.17, -107.12, 180),   # 10m
+        # ("R301", -79.39, -116.52, 180),    # 8.2k 1%
+        # ("R302", -13.87, -107.87, 180),    # 10k
+        # ("R303", -19.12, -107.87, 180),    # 5.23k 1%
+        # ("R304", -24.37, -107.87, 180),    # 30.1k 1%
+        # ("R305", -29.62, -107.87, 180),    # 100R
+        # ("R306", -34.87, -107.87, 180),    # 2.2k
+        # ("C301", -13.90, -120.00, 180),    # 47nF
+        # ("C302", -19.21, -120.00, 180),    # 47nF
+        # ("C303", -24.52, -120.00, 180),    # 10uF 25V
+        # ("C304", -29.83, -120.00, 180),    # 10uF 25V
+        # ("C305", -35.14, -120.00, 180),    # 10uF 25V
+        # ("C306", -40.45, -120.00, 180),    # 10uF 25V
+        # ("C307", -45.76, -120.00, 180),    # 10uF 25V
+        # ("C308", -51.07, -120.00, 180),    # 100nF 25V
+        # ("C309", -56.38, -120.00, 180),    # 4.7uF 10V
+        # ("C310", -61.69, -120.00, 180),    # 10uF 25V
+        # ("C311", -67.00, -120.00, 180),    # 10uF 25V
+        # ("C312", -72.31, -120.00, 180),    # 10uF 25V
+        # ("C313", -77.62, -120.00, 180),    # 10uF 25V
+        # ("C314", -13.90, -116.49, 180),    # 10uF 25V
+        # ("C315", -19.21, -116.49, 180),    # 100nF 25V
+        # ("C316", -24.52, -116.49, 180),    # 10uF 25V
+        # ("C317", -29.83, -116.49, 180),    # 10uF 25V
+        # ("C318", -35.14, -116.49, 180),    # 1nF 50V
+        # ("C319", -40.45, -116.49, 180),    # 1uF 25V
+        # ("C320", -45.76, -116.49, 180),    # 1uF
+        # ("C321", -51.07, -116.49, 180),    # 1uF
+        # ("TP301", -52.42, -107.57, 180),   # CHG_QON
+        # ("TP302", -56.47, -107.57, 180),   # BAT_PACK
+        # ("TP303", -60.52, -107.57, 180),   # VSYS
+        # ("TP304", -64.57, -107.57, 180),   # VBUS_CHG
+        # ("TP305", -68.62, -107.57, 180),   # VBACKUP
+    ],
+    # ------------------------------------------------ page 4: Power Rails
+    "Power Rails": [
+        ("U411", 69.61, 2.59, 180),          # TPS62933
+        ("U421", 63.11, 2.59, 180),          # TPS62933
+        ("U430", 98.94, 3.09, 180),          # TPS22917
+        ("U431", 91.44, 3.09, 180),          # TPS22917
+        ("U432", 83.94, 3.09, 180),          # TPS22917
+        ("U433", 76.44, 3.09, 180),          # TPS22917
+        # ("L411", -49.78, 119.33, 180),     # 4.7uH
+        # ("L421", -58.33, 119.33, 180),     # 4.7uH
+        # SW401: placed by EDGE_RIGHT  (POWER (slide))
+        # ("RS401", -51.22, 125.43, 180),    # 10m
+        # ("RS402", -57.67, 125.43, 180),    # 20m
+        # ("RS403", -64.12, 125.43, 180),    # 50m
+        # ("RS404", -70.57, 125.43, 180),    # 50m
+        # ("RS405", -77.02, 125.43, 180),    # 100m
+        # ("RS406", -14.47, 129.81, 180),    # 100m
+        # ("RS407", -20.92, 129.81, 180),    # 1R
+        # ("RS408", -27.37, 129.81, 180),    # 1R
+        # ("RS409", -33.82, 129.81, 180),    # 100m
+        # ("R411", -65.23, 117.43, 180),     # 100k
+        # ("R412", -70.48, 117.43, 180),     # 28k
+        # ("R413", -75.73, 117.43, 180),     # 52.3k 1%
+        # ("R414", -13.87, 124.68, 180),     # 10k 1%
+        # ("R423", -19.12, 124.68, 180),     # 31.6k 1%
+        # ("R424", -24.37, 124.68, 180),     # 10k 1%
+        # ("R430", -29.62, 124.68, 180),     # 100R
+        # ("R431", -34.87, 124.68, 180),     # 100R
+        # ("R432", -40.12, 124.68, 180),     # 100R
+        # ("R433", -45.37, 124.68, 180),     # 100R
+        # ("C411", -13.90, 113.61, 180),     # 10uF 25V
+        # ("C412", -19.21, 113.61, 180),     # 10uF 25V
+        # ("C413", -24.52, 113.61, 180),     # 100nF
+        # ("C414", -29.83, 113.61, 180),     # 33nF
+        # ("C415", -35.14, 113.61, 180),     # 100nF
+        # ("C416", -41.05, 113.78, 180),     # 22uF 10V
+        # ("C417", -47.56, 113.78, 180),     # 22uF 10V
+        # ("C421", -53.47, 113.61, 180),     # 10uF 25V
+        # ("C422", -58.78, 113.61, 180),     # 10uF 25V
+        # ("C423", -64.09, 113.61, 180),     # 100nF
+        # ("C424", -69.40, 113.61, 180),     # 33nF
+        # ("C425", -74.71, 113.61, 180),     # 100nF
+        # ("C426", -14.50, 117.63, 180),     # 22uF 10V
+        # ("C427", -21.01, 117.63, 180),     # 22uF 10V
+        # ("C430", -26.92, 117.46, 180),     # 1nF
+        # ("C431", -32.23, 117.46, 180),     # 1nF
+        # ("C432", -37.54, 117.46, 180),     # 1nF
+        # ("C433", -42.85, 117.46, 180),     # 1nF
+        # ("TP401", -39.07, 129.36, 180),    # 5V
+        # ("TP402", -43.12, 129.36, 180),    # 3V3
+        # ("TP403", -47.17, 129.36, 180),    # VSYS
+        # ("TP410", -51.22, 129.36, 180),    # 5V_SDR
+        # ("TP411", -55.27, 129.36, 180),    # 5V_LCD
+        # ("TP412", -59.32, 129.36, 180),    # 3V3_MCU
+        # ("TP413", -63.37, 129.36, 180),    # 3V3_SD
+        # ("TP414", -67.42, 129.36, 180),    # 3V3_ETH
+        # ("TP415", -71.47, 129.36, 180),    # 3V3_GPS
+        # ("TP416", -75.52, 129.36, 180),    # 3V3_M1421
+        # ("TP417", -79.57, 129.36, 180),    # 3V3_PERIPH
+    ],
+    # ------------------------------------------------ page 5: Power Monitor
+    "Power Monitor": [
+        ("U501", 55.74, 3.90, 180),          # PAC1954 (PM1)
+        ("U502", 47.74, 3.90, 180),          # PAC1954 (PM2)
+        ("U503", 68.74, 9.40, 180),          # PAC1954 (PM3)
+        # ("R501", -29.80, 99.57, 180),      # 0R (0x10)
+        # ("R502", -35.05, 99.57, 180),      # 499R 1% (0x11)
+        # ("R503", -40.30, 99.57, 180),      # 806R 1% (0x12)
+        # ("R504", -45.55, 99.57, 180),      # 10k
+        # ("C501", -13.90, 99.60, 180),      # 100nF
+        # ("C502", -19.21, 99.60, 180),      # 100nF
+        # ("C503", -24.52, 99.60, 180),      # 100nF
+    ],
+    # ------------------------------------------------ page 6: MCU Module
+    "MCU Module": [
+        # U601: placed by BIG  (ESP32-P4C5 Core (OSPTEK))
+        ("Y601", 108.48, 46.04, 180),        # 32.768kHz
+        # J601: placed by BIG  (U.FL Wi-Fi (from module IPEX))
+        # J602: placed by EDGE_TOP  (RP-SMA Wi-Fi 2.4/5 GHz)
+        # SW601: placed by BIG  (BOOT)
+        # SW602: placed by BIG  (RESET)
+        # SW603: placed by EDGE_RIGHT  (SLEEP/WAKE)
+        # ("R601", -64.06, 59.53, 180),      # 10M
+        # ("R602", -69.31, 59.53, 180),      # 2.2k
+        # ("R603", -74.56, 59.53, 180),      # 2.2k
+        # ("R604", -79.81, 59.53, 180),      # 4.7k
+        # ("R605", -13.87, 63.38, 180),      # 10k
+        # ("R606", -19.12, 63.38, 180),      # 330R
+        # ("R607", -24.37, 63.38, 180),      # 10k
+        # ("R608", -29.62, 63.38, 180),      # 10k
+        # ("R609", -34.87, 63.38, 180),      # 470R
+        # ("C601", -14.50, 59.74, 180),      # 22uF 10V
+        # ("C602", -21.01, 59.74, 180),      # 22uF 10V
+        # ("C603", -26.92, 59.56, 180),      # 100nF
+        # ("C604", -32.23, 59.56, 180),      # 1uF
+        # ("C605", -37.54, 59.56, 180),      # 22pF
+        # ("C606", -42.85, 59.56, 180),      # 22pF
+        # ("C607", -48.16, 59.56, 180),      # 1uF
+        # ("C608", -53.47, 59.56, 180),      # 100nF
+        # ("C609", -58.78, 59.56, 180),      # 100nF
+        # ("TP601", -39.52, 63.69, 180),     # C5_IO27
+        # ("TP602", -43.57, 63.69, 180),     # C5_IO25
+        # ("TP603", -47.62, 63.69, 180),     # C5_IO24
+        # ("TP604", -51.67, 63.69, 180),     # C5_IO23
+        # ("TP605", -55.72, 63.69, 180),     # C5_IO6
+        # ("TP606", -59.77, 63.69, 180),     # C5_IO5
+        # ("TP607", -63.82, 63.69, 180),     # C5_IO4
+        # ("TP608", -67.87, 63.69, 180),     # SLEEP_WAKE
+        # ("TP609", -71.92, 63.69, 180),     # P4_GPIO20
+        # ("TP610", -75.97, 63.69, 180),     # P4_GPIO36
+        # ("TP611", -80.02, 63.69, 180),     # C5_PU
+    ],
+    # ------------------------------------------------ page 7: RTC
+    "RTC": [
+        ("U701", 136.91, 11.00, 180),        # DS3231M
+        # ("R701", -24.49, 143.94, 180),     # 10k
+        # ("C701", -13.90, 143.97, 180),     # 100nF
+        # ("C702", -19.21, 143.97, 180),     # 100nF
+        # ("TP701", -29.14, 144.24, 180),    # RTC_INT
+    ],
+    # ------------------------------------------------ page 8: Ethernet
+    "Ethernet": [
+        ("U801", 176.48, 59.42, 180),        # LAN8720A
+        # ("FB801", -69.45, 4.43, 180),      # 600R@100MHz
+        ("Y801", 166.01, 62.90, 180),        # 25MHz
+        # J801: placed by EDGE_RIGHT  (HR911105A)
+        # ("R801", -74.78, 4.53, 180),       # 12.1k 1%
+        # ("R802", -80.03, 4.53, 180),       # 10k
+        # ("R803", -13.87, 8.38, 180),       # 10k
+        # ("R804", -19.12, 8.38, 180),       # 10k
+        # ("R805", -24.37, 8.38, 180),       # 1.5k
+        # ("R806", -29.62, 8.38, 180),       # 10k
+        # ("R807", -34.87, 8.38, 180),       # 33R
+        # ("R808", -40.12, 8.38, 180),       # 49.9R 1%
+        # ("R809", -45.37, 8.38, 180),       # 49.9R 1%
+        # ("R810", -50.62, 8.38, 180),       # 49.9R 1%
+        # ("R811", -55.87, 8.38, 180),       # 49.9R 1%
+        # ("R812", -61.12, 8.38, 180),       # 270R
+        # ("R813", -66.37, 8.38, 180),       # 270R
+        # ("R814", -71.62, 8.38, 180),       # 10k
+        # ("R815", -76.87, 8.38, 180),       # 10k
+        # ("R816", -13.87, 11.83, 180),      # 10k
+        # ("C801", -14.50, 4.74, 180),       # 10uF
+        # ("C802", -20.41, 4.56, 180),       # 100nF
+        # ("C803", -26.32, 4.74, 180),       # 10uF
+        # ("C804", -32.23, 4.56, 180),       # 100nF
+        # ("C805", -37.54, 4.56, 180),       # 100nF
+        # ("C806", -42.85, 4.56, 180),       # 1uF
+        # ("C807", -48.16, 4.56, 180),       # 470pF
+        # ("C808", -53.47, 4.56, 180),       # 27pF
+        # ("C809", -58.78, 4.56, 180),       # 27pF
+        # ("C810", -64.09, 4.56, 180),       # 22nF
+        # ("TP801", -18.52, 12.13, 180),     # ETH_REF_CLK
+        # ("TP802", -22.57, 12.13, 180),     # ETH_1V2
+    ],
+    # ------------------------------------------------ page 9: User USB-C
+    "User USB-C": [
+        ("U901", 156.51, 13.40, 180),        # CP2102N-A02-GQFN24
+        ("U902", 177.21, 3.09, 180),         # USBLC6-2SC6
+        ("D901", 170.26, 2.25, 180),         # TX green
+        ("D902", 177.76, 18.25, 180),        # RX yellow
+        # ("D903", -31.45, 216.26, 180),     # SMAJ20A
+        # J901: placed by EDGE_RIGHT  (User USB-C (PD sink + UART))
+        # ("R901", -38.40, 215.46, 180),     # 22.1k
+        # ("R902", -43.65, 215.46, 180),     # 47.5k
+        # ("R903", -48.90, 215.46, 180),     # 10k
+        # ("R904", -54.15, 215.46, 180),     # 1k
+        # ("R905", -59.40, 215.46, 180),     # 1k
+        # ("C901", -13.90, 215.50, 180),     # 1uF
+        # ("C902", -19.21, 215.50, 180),     # 100nF
+        # ("C903", -24.52, 215.50, 180),     # 10uF 25V
+    ],
+    # ------------------------------------------------ page 10: Dev USB Hub
+    "Dev USB Hub": [
+        ("U1001", 154.21, 47.09, 180),       # USBLC6-2SC6
+        ("U1002", 146.73, 47.09, 180),       # AP2112K-3.3
+        ("U1003", 175.51, 49.40, 180),       # USB2514B
+        ("Y1001", 164.01, 47.40, 180),       # 24MHz
+        # J1001: placed by EDGE_RIGHT  (Dev USB-C)
+        # ("R1001", -78.79, -67.89, 180),    # 5.1k
+        # ("R1002", -13.87, -64.04, 180),    # 5.1k
+        # ("R1003", -19.12, -64.04, 180),    # 10k
+        # ("R1004", -24.37, -64.04, 180),    # 10k
+        # ("R1005", -29.62, -64.04, 180),    # 10k
+        # ("R1006", -34.87, -64.04, 180),    # 10k
+        # ("R1007", -40.12, -64.04, 180),    # 10k
+        # ("R1008", -45.37, -64.04, 180),    # 10k
+        # ("R1009", -50.62, -64.04, 180),    # 12k 1%
+        # ("R1010", -55.87, -64.04, 180),    # 10k
+        # ("R1011", -61.12, -64.04, 180),    # 100k
+        # ("R1012", -66.37, -64.04, 180),    # 100k
+        # ("R1013", -71.62, -64.04, 180),    # 1M
+        # ("C1001", -13.90, -67.86, 180),    # 1uF
+        # ("C1002", -19.81, -67.69, 180),    # 10uF
+        # ("C1003", -25.72, -67.86, 180),    # 1uF
+        # ("C1004", -31.03, -67.86, 180),    # 1uF
+        # ("C1005", -36.34, -67.86, 180),    # 100nF
+        # ("C1006", -41.65, -67.86, 180),    # 27pF
+        # ("C1007", -46.96, -67.86, 180),    # 27pF
+        # ("C1008", -52.27, -67.86, 180),    # 100nF
+        # ("C1009", -57.58, -67.86, 180),    # 100nF
+        # ("C1010", -62.89, -67.86, 180),    # 100nF
+        # ("C1011", -68.20, -67.86, 180),    # 100nF
+        # ("C1012", -73.51, -67.86, 180),    # 4.7uF
+        # ("TP1001", -76.27, -63.74, 180),   # VBUS_DEV
+        # ("TP1002", -80.32, -63.74, 180),   # 3V3_DEV
+    ],
+    # ------------------------------------------------ page 11: USB Host
+    "USB Host": [
+        ("U1101", 164.86, 55.04, 180),       # TPS259621DDA
+        ("U1102", 154.21, 53.59, 180),       # USBLC6-2SC6
+        # J1101: placed by EDGE_RIGHT  (USB-A (SDR hub))
+        # ("R1101", -40.75, 196.31, 180),    # 604R 1%
+        # ("R1102", -46.00, 196.31, 180),    # 402k 1%
+        # ("R1103", -51.25, 196.31, 180),    # 10k
+        # ("R1104", -56.50, 196.31, 180),    # 100k
+        # ("C1101", -13.90, 196.35, 180),    # 10nF
+        # ("C1102", -19.21, 196.35, 180),    # 1uF
+        # ("C1103", -27.34, 198.92, 180),    # 150uF 10V
+        # ("C1104", -35.47, 196.35, 180),    # 100nF
+        # ("TP1101", -61.15, 196.62, 180),   # VBUS_HOST
+        # ("TP1102", -65.20, 196.62, 180),   # USBA_FAULT
+    ],
+    # ------------------------------------------------ page 12: GPS
+    "GPS": [
+        # U1201: placed by BIG  (MAX-M10S)
+        # ("D1201", -35.71, 26.13, 180),     # ESD7351XV2T1G
+        ("D1202", 36.86, 72.25, 180),        # PPS green
+        # ("L1201", -40.49, 26.28, 180),     # 47nH
+        # J1201: placed by EDGE_LEFT  (SMA GNSS (active antenna))
+        # SH1201: placed by BIG  (RF can frame (DNP))
+        # ("R1201", -45.82, 26.38, 180),     # 10R
+        # ("R1202", -51.07, 26.38, 180),     # 1k
+        # ("C1201", -14.50, 26.58, 180),     # 10uF
+        # ("C1202", -20.41, 26.41, 180),     # 100nF
+        # ("C1203", -25.72, 26.41, 180),     # 100nF
+        # ("C1204", -31.03, 26.41, 180),     # 10nF
+        # ("TP1201", -55.72, 26.68, 180),    # GPS_EXTINT
+        # ("TP1202", -59.77, 26.68, 180),    # GPS_SAFEBOOT
+        # ("TP1203", -63.82, 26.68, 180),    # GPS_RESET_N
+        # ("TP1204", -67.87, 26.68, 180),    # GPS_PPS
+    ],
+    # ------------------------------------------------ page 13: Display Touch
+    "Display Touch": [
+        ("U1301", 94.83, 96.69, 180),        # AP3012KTR-E1
+        ("U1302", 87.33, 96.69, 180),        # AP2112K-1.8
+        ("U1303", 102.31, 96.69, 180),       # AP3032KTR-G1
+        # ("D1301", -73.47, -23.53, 180),    # 1N5819HW
+        # ("D1302", -14.72, -18.85, 180),    # BAT54S
+        # ("D1303", -21.17, -19.68, 180),    # BZT52C7V5S
+        # ("D1304", -27.67, -18.85, 180),    # BAT54S
+        # ("D1305", -34.12, -19.68, 180),    # BZT52C18S
+        # ("D1306", -40.26, -19.68, 180),    # 1N5819HW
+        # ("L1301", -46.74, -18.58, 180),    # 10uH
+        # ("L1302", -53.35, -18.58, 180),    # 10uH 0.55A
+        # J1301: placed by BIG  (LCD FPC 30p 0.5mm)
+        # J1302: placed by BIG  (Touch FPC 6p 0.5mm)
+        # ("R1301", -59.28, -19.88, 180),    # 10k
+        # ("R1302", -64.53, -19.88, 180),    # 22k 1%
+        # ("R1303", -69.78, -19.88, 180),    # 3.3k 1%
+        # ("R1304", -75.03, -19.88, 180),    # 220R 1%
+        # ("R1305", -13.87, -13.83, 180),    # 51k 1%
+        # ("R1306", -19.12, -13.83, 180),    # 220R 1%
+        # ("R1307", -24.37, -13.83, 180),    # 51k 1%
+        # ("R1308", -29.62, -13.83, 180),    # 2k 1%
+        # ("R1309", -34.87, -13.83, 180),    # 1k 1%
+        # ("R1310", -40.12, -13.83, 180),    # 100k
+        # ("R1311", -45.37, -13.83, 180),    # 0R
+        # ("R1312", -50.62, -13.83, 180),    # 5.1k 1%
+        # ("R1313", -56.47, -13.65, 180),    # 1.3R 1%
+        # ("R1314", -62.32, -13.83, 180),    # 68k
+        # ("R1315", -67.57, -13.83, 180),    # 10k
+        # ("R1316", -72.82, -13.83, 180),    # 0R
+        # ("R1317", -78.07, -13.83, 180),    # 10k
+        # ("R1318", -13.87, -10.02, 180),    # 10k
+        # ("R1319", -19.12, -10.02, 180),    # 0R
+        # ("R1320", -24.37, -10.02, 180),    # 10k
+        # ("R1321", -29.62, -10.02, 180),    # 0R
+        # ("R1322", -34.87, -10.02, 180),    # 0R
+        # ("R1323", -40.12, -10.02, 180),    # 0R
+        # ("R1324", -45.37, -10.02, 180),    # 10k
+        # ("C1301", -14.50, -27.38, 180),    # 10uF
+        # ("C1302", -20.41, -27.55, 180),    # 1uF
+        # ("C1303", -25.72, -27.55, 180),    # 1uF 25V
+        # ("C1304", -31.03, -27.55, 180),    # 100nF 25V
+        # ("C1305", -36.94, -27.38, 180),    # 10uF 25V
+        # ("C1306", -42.85, -27.55, 180),    # 100nF 50V
+        # ("C1307", -48.16, -27.55, 180),    # 1uF 25V
+        # ("C1308", -53.47, -27.55, 180),    # 100nF 25V
+        # ("C1309", -59.38, -27.38, 180),    # 10uF 25V
+        # ("C1310", -65.29, -27.55, 180),    # 100nF 50V
+        # ("C1311", -70.60, -27.55, 180),    # 1uF 50V
+        # ("C1312", -75.91, -27.55, 180),    # 100nF 50V
+        # ("C1313", -14.50, -23.53, 180),    # 10uF 25V
+        # ("C1314", -21.01, -23.53, 180),    # 10uF
+        # ("C1315", -26.92, -23.70, 180),    # 100nF
+        # ("C1316", -32.23, -23.70, 180),    # 1uF
+        # ("C1317", -37.54, -23.70, 180),    # 1uF
+        # ("C1318", -43.45, -23.53, 180),    # 10uF
+        # ("C1319", -49.96, -23.53, 180),    # 1uF 50V
+        # ("C1320", -56.47, -23.53, 180),    # 1uF 50V
+        # ("C1321", -62.38, -23.70, 180),    # 100nF
+        # ("C1322", -67.69, -23.70, 180),    # 100nF
+        # ("TP1301", -50.02, -9.72, 180),    # AVDD
+        # ("TP1302", -54.07, -9.72, 180),    # VGH
+        # ("TP1303", -58.12, -9.72, 180),    # VGL
+        # ("TP1304", -62.17, -9.72, 180),    # VCOM
+        # ("TP1305", -66.22, -9.72, 180),    # VCC_1V8
+        # ("TP1306", -70.27, -9.72, 180),    # LED_P
+    ],
+    # ------------------------------------------------ page 14: M1421
+    "M1421": [
+        # U1401: placed by BIG  (ADSBee m1421)
+        ("U1402", 36.31, 3.09, 180),         # 74LVC1G97 (AND)
+        ("U1403", 28.83, 3.09, 180),         # 74LVC1G32
+        ("U1404", 21.33, 3.09, 180),         # 74LVC1G07
+        ("U1405", 14.46, 3.04, 180),         # SCN-2-11+
+        ("D1401", 36.86, 8.75, 180),         # RED 1090
+        ("D1402", 30.36, 8.75, 180),         # GREEN UAT
+        # ("D1403", -23.89, 40.68, 180),     # ESD7351XV2T1G
+        # J1401: placed by BIG  (m1421 JTAG (J-Link))
+        # J1402: placed by BIG  (ADSBee 1421 Dev Kit)
+        # J1403: placed by EDGE_LEFT  (SMA 1090/978)
+        # SH1401: placed by BIG  (RF can frame (DNP))
+        # ("R1401", -28.59, 40.93, 180),     # 100k
+        # ("R1402", -33.84, 40.93, 180),     # 100k
+        # ("R1403", -39.09, 40.93, 180),     # 100k
+        # ("R1404", -44.34, 40.93, 180),     # 100k
+        # ("R1405", -49.59, 40.93, 180),     # 100k
+        # ("R1406", -54.84, 40.93, 180),     # 287R
+        # ("R1407", -60.09, 40.93, 180),     # 115R
+        # ("R1408", -65.34, 40.93, 180),     # 100R
+        # ("R1409", -70.59, 40.93, 180),     # 100k
+        # ("C1401", -13.90, 40.96, 180),     # 1uF
+        # ("C1402", -19.21, 40.96, 180),     # 100nF
+        # ("TP1401", -75.24, 41.24, 180),    # SD23
+        # ("TP1402", -79.29, 41.24, 180),    # SD24
+        # ("TP1403", -13.27, 45.28, 180),    # SD25
+        # ("TP1404", -17.32, 45.28, 180),    # LD11
+        # ("TP1405", -21.37, 45.28, 180),    # LD09
+        # ("TP1406", -25.42, 45.28, 180),    # LD08
+        # ("TP1407", -29.47, 45.28, 180),    # LRST
+        # ("TP1408", -33.52, 45.28, 180),    # CSMI
+        # ("TP1409", -37.57, 45.28, 180),    # CSMO
+        # ("TP1410", -41.62, 45.28, 180),    # CSCK
+        # ("TP1411", -45.67, 45.28, 180),    # LRCS
+        # ("TP1412", -49.72, 45.28, 180),    # LBSY
+    ],
+    # ------------------------------------------------ page 15: Storage Misc
+    "Storage Misc": [
+        ("U1501", 175.76, 120.05, 180),      # TCA6408APW
+        # ("Q1501", -31.85, 159.51, 180),    # AO3401A
+        # J1501: placed by EDGE_RIGHT  (microSD (push-pull, detect))
+        # ("R1501", -37.95, 158.49, 180),    # 10k
+        # ("R1502", -43.20, 158.49, 180),    # 10k
+        # ("R1503", -48.45, 158.49, 180),    # 10k
+        # ("R1504", -53.70, 158.49, 180),    # 10k
+        # ("R1505", -58.95, 158.49, 180),    # 10k
+        # ("R1506", -64.20, 158.49, 180),    # 10k
+        # ("R1507", -69.45, 158.49, 180),    # 10k
+        # ("R1508", -74.70, 158.49, 180),    # 10k
+        # ("R1509", -79.95, 158.49, 180),    # 10k
+        # ("R1510", -13.87, 163.76, 180),    # 100k
+        # ("R1511", -19.12, 163.76, 180),    # 100k
+        # ("R1512", -24.37, 163.76, 180),    # 100k
+        # ("R1513", -29.62, 163.76, 180),    # 100k
+        # ("C1501", -14.50, 158.69, 180),    # 10uF
+        # ("C1502", -20.41, 158.52, 180),    # 100nF
+        # ("C1503", -25.72, 158.52, 180),    # 100nF
+        # ("TP1501", -34.27, 164.06, 180),   # SD_VDD
+    ],
+    # ------------------------------------------------ page 16: Test Debug
+    "Test Debug": [
+        # J1601: placed by BIG  (Kingst LA5016 (2x20 keyed))
+        # ("R1601", -13.87, 178.31, 180),    # 100R
+        # ("R1602", -19.12, 178.31, 180),    # 100R
+        # ("R1603", -24.37, 178.31, 180),    # 100R
+        # ("R1604", -29.62, 178.31, 180),    # 100R
+        # ("R1605", -34.87, 178.31, 180),    # 100R
+        # ("R1606", -40.12, 178.31, 180),    # 100R
+        # ("R1607", -45.37, 178.31, 180),    # 100R
+        # ("R1608", -50.62, 178.31, 180),    # 100R
+        # ("R1609", -55.87, 178.31, 180),    # 100R
+        # ("R1610", -61.12, 178.31, 180),    # 100R
+        # ("R1611", -66.37, 178.31, 180),    # 100R
+        # ("R1612", -71.62, 178.31, 180),    # 100R
+        # ("R1613", -76.87, 178.31, 180),    # 100R
+        # ("R1614", -13.87, 181.76, 180),    # 100R
+        # ("R1615", -19.12, 181.76, 180),    # 100R
+        # ("R1616", -24.37, 181.76, 180),    # 100R
+        # ("R1617", -29.62, 181.76, 180),    # 0R
+        # ("TP1601", -34.27, 182.06, 180),   # LA_PWM1
+        # ("TP1602", -38.32, 182.06, 180),   # LA_PWM2
+        # ("TP1603", -42.37, 182.06, 180),   # GND
+        # ("TP1604", -46.42, 182.06, 180),   # GND
+        # ("TP1605", -50.47, 182.06, 180),   # GND
+        # ("TP1606", -54.52, 182.06, 180),   # GND
+        # H1601: corner mounting hole
+        # H1602: corner mounting hole
+        # H1603: corner mounting hole
+        # H1604: corner mounting hole
+    ],
+    # ------------------------------------------------ page 17: Dev UARTs
+    "Dev UARTs": [
+        ("U1701", 98.01, 52.00, 180),        # FT2232HL
+        ("U1702", 85.01, 48.00, 180),        # 93LC56B
+        ("U1703", 64.33, 47.09, 180),        # 74LVC1G07
+        ("U1704", 49.83, 47.09, 180),        # 74LVC1G125
+        ("U1705", 64.33, 53.59, 180),        # 74LVC1G07
+        ("U1706", 49.83, 53.59, 180),        # 74LVC1G125
+        # ("Q1701", -73.13, -91.96, 180),    # MMBT3904
+        # ("Q1702", -14.72, -86.69, 180),    # MMBT3904
+        # ("Q1703", -21.67, -86.69, 180),    # MMBT3904
+        # ("Q1704", -28.62, -86.69, 180),    # MMBT3904
+        ("Y1701", 74.11, 47.40, 180),        # 12MHz
+        # ("R1701", -34.72, -87.71, 180),    # 12k 1%
+        # ("R1702", -39.97, -87.71, 180),    # 10k
+        # ("R1703", -45.22, -87.71, 180),    # 2.2k
+        # ("R1704", -50.47, -87.71, 180),    # 10k
+        # ("R1705", -55.72, -87.71, 180),    # 10k
+        # ("R1706", -60.97, -87.71, 180),    # 10k
+        # ("R1707", -66.22, -87.71, 180),    # 10k
+        # ("R1708", -71.47, -87.71, 180),    # 10k
+        # ("R1709", -76.72, -87.71, 180),    # 10k
+        # ("R1710", -13.87, -82.44, 180),    # 10k
+        # ("R1711", -19.12, -82.44, 180),    # 10k
+        # ("R1712", -24.37, -82.44, 180),    # 10k
+        # ("C1701", -13.90, -92.96, 180),    # 100nF
+        # ("C1702", -19.21, -92.96, 180),    # 100nF
+        # ("C1703", -24.52, -92.96, 180),    # 100nF
+        # ("C1704", -29.83, -92.96, 180),    # 100nF
+        # ("C1705", -35.14, -92.96, 180),    # 4.7uF
+        # ("C1706", -40.45, -92.96, 180),    # 27pF
+        # ("C1707", -45.76, -92.96, 180),    # 27pF
+        # ("C1708", -51.07, -92.96, 180),    # 100nF
+        # ("C1709", -56.38, -92.96, 180),    # 100nF
+        # ("C1710", -61.69, -92.96, 180),    # 100nF
+        # ("C1711", -67.00, -92.96, 180),    # 100nF
+        # ("TP1701", -29.02, -82.14, 180),   # FT_A_DTR
+        # ("TP1702", -33.07, -82.14, 180),   # FT_A_RTS
+        # ("TP1703", -37.12, -82.14, 180),   # FT_B_DTR
+        # ("TP1704", -41.17, -82.14, 180),   # FT_B_RTS
+    ],
+    # ------------------------------------------------ page 18: Dev m1421 Programmer
+    "Dev m1421 Programmer": [
+        ("U1801", 47.68, 62.82, 180),        # RP2040
+        ("U1802", 83.06, 65.19, 180),        # W25Q16JVSS
+        ("U1803", 66.83, 71.09, 180),        # 74LVC1G125
+        ("U1804", 49.83, 72.09, 180),        # 74LVC1G125
+        ("U1805", 83.83, 72.59, 180),        # 74LVC1G125
+        ("U1806", 66.83, 77.59, 180),        # 74LVC1G125
+        # ("D1801", -19.68, -45.78, 180),    # 1N4148W
+        ("D1802", 85.26, 56.04, 180),        # WS2812B
+        ("Y1801", 71.11, 64.40, 180),        # 12MHz
+        # J1801: placed by BIG  (RP2040 GPIO (pins DNP))
+        ("J1802", 73.94, 71.06, 180),        # RP2040 SWD
+        # SW1801: placed by BIG  (BOOTSEL (programmer))
+        # ("R1801", -25.48, -45.98, 180),    # 27R
+        # ("R1802", -30.73, -45.98, 180),    # 27R
+        # ("R1803", -35.98, -45.98, 180),    # 1k
+        # ("R1804", -41.23, -45.98, 180),    # 10k
+        # ("R1805", -46.48, -45.98, 180),    # 10k
+        # ("R1806", -51.73, -45.98, 180),    # 1k
+        # ("R1807", -56.98, -45.98, 180),    # 330R
+        # ("R1808", -62.23, -45.98, 180),    # 0R
+        # ("R1809", -67.48, -45.98, 180),    # 0R
+        # ("R1810", -72.73, -45.98, 180),    # 10k
+        # ("R1811", -77.98, -45.98, 180),    # 100k
+        # ("R1812", -13.87, -42.13, 180),    # 0R
+        # ("R1813", -19.12, -42.13, 180),    # 0R
+        # ("C1801", -13.90, -49.46, 180),    # 27pF
+        # ("C1802", -19.21, -49.46, 180),    # 27pF
+        # ("C1803", -24.52, -49.46, 180),    # 1uF
+        # ("C1804", -29.83, -49.46, 180),    # 1uF
+        # ("C1805", -35.14, -49.46, 180),    # 100nF
+        # ("C1806", -40.45, -49.46, 180),    # 100nF
+        # ("C1807", -45.76, -49.46, 180),    # 100nF
+        # ("C1808", -51.07, -49.46, 180),    # 100nF
+        # ("C1809", -56.38, -49.46, 180),    # 100nF
+        # ("C1810", -61.69, -49.46, 180),    # 100nF
+        # ("C1811", -67.00, -49.46, 180),    # 100nF
+        # ("C1812", -72.31, -49.46, 180),    # 100nF
+        # ("C1813", -77.62, -49.46, 180),    # 100nF
+        # ("C1814", -13.90, -45.95, 180),    # 100nF
+        # ("TP1801", -23.77, -41.83, 180),   # RP_SWCLK
+        # ("TP1802", -27.82, -41.83, 180),   # RP_SWDIO
+        # ("TP1803", -31.87, -41.83, 180),   # RP_RUN
+    ],
+}
+# <<< PLACE
+
+# ================================================================ derived from the arrays
 PANEL_BOTTOM = (H + PH) / 2            # bottom-view y of the panel's bottom edge
 # (name, bottom-view x centre, length, bottom-view y centre, height)
 SLOTS = [(n, W - (W - PW) / 2 - (a + b) / 2, b - a, PANEL_BOTTOM - (up + h / 2), h) for n, a, b, up, h in SLOTS_FRONT]
 for _r, (_n, _x, _l, _y, _h) in zip(("J1301", "J1302"), SLOTS):   # sockets just inside their slots, facing them
     BIG[_r] = (_x, _y - SOCKET_GAP, BIG[_r][2])
+
+
+def edge_positions():
+    """Edge parts evenly spaced between the corner-hole keep-outs: ref -> (side, position along the edge)."""
+    out = {}
+    for side, items in (("L", EDGE_LEFT), ("R", EDGE_RIGHT)):
+        lo, hi = HOLE_IN + 4.0, H - HOLE_IN - 4.0
+        gap = (hi - lo - sum(a for _, a in items)) / (len(items) - 1)
+        y = lo
+        for ref, along in items:
+            out[ref] = (side, y + along / 2)
+            y += along + gap
+    for ref, bx in EDGE_TOP:
+        out[ref] = ("T", bx)
+    return out
+
+
+EDGE = edge_positions()
+PLACED_BY_PAGE = {e[0]: tuple(e[1:]) for page in PLACE.values() for e in page}
+
+
+def mm(v):
+    return pcbnew.FromMM(v)
+
+
+def top(bx, by):
+    """bottom-view (bx, by) -> KiCad top-view point (mirror in x)."""
+    return pcbnew.VECTOR2I(mm(OX + W - bx), mm(OY + by))
 
 
 # ---------------------------------------------------------------- netlist
@@ -306,9 +893,6 @@ def add_stackup():
 sys.path.insert(0, str(ROOT / "boards/adsb-test/hardware/floorplan"))
 import floorplan  # noqa: E402
 
-AUTO_PREFIX = ("U", "J", "SW", "Y", "BT")
-SPACE = 1.25                         # mm kept clear round each courtyard (2.5 mm between parts: room for the iron)
-
 
 def is_auto(ref, fpid):
     pre = re.sub(r"\d.*", "", ref)
@@ -378,6 +962,8 @@ def main():
     ds.m_MinThroughDrill = mm(0.25)
     ds.m_ViasMinSize = mm(0.5)
     ds.m_ViasMinAnnularWidth = mm(0.125)
+    ds.SetGridOrigin(top(0, 0))          # bottom-view board corner: KiCad X (relative) = -bx, Y = by
+    ds.SetAuxOrigin(top(0, 0))
     outline(board)
 
     nets = {}
@@ -431,10 +1017,23 @@ def main():
             fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x + int(top(bx, by).x - b.GetCenter().x),
                                            fp.GetPosition().y + int(top(bx, by).y - b.GetCenter().y)))
             placed.append(ref)
+        elif ref in PLACED_BY_PAGE:                                      # per-page PLACE arrays: origin + rotation
+            bx, by, rot = PLACED_BY_PAGE[ref]
+            fp.SetOrientationDegrees(rot)
+            fp.SetPosition(top(bx, by))
+            placed.append(ref)
         else:
             parked[c["sheet"]].append(fp)
+    refs = {c["ref"] for c in comps}
+    for ref in PLACED_BY_PAGE:
+        if ref not in refs:
+            print("  PLACE lists a part that is not in the schematic:", ref)
+        elif ref in EDGE or ref in BIG:
+            print("  PLACE entry ignored (placed by EDGE_*/BIG):", ref)
 
-    # key parts into their zones; keep clear of everything placed so far, the slots and the corner holes
+    # optional: key parts still commented out in PLACE into their zones, clear of everything placed so far,
+    # the slots and the corner holes
+    zoned = 0
     occupied = [fp_box(f) for f in board.GetFootprints() if f.GetReference() in placed]
     for _, bx, length, by, height in SLOTS:
         c = top(bx, by)
@@ -444,16 +1043,17 @@ def main():
         c = top(hx, hy)
         occupied.append(pcbnew.BOX2I(pcbnew.VECTOR2I(c.x - mm(4), c.y - mm(4)), pcbnew.VECTOR2L(mm(8), mm(8))))
     auto = collections.defaultdict(list)
-    for sheet, fps in parked.items():
-        for f in fps:
-            if is_auto(f.GetReference(), f.GetFPID().GetLibItemName().wx_str()):
-                auto[sheet].append(f)
-    left = place_in_zones(board, auto, occupied)
-    zoned = sum(len(v) for v in auto.values()) - len(left)
-    for sheet in parked:
-        parked[sheet] = [f for f in parked[sheet] if f not in auto[sheet] or f.GetReference() in left]
-    if left:
-        print("  did not fit their zone (parked):", " ".join(sorted(left)))
+    if AUTO_ZONES:
+        for sheet, fps in parked.items():
+            for f in fps:
+                if is_auto(f.GetReference(), f.GetFPID().GetLibItemName().wx_str()):
+                    auto[sheet].append(f)
+        left = place_in_zones(board, auto, occupied)
+        zoned = sum(len(v) for v in auto.values()) - len(left)
+        for sheet in parked:
+            parked[sheet] = [f for f in parked[sheet] if f not in auto[sheet] or f.GetReference() in left]
+        if left:
+            print("  did not fit their zone (parked):", " ".join(sorted(left)))
 
     # park the rest on the page either side of the board, one block per sheet
     columns = [OX + W + 12, OX + W + 92, OX - 92, OX - 172]
@@ -497,7 +1097,8 @@ def main():
         d["net_settings"] = net_settings
         pro.write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8", newline="\n")
     add_stackup()
-    print(f"wrote {PCB.name}: {len(comps)} parts, {len(placed)} placed, {zoned} in zones, "
+    print(f"wrote {PCB.name}: {len(comps)} parts, {len(placed)} placed ({len(PLACED_BY_PAGE)} from PLACE), "
+          f"{zoned} by the zone packer, "
           f"{sum(len(v) for v in parked.values())} parked, "
           f"{len(nets)} nets")
 

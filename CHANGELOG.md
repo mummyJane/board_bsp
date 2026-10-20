@@ -8,7 +8,11 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Added
+- ADSB_Test `hardware/gen/dump_placement.py`: reads the saved PCB and writes the per-page `PLACE` arrays in `gen_pcb.py` (`--write`), so parts moved in KiCad survive a regeneration.
+
 ### Changed
+- ADSB_Test `gen_pcb.py`: all placement arrays moved to the top of the file (`EDGE_LEFT/RIGHT/TOP`, `BIG`, `SLOTS_FRONT`, zone-packer settings) plus a new `PLACE` dict with one list per schematic page, every part listed as `("REF", bx, by, rotation)`: uncommented lines are placed, commented ones parked. Seeded from the current board (55 placed, 415 commented). The zone packer is now optional (`AUTO_ZONES`). Grid/aux origin set to the bottom-view board corner. Round-trip checked: regenerating reproduces every position and rotation.
 - ADSB_Test PCB generator: A2 page with the board centred (it hung off the A4 page); the ICs, connectors, switches, crystals, LEDs and the coin-cell holder (55 parts) are packed into their floorplan zones with 2.5 mm between courtyards, clear of the placed parts, slots and corner holes; passives and test pads parked by sheet on both sides of the board.
 - ADSB_Test board enlarged to **204.9 × 140 mm** (20 mm border round the panel, Q28 answered): the first placement at 180.9 × 116 was too cramped to hand-solder. `gen_pcb.py` places the panel-tied parts (module, sockets, slots) from the panel corner and the edge parts from their edge; the digital-edge connectors are now ~5 mm apart. Floorplan uses a 2.4 hand-solder spacing factor (was 1.6) with zones defined relative to the panel; all zones under 90 %, 62 % overall.
 - ADSB_Test BOM: UK suppliers. Every line has Mouser UK / Farnell UK / RS UK search links; new `uk_bom_upload.csv` (manufacturer, MPN, quantity) for the Mouser, Farnell and RS BOM tools; `uk_stock` column with stock confirmed by hand (FT2232HL: RS 49; FH12-6S: Farnell 321 / RS 25; ESD7351, BAT43W, AO3401A: TME). USB-A J1101 changed to Würth 614004134726 (Molex 0676432910 is out of stock everywhere; same 4-pin + shield pattern). Q29 answered (bottom-contact FPC sockets are right), Q30 updated.
