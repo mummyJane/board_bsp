@@ -17,6 +17,7 @@ Re-running OVERWRITES ADSB_Test.kicad_pcb. Once layout work starts in KiCad, sto
 """
 import collections
 import json
+import re
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -34,7 +35,8 @@ PW, PH = 164.9, 100.0               # panel (on the top side)
 GAP = 20.0                          # border round the panel (Q28: 20 mm since 2026-10-20, room for hand soldering)
 W, H = PW + 2 * GAP, PH + 2 * GAP   # board 204.9 x 140
 PX0, PY0 = (W - PW) / 2, (H - PH) / 2   # panel corner (bottom view; the panel is centred, so either corner)
-OX, OY = 100.0, 100.0               # board top-left corner on the KiCad page
+PAPER = ("A2", 594.0, 420.0)        # page: board centred, parked parts in columns either side
+OX, OY = (PAPER[1] - W) / 2, (PAPER[2] - H) / 2   # board top-left corner on the KiCad page
 HOLE_IN = 4.0                       # corner hole centres, mm in from both edges
 
 
@@ -294,7 +296,74 @@ def add_stackup():
     if "(stackup" not in text:
         assert "\t(setup\n" in text, "no (setup) section in the board file"
         text = text.replace("\t(setup\n", "\t(setup\n" + STACKUP, 1)
+    text = re.sub(r'\(paper "[^"]*"\)', f'(paper "{PAPER[0]}")', text, count=1)   # page size (no Python API)
     PCB.write_text(text, encoding="utf-8", newline="\n")
+
+
+# ---------------------------------------------------------------- zone placement of the key parts
+# ICs, connectors, switches, crystals, LEDs and the coin-cell holder go into their sheet's zone from
+# floorplan.py (same bottom-view coordinates). Passives and test pads stay parked: they go next to their IC by hand.
+sys.path.insert(0, str(ROOT / "boards/adsb-test/hardware/floorplan"))
+import floorplan  # noqa: E402
+
+AUTO_PREFIX = ("U", "J", "SW", "Y", "BT")
+SPACE = 1.25                         # mm kept clear round each courtyard (2.5 mm between parts: room for the iron)
+
+
+def is_auto(ref, fpid):
+    pre = re.sub(r"\d.*", "", ref)
+    return pre in AUTO_PREFIX or (pre == "D" and "LED" in fpid.upper())
+
+
+def fp_box(fp):
+    """Courtyard box (bottom courtyard after the flip), else the body."""
+    for layer in (pcbnew.B_CrtYd, pcbnew.F_CrtYd):
+        try:
+            cy = fp.GetCourtyard(layer)
+            if cy.OutlineCount():
+                return cy.BBox()
+        except Exception:  # noqa: BLE001 - older API: fall back to the body box
+            break
+    return body_box(fp)
+
+
+def place_in_zones(board, fps_by_sheet, occupied):
+    """Pack each sheet's key parts into its zone (top-view coordinates). Returns the refs left over."""
+    zones = {}
+    for name, (x0, y0, x1, y1, sheets) in floorplan.layout(W, H).items():
+        for s in sheets:
+            zones[s] = (name, mm(OX + W - x1), mm(OY + y0), mm(OX + W - x0), mm(OY + y1))
+    left = []
+    step, sp = mm(0.5), mm(SPACE)
+    for sheet, fps in fps_by_sheet.items():
+        if sheet not in zones:
+            left += [f.GetReference() for f in fps]
+            continue
+        _, zx0, zy0, zx1, zy1 = zones[sheet]
+        for fp in sorted(fps, key=lambda f: -fp_box(f).GetArea()):
+            done = False
+            for turn in (0, 90):
+                if turn:
+                    fp.SetOrientationDegrees(fp.GetOrientationDegrees() + 90)
+                b = fp_box(fp)
+                w, h = b.GetWidth() + 2 * sp, b.GetHeight() + 2 * sp
+                y = zy0
+                while y + h <= zy1 and not done:
+                    x = zx0
+                    while x + w <= zx1:
+                        cand = pcbnew.BOX2I(pcbnew.VECTOR2I(x, y), pcbnew.VECTOR2L(w, h))
+                        if not any(cand.Intersects(o) for o in occupied):
+                            fp.Move(pcbnew.VECTOR2I(x + sp - b.GetX(), y + sp - b.GetY()))
+                            occupied.append(cand)
+                            done = True
+                            break
+                        x += step
+                    y += step
+                if done:
+                    break
+            if not done:
+                left.append(fp.GetReference())
+    return left
 
 
 def main():
@@ -365,10 +434,34 @@ def main():
         else:
             parked[c["sheet"]].append(fp)
 
-    # park the rest beside the board (top-view right of the board), one column block per sheet
-    x0, y = OX + W + 15, OY
-    col_x = x0
+    # key parts into their zones; keep clear of everything placed so far, the slots and the corner holes
+    occupied = [fp_box(f) for f in board.GetFootprints() if f.GetReference() in placed]
+    for _, bx, length, by, height in SLOTS:
+        c = top(bx, by)
+        occupied.append(pcbnew.BOX2I(pcbnew.VECTOR2I(c.x - mm(length / 2 + 1), c.y - mm(height / 2 + 1)),
+                                     pcbnew.VECTOR2L(mm(length + 2), mm(height + 2))))
+    for hx, hy in corners:
+        c = top(hx, hy)
+        occupied.append(pcbnew.BOX2I(pcbnew.VECTOR2I(c.x - mm(4), c.y - mm(4)), pcbnew.VECTOR2L(mm(8), mm(8))))
+    auto = collections.defaultdict(list)
+    for sheet, fps in parked.items():
+        for f in fps:
+            if is_auto(f.GetReference(), f.GetFPID().GetLibItemName().wx_str()):
+                auto[sheet].append(f)
+    left = place_in_zones(board, auto, occupied)
+    zoned = sum(len(v) for v in auto.values()) - len(left)
+    for sheet in parked:
+        parked[sheet] = [f for f in parked[sheet] if f not in auto[sheet] or f.GetReference() in left]
+    if left:
+        print("  did not fit their zone (parked):", " ".join(sorted(left)))
+
+    # park the rest on the page either side of the board, one block per sheet
+    columns = [OX + W + 12, OX + W + 92, OX - 92, OX - 172]
+    col = 0
+    col_x, y = columns[col], 15.0
     for sheet in sorted(parked):
+        if not parked[sheet]:
+            continue
         fps = parked[sheet]
         t = pcbnew.PCB_TEXT(board)
         t.SetText(f"[{sheet}] {len(fps)} parts")
@@ -390,8 +483,9 @@ def main():
             cx += w + 1.5
             row_h = max(row_h, h)
         y += row_h + 8
-        if y > OY + 260:
-            col_x, y = col_x + 80, OY
+        if y > PAPER[2] - 60 and col + 1 < len(columns):
+            col += 1
+            col_x, y = columns[col], 15.0
 
     # SaveBoard also rewrites ADSB_Test.kicad_pro from this fresh board, which has no net classes: keep the
     # project's net_settings (written by gen_netclasses.py) across the save
@@ -403,7 +497,8 @@ def main():
         d["net_settings"] = net_settings
         pro.write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8", newline="\n")
     add_stackup()
-    print(f"wrote {PCB.name}: {len(comps)} parts, {len(placed)} placed, {sum(len(v) for v in parked.values())} parked, "
+    print(f"wrote {PCB.name}: {len(comps)} parts, {len(placed)} placed, {zoned} in zones, "
+          f"{sum(len(v) for v in parked.values())} parked, "
           f"{len(nets)} nets")
 
 
