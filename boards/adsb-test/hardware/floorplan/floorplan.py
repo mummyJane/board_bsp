@@ -20,8 +20,8 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from areas import parts  # noqa: E402
 
-W, H = 180.9, 116.0            # board, mm: panel 164.9 x 100 + 8 mm all round (override: --size WxH)
-K = 1.6                        # spacing + routing factor for small parts
+W, H = 204.9, 140.0            # board, mm: panel 164.9 x 100 + 20 mm all round, Q28 (override: --size WxH)
+K = 2.4                        # spacing + routing factor for small parts (hand soldering; 1.6 felt too tight)
 FIXED = 1.15                   # factor for big parts (fan-out only)
 BIG = 150.0                    # courtyard mm2 above which a part is "fixed"
 HOLE_KEEPOUT = 3.5             # mm radius (M2.5 screw head + clearance)
@@ -64,13 +64,13 @@ def layout(w, h):
             y += along + gap
     for ref, cx_, along, depth, label in TOP_PARTS:
         EDGE.append((ref, "T", cx_, along, depth, label))
-    top = 30 * H / 97                                      # power band
-    rf1 = 36.0                                             # RF column: left edge .. rf1
+    top = y0p + 24                                         # power band (44 mm at the 20 mm border)
+    rf1 = max(36.0, x0p + 20)                              # RF column: left edge .. rf1
     dig0 = W - 24                                          # digital-edge column: dig0 .. right edge
-    mcu0, mcu1 = 94.0, 130.0                               # module stays at x 100-128 (gen_pcb.py)
-    la_h = 14.0                                            # LA header strip along the bottom
+    mcu0, mcu1 = x0p + 86, x0p + 122                       # module at panel x 92-120 (gen_pcb.py)
+    la_h = 16.0                                            # LA header strip along the bottom
     span = dig0 - rf1
-    dev_h = 41.0                                           # Dev UARTs/programmer above the display supplies
+    dev_h = 0.62 * (H - la_h - top)                        # Dev UARTs/programmer above the display supplies
     col = top + 0.75 * (H - top)                           # digital-edge column split
     # panel cable slots, measured on the Waveshare board (gen_pcb.py SLOTS_FRONT): LCD 74-96 mm, 42.6-45.6 mm
     # up; touch 34-42 mm, 49.6-52.6 mm up (front view from the panel's left edge)
@@ -256,7 +256,7 @@ if __name__ == "__main__":
     import io
     import contextlib
     ap = argparse.ArgumentParser()
-    ap.add_argument("--size", default="180.9x116", help="board size WxH in mm")
+    ap.add_argument("--size", default="204.9x140", help="board size WxH in mm")
     ap.add_argument("--compare", action="store_true", help="fill summary for several board sizes")
     a = ap.parse_args()
     ps = parts()

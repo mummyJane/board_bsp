@@ -4,7 +4,7 @@
 Run with KiCad's own Python (it needs the pcbnew module):
     "C:\\Program Files\\KiCad\\10.0\\bin\\python.exe" boards/adsb-test/hardware/gen/gen_pcb.py
 
-* Board 180.9 x 116 mm (Q28: panel 164.9 x 100 centred with an 8 mm border), 4 layers, 1.6 mm.
+* Board 204.9 x 140 mm (Q28: panel 164.9 x 100 centred with a 20 mm border), 4 layers, 1.6 mm.
 * ALL parts are on the BOTTOM side (the panel is bonded to the top). Placements below are given in
   BOTTOM VIEW (looking at the component side, RF edge on the left, digital edge on the right), as in docs/floorplan.md;
   the script mirrors them into KiCad's top-view coordinates.
@@ -30,8 +30,10 @@ PCB = KICAD / "ADSB_Test.kicad_pcb"
 CLI = r"C:\Program Files\KiCad\10.0\bin\kicad-cli.exe"
 STD = Path(r"C:\Program Files\KiCad\10.0\share\kicad\footprints")
 
-W, H = 180.9, 116.0                 # board
 PW, PH = 164.9, 100.0               # panel (on the top side)
+GAP = 20.0                          # border round the panel (Q28: 20 mm since 2026-10-20, room for hand soldering)
+W, H = PW + 2 * GAP, PH + 2 * GAP   # board 204.9 x 140
+PX0, PY0 = (W - PW) / 2, (H - PH) / 2   # panel corner (bottom view; the panel is centred, so either corner)
 OX, OY = 100.0, 100.0               # board top-left corner on the KiCad page
 HOLE_IN = 4.0                       # corner hole centres, mm in from both edges
 
@@ -59,29 +61,31 @@ def edge_positions():
         for ref, along in items:
             out[ref] = (side, y + along / 2)
             y += along + gap
-    out["J602"] = ("T", 96.0)     # Wi-Fi RP-SMA on the top long edge, away from the RF-edge SMAs (by = bx here)
+    out["J602"] = ("T", PX0 + 88.0)   # Wi-Fi RP-SMA on the top long edge, away from the RF-edge SMAs (by = bx here)
     return out
 
 
 EDGE = edge_positions()
-# interior big parts: ref -> (bx, by, mouth) ; mouth = direction the connector opening faces (bottom view)
+# interior big parts: ref -> (bx, by, mouth) ; mouth = direction the connector opening faces (bottom view).
+# Parts tied to the panel (module, sockets) are given from the panel corner (PX0, PY0); parts tied to an edge
+# keep their distance from that edge.
 BIG = {
-    "U601": (114.3, 46.0, None),            # OSPTEK ESP32-P4C5 module, between the LCD and touch sockets (short MIPI)
-    "U1401": (22.9, 30.0, None),            # m1421, under can SH1401 (RF column, left edge)
-    "SH1401": (22.9, 30.0, None),
-    "U1201": (20.9, 94.0, None),            # MAX-M10S, under can SH1201
-    "SH1201": (20.9, 94.0, None),
-    "J1601": (95.0, 104.0, "rot90"),        # LA5016 2x20 header, horizontal along the bottom edge
-    "J1301": (W - (W - PW) / 2 - 76.0, None, "+y"),    # LCD 30-pin FPC, opening towards its slot (y set below)
-    "J1302": (W - (W - PW) / 2 - 42.0, None, "+y"),    # touch 6-pin FPC, opening towards its slot (y set below)
-    "J301": (114.0, 9.0, None),             # battery connector, charger zone (outside the battery footprint)
-    "SW601": (142.0, 12.0, None),           # BOOT  (top band near the digital edge, clear of the battery)
-    "SW602": (153.0, 12.0, None),           # RESET
-    "SW1801": (62.0, 45.0, None),           # RP2040 BOOTSEL (Dev zone)
-    "J601": (96.0, 10.5, None),             # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
-    "J1401": (30.9, 54.0, None),            # m1421 JTAG (below the m1421 can)
+    "U601": (PX0 + 106.3, PY0 + 38.0, None),   # OSPTEK ESP32-P4C5 module, between the LCD and touch sockets (short MIPI)
+    "U1401": (22.9, 32.0, None),            # m1421, under can SH1401 (RF column, left edge)
+    "SH1401": (22.9, 32.0, None),
+    "U1201": (20.9, H - 22.0, None),        # MAX-M10S, under can SH1201
+    "SH1201": (20.9, H - 22.0, None),
+    "J1601": (PX0 + 87.0, H - 12.0, "rot90"),  # LA5016 2x20 header, horizontal along the bottom edge
+    "J1301": (0.0, None, "+y"),             # LCD 30-pin FPC, opening towards its slot (x, y set from the slot below)
+    "J1302": (0.0, None, "+y"),             # touch 6-pin FPC, opening towards its slot (x, y set from the slot below)
+    "J301": (PX0 + 106.0, 9.0, None),       # battery connector, charger zone (outside the battery footprint)
+    "SW601": (W - 39.0, 12.0, None),        # BOOT  (top band near the digital edge, clear of the battery)
+    "SW602": (W - 28.0, 12.0, None),        # RESET
+    "SW1801": (PX0 + 54.0, PY0 + 37.0, None),  # RP2040 BOOTSEL (Dev zone)
+    "J601": (PX0 + 88.0, 10.5, None),       # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
+    "J1401": (30.9, 56.0, None),            # m1421 JTAG (below the m1421 can)
     "J1402": (40.9, 14.0, None),            # ADSBee Dev Kit header (1x6, vertical, next to the m1421)
-    "J1801": (45.0, 56.0, None),            # RP2040 GPIO header (DNP)
+    "J1801": (PX0 + 37.0, PY0 + 48.0, None),   # RP2040 GPIO header (DNP)
 }
 # Panel-cable slots, measured on the Waveshare ESP32-P4-WIFI6-Touch-LCD-7B (2026-10-20), back view, from its
 # bottom edge and its USB side:

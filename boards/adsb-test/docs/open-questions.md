@@ -7,7 +7,7 @@ the CHANGELOG.
 
 | # | Question | Current assumption |
 |---|----------|--------------------|
-| Q28 | Board outline after the floorplan check (docs/floorplan.md): panel centred with an even gap all round, cables through PCB slots, corner mounting holes, POWER switch on the digital edge | Proposed: **8 mm gap = 180.9 x 116 mm** (every zone < 90 % in the 2026-10-20 layout). 6 mm (176.9 x 112) is borderline, 4 mm too tight. Layout has started on it: confirm |
+| Q28 | Board outline after the floorplan check (docs/floorplan.md): panel centred with an even gap all round, cables through PCB slots, corner mounting holes | **Answered 2026-10-20: 20 mm gap = 204.9 × 140 mm.** A first placement at 180.9 × 116 (8 mm) was too cramped to hand-solder; at 20 mm every zone is under 90 % with the hand-solder spacing factor and the digital-edge connectors are ~5 mm apart |
 | Q29 | Panel FPC sockets: top- or bottom-contact? | **Answered 2026-10-20:** checked against the Waveshare board, the cables go into the bottom: the FH12 **bottom-contact** sockets (J1301 FH12-30S, J1302 FH12-6S) are right |
 | Q30 | Out-of-stock parts that set a footprint: FT2232HL (DigiKey due 2027-02), USB-A 0676432910 (marketplace only), ESD7351XV2T1G (no date) | 2026-10-20 (UK): **USB-A replaced** by Würth 614004134726 (same pin pattern, DigiKey UK 2,801). **FT2232HL**: RS had 49 (findchips), Farnell/TME 0: order early. **ESD7351XV2T1G**: TME 10k, Rochester (SZ- grade) 969k. Recheck with `uk_bom_upload.csv` in the Mouser/Farnell/RS BOM tools |
 | Q31 | OSPTEK module footprint | Ours is drawn from OSPTEK's pin table and dimension drawing. Compare pad positions with OSPTEK's own PcbLib (github.com/osptek/esp32-p4c5-core-board) before ordering |

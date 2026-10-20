@@ -519,7 +519,7 @@ Outline and case (Q20, decided 2026-10-10):
 
 | Item | Decision |
 |------|----------|
-| Board outline | ~~188 × 97 mm~~. **Proposed (Q28, floorplan check): 180.9 × 116 mm**, panel centred with an 8 mm gap all round, panel cables through PCB slots, mounting holes in the board corners. See [floorplan.md](floorplan.md) |
+| Board outline | ~~188 × 97 mm~~, ~~180.9 × 116 mm~~. **204.9 × 140 mm (Q28, 2026-10-20)**: panel centred with a 20 mm gap all round (room to hand-solder), panel cables through PCB slots, mounting holes in the board corners. See [floorplan.md](floorplan.md) |
 | Digital edge (short edge nearer the module; right in bottom view since 2026-10-20) | User USB-C, Dev USB-C, USB-A, RJ45, microSD, POWER, SLEEP/WAKE (92 mm of the 101 mm between the corner holes) |
 | RF edge (other short edge, left in bottom view) | GNSS SMA and m1421 SMA, spaced apart, with the m1421 and GNSS cans behind them |
 | C5 antenna | ~~In the digital-edge margin~~ (edge is full). **J602 RP-SMA on the top long edge** (96 mm from the RF end), U.FL jumper from the module |
