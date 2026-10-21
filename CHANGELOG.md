@@ -8,6 +8,10 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Changed
+- ADSB_Test `gen_pcb.py`: one coordinate rule for every placement array: `(x, y, rot)` = footprint origin in mm from the board's top-right corner in KiCad's normal view (x to the left, y down), rot as KiCad shows it. `BIG` now uses it too (was body centre with `PX0`/`W`/`H` expressions and `rot90`/`rot180`/mouth words); the edge arrays take the position along the edge (was a size used to spread the parts); the panel sockets J1301/J1302 are plain `BIG` entries in line with their slots. Values taken from the current board, so nothing moved. User placement edits (m1421, GPS front end, Ethernet PHY, RP2040 programmer, cans) kept.
+- ADSB_Test `dump_placement.py --write` now edits `gen_pcb.py` in place and only where something changed (numbers in PLACE/BIG/EDGE_*, comments out parts moved off the board, uncomments parts moved onto it), keeping hand formatting; `--rebuild` rewrites the PLACE block.
+
 ### Added
 - ADSB_Test `hardware/gen/dump_placement.py`: reads the saved PCB and writes the per-page `PLACE` arrays in `gen_pcb.py` (`--write`), so parts moved in KiCad survive a regeneration.
 

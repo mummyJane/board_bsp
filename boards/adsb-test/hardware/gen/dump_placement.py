@@ -3,11 +3,12 @@
 
 Run with KiCad's own Python (it needs pcbnew), from the repo root:
     & "C:\\Program Files\\KiCad\\10.0\\bin\\python.exe" boards/adsb-test/hardware/gen/dump_placement.py           # print
-    & "C:\\Program Files\\KiCad\\10.0\\bin\\python.exe" boards/adsb-test/hardware/gen/dump_placement.py --write   # update gen_pcb.py
+    & "C:\\Program Files\\KiCad\\10.0\\bin\\python.exe" boards/adsb-test/hardware/gen/dump_placement.py --write   # update gen_pcb.py in place
+    ... dump_placement.py --rebuild   # rewrite the whole PLACE block (after adding parts to the schematic)
 
-Every part gets a line in its page's list, in the bottom-view coordinates gen_pcb.py uses
-("REF", bx, by, rotation): bx, by = footprint origin in mm from the board corner (bx from the left/RF
-edge, by down from the top edge); rotation = the orientation KiCad shows.
+Every part gets a line in its page's list, in gen_pcb.py's coordinates ("REF", x, y, rot): footprint
+origin in mm from the board's top-right corner as seen in KiCad's normal view (x to the left, y down),
+rot = the orientation KiCad shows. --write also refreshes the numbers in BIG and EDGE_*.
 * Parts on the board are written uncommented (gen_pcb.py places them).
 * Parts off the board (parked) are written commented out, with their current position.
 * Parts placed by EDGE_* / BIG and the corner holes get a reference comment only.
@@ -82,22 +83,98 @@ def block():
                 parked += 1
         lines.append("    ],")
     lines += ["}", END]
-    return "\n".join(lines), placed, parked
+    return "\n".join(lines), placed, parked, pos
+
+
+def fmt(v):
+    """Short number: 33.0, 34.75, 180 (rotation)."""
+    s = f"{v:.2f}".rstrip("0")
+    return s + "0" if s.endswith(".") else s
+
+
+def same(text_numbers, values):
+    """True when the numbers already written equal the board's (to 0.01 mm / 0.1 deg)."""
+    try:
+        old = [float(t) for t in re.findall(r"-?\d+(?:\.\d+)?", text_numbers)]
+    except ValueError:
+        return False
+    return len(old) == len(values) and all(abs(a - b) < 0.006 or abs((a - b) % 360) < 0.06 for a, b in zip(old, values))
+
+
+def update_big_and_edges(src, pos):
+    """Refresh the numbers in BIG and EDGE_* in place, only where they changed (comments and layout kept)."""
+    n = 0
+    for ref in g.BIG:
+        if ref in pos and pos[ref][3]:
+            x, y, rot, _ = pos[ref]
+            m = re.search(rf'("{ref}":\s*)\(([^)]*)\)', src)
+            if m and not same(m.group(2), (x, y, rot)):
+                src = src[:m.start()] + f"{m.group(1)}({fmt(x)}, {fmt(y)}, {rot:g})" + src[m.end():]
+                n += 1
+    for ref, (side, _) in g.EDGE.items():
+        if ref in pos and pos[ref][3]:
+            v = pos[ref][0] if side == "T" else pos[ref][1]
+            m = re.search(rf'\("{ref}",\s*([-\d.]+)\)', src)
+            if m and not same(m.group(1), (v,)):
+                src = src[:m.start()] + f'("{ref}", {fmt(v)})' + src[m.end():]
+                n += 1
+    return src, n
+
+
+def update_place(src, pos):
+    """Edit the PLACE lines in place, only where something changed: new numbers, commented out when off the
+    board, uncommented when on it. Spacing, blank lines and trailing comments are kept.
+    Returns (text, changed, placed, refs not found)."""
+    i, j = src.index(BEGIN), src.index(END)
+    body = src[i:j]
+    changed = placed = 0
+    missing = []
+    for ref, (x, y, rot, on_board) in pos.items():
+        if ref in g.EDGE or ref in g.BIG or ref.startswith("H16"):
+            continue
+        pat = re.compile(rf'^(?P<ind>[ \t]*)(?P<hash>#[ \t]*)?\("{ref}",(?P<nums>[^)]*)\),?(?P<rest>.*)$', re.M)
+        m = pat.search(body)
+        if not m:
+            missing.append(ref)
+            continue
+        placed += on_board
+        if not on_board and m["hash"]:
+            continue                                     # still parked: parking spots shift, leave the line alone
+        if on_board and not m["hash"] and same(m["nums"], (x, y, rot)):
+            continue                                     # already right: leave the line exactly as written
+        entry = f'("{ref}", {fmt(x)}, {fmt(y)}, {rot:g}),'
+        line = f"{m['ind']}{'' if on_board else '# '}{entry}{m['rest']}"
+        body = body[:m.start()] + line + body[m.end():]
+        changed += 1
+    return src[:i] + body + src[j:], changed, placed, missing
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--write", action="store_true", help="replace the PLACE block in gen_pcb.py")
+    ap.add_argument("--write", action="store_true",
+                    help="update gen_pcb.py in place: numbers in PLACE, BIG and EDGE_*, comment state of PLACE lines")
+    ap.add_argument("--rebuild", action="store_true",
+                    help="rewrite the whole PLACE block (needed after parts are added to the schematic; "
+                         "loses hand formatting in PLACE)")
     a = ap.parse_args()
-    text, placed, parked = block()
-    if not a.write:
+    text, placed, parked, pos = block()
+    if not (a.write or a.rebuild):
         print(text)
         return
     src = Path(g.__file__)
     s = src.read_text(encoding="utf-8")
-    i, j = s.index(BEGIN), s.index(END) + len(END)
-    src.write_text(s[:i] + text + s[j:], encoding="utf-8", newline="\n")
-    print(f"PLACE in {src.name}: {placed} placed, {parked} parked (commented out)")
+    if a.rebuild:
+        i, j = s.index(BEGIN), s.index(END) + len(END)
+        s = s[:i] + text + s[j:]
+        missing, changed = [], "all"
+    else:
+        s, changed, placed, missing = update_place(s, pos)
+    s, n = update_big_and_edges(s, pos)
+    src.write_text(s, encoding="utf-8", newline="\n")
+    print(f"{src.name}: {placed} parts placed by PLACE ({changed} PLACE lines changed), "
+          f"{n} BIG/EDGE entries changed")
+    if missing:
+        print("  not in PLACE (new parts? run with --rebuild):", " ".join(sorted(missing, key=ref_key)))
 
 
 if __name__ == "__main__":

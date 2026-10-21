@@ -12,19 +12,17 @@ Run with KiCad's own Python (it needs the pcbnew module):
   keeps working and the ratsnest shows. Parts not placed here are parked beside the board, grouped
   by sheet, for manual placement.
 
-All placement data is in the arrays at the top of this file:
-  EDGE_LEFT / EDGE_RIGHT / EDGE_TOP   connectors and switches on the board edges (spread automatically)
-  BIG                                 big parts (module, cans, sockets, headers), body centred on (bx, by)
-  SLOTS_FRONT                         panel-cable slots (panel front-view coordinates)
-  PLACE                               one list per schematic page: ("REF", bx, by, rotation)
-      * bx, by = footprint ORIGIN in bottom-view mm from the board corner (bx from the left/RF edge,
-        by down from the top edge); rotation = the orientation KiCad shows for the (bottom-side) part.
-      * Uncommented lines are placed; commented lines are parked beside the board.
-      * In KiCad the grid/aux origin is set to that corner, so with "relative to grid origin"
-        coordinates X reads -bx and Y reads by.
-      * dump_placement.py (KiCad's Python) reads the saved PCB and rewrites the PLACE block, so parts moved
-        in KiCad can be kept: `... python.exe boards/adsb-test/hardware/gen/dump_placement.py --write`.
-
+All placement data is in the arrays at the top of this file, all with ONE coordinate rule (see there):
+(x, y) = footprint origin in mm from the board's top-right corner as seen in KiCad's normal view
+(x grows to the left, y down), rot = the orientation KiCad shows.
+  EDGE_LEFT / EDGE_RIGHT / EDGE_TOP   edge connectors and switches: position along the edge only
+                                      (snapped to the edge and turned to face out automatically)
+  BIG                                 big parts (module, cans, sockets, headers): "REF": (x, y, rot)
+  SLOTS_FRONT                         panel-cable slots (panel front-view coordinates, measured)
+  PLACE                               one list per schematic page: ("REF", x, y, rot);
+                                      uncommented lines are placed, commented lines parked beside the board
+dump_placement.py (KiCad's Python) reads the saved PCB and refreshes every number (PLACE, BIG, EDGE_*), so
+parts moved in KiCad are kept: `... python.exe boards/adsb-test/hardware/gen/dump_placement.py --write`.
 Re-running OVERWRITES ADSB_Test.kicad_pcb. Before re-running after moving parts in KiCad, run
 dump_placement.py --write so the moves are kept.
 """
@@ -52,35 +50,50 @@ PAPER = ("A2", 594.0, 420.0)        # page: board centred, parked parts in colum
 OX, OY = (PAPER[1] - W) / 2, (PAPER[2] - H) / 2   # board top-left corner on the KiCad page
 HOLE_IN = 4.0                       # corner hole centres, mm in from both edges
 
-# ================================================================ PLACEMENT ARRAYS (bottom view, mm)
-# Edge parts: (ref, size along the edge). Spread evenly between the corner-hole keep-outs (same as floorplan.py).
-# Bottom view: RF edge on the left, digital edge on the right (nearer the module) since 2026-10-20.
-EDGE_LEFT = [("J1403", 50), ("J1201", 25)]
-EDGE_RIGHT = [("J901", 10.6), ("J1001", 10.6), ("J1101", 17.2), ("J801", 19.0), ("J1501", 13.7), ("SW401", 11.4),
-              ("SW603", 9.6)]
-# Top long edge: (ref, bottom-view x of the part's centre)
-EDGE_TOP = [("J602", PX0 + 88.0)]     # Wi-Fi RP-SMA, away from the RF-edge SMAs
+# ================================================================ PLACEMENT ARRAYS
+# ONE coordinate rule for every array below (and the PLACE lists):
+#   x, y   = the footprint ORIGIN (the position KiCad shows in the part's Properties), in mm from the board's
+#            TOP-RIGHT corner as seen in KiCad's normal (top) view; x grows to the LEFT, y grows DOWN.
+#            (= looking at the component side: from the top-left, x to the right. RF edge at x = 0,
+#            digital edge at x = 204.9.)  KiCad's grid origin is put on that corner, so with
+#            "relative to grid origin" KiCad shows X = -x, Y = y.
+#   rot    = the orientation KiCad shows for the part (all parts are on the bottom side).
+# dump_placement.py --write refreshes every number below from the saved PCB (moves made in KiCad).
 
-# interior big parts: ref -> (bx, by, mouth) ; mouth = direction the connector opening faces (bottom view).
-# Parts tied to the panel (module, sockets) are given from the panel corner (PX0, PY0); parts tied to an edge
-# keep their distance from that edge.
+# Edge parts: x (or y for the top edge) is snapped to the edge automatically and the part is turned to face
+# out, so only the position ALONG the edge is given: ("REF", y) on the left/right edges, ("REF", x) on the top.
+EDGE_LEFT = [("J1403", 33.0), ("J1201", 117.0)]                       # RF edge (x = 0)
+EDGE_RIGHT = [("J901", 13.3), ("J1001", 29.22), ("J1101", 48.43), ("J801", 76.29), ("J1501", 93.52),
+              ("SW401", 113.38), ("SW603", 124.93)]                   # digital edge (x = 204.9)
+EDGE_TOP = [("J602", 108.0)]          # Wi-Fi RP-SMA, away from the RF-edge SMAs
+
+# Big parts: "REF": (x, y, rot), same rule as PLACE. A part and its can (U1401/SH1401, U1201/SH1201) have
+# different origins: move both together.
 BIG = {
-    "U601": (PX0 + 106.3, PY0 + 38.0, None),   # OSPTEK ESP32-P4C5 module, between the LCD and touch sockets (short MIPI)
-    "U1401": (22.9, 32.0, None),            # m1421, under can SH1401 (RF column, left edge)
-    "SH1401": (22.9, 32.0, None),
-    "U1201": (20.9, H - 22.0, None),        # MAX-M10S, under can SH1201
-    "SH1201": (20.9, H - 22.0, None),
-    "J1601": (PX0 + 87.0, H - 12.0, "rot90"),  # LA5016 2x20 header, horizontal along the bottom edge
-    "J1301": (0.0, None, "+y"),             # LCD 30-pin FPC, opening towards its slot (x, y set from the slot below)
-    "J1302": (0.0, None, "+y"),             # touch 6-pin FPC, opening towards its slot (x, y set from the slot below)
-    "J301": (PX0 + 106.0, 9.0, None),       # battery connector, charger zone (outside the battery footprint)
-    "SW601": (W - 39.0, 12.0, None),        # BOOT  (top band near the digital edge, clear of the battery)
-    "SW602": (W - 28.0, 12.0, None),        # RESET
-    "SW1801": (PX0 + 54.0, PY0 + 37.0, None),  # RP2040 BOOTSEL (Dev zone)
-    "J601": (PX0 + 88.0, 10.5, None),       # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
-    "J1401": (30.9, 56.0, None),            # m1421 JTAG (below the m1421 can)
-    "J1402": (40.9, 30.0, None),            # ADSBee Dev Kit header (1x6, vertical, next to the m1421)
-    "J1801": (PX0 + 37.0, PY0 + 48.0, None),   # RP2040 GPIO header (DNP)
+    "U601":   (126.81, 58.0, 180),    # OSPTEK ESP32-P4C5 module, between the LCD and touch sockets (short MIPI)
+
+    "U1401":  (30.0, 34.75, 0),       # m1421, under can SH1401 (RF column, left edge)
+    "SH1401": (30.0, 35.0, 180),
+
+    "U1201":  (25.0, 117.96, 0),      # MAX-M10S, under can SH1201
+    "SH1201": (25.0, 118.0, 180),
+
+    "J1601":  (131.13, 127.25, 270),  # LA5016 2x20 header, horizontal along the bottom edge
+
+    "J1301":  (99.9, 67.97, 180),     # LCD 30-pin FPC: in line with its slot (SLOTS_FRONT), opening towards it
+    "J1302":  (146.9, 60.97, 180),    # touch 6-pin FPC: in line with its slot, opening towards it
+
+    "J301":   (123.5, 8.47, 180),     # battery connector, charger zone (outside the battery footprint)
+
+    "SW601":  (162.65, 9.75, 180),    # BOOT  (top band near the digital edge, clear of the battery)
+    "SW602":  (173.65, 9.75, 180),    # RESET
+    "J601":   (108.38, 10.5, 180),    # Wi-Fi U.FL (jumper from the module IPEX), just behind J602
+
+    "J1401":  (15.0, 56.0, 180),      # m1421 JTAG (below the m1421 can)
+    "J1402":  (25.0, 53.65, 180),     # ADSBee Dev Kit header (1x6, vertical, next to the m1421)
+
+    "J1801":  (36.28, 86.51, 0),      # RP2040 GPIO header (DNP)
+    "SW1801": (3.75, 77.75, 180),     # RP2040 BOOTSEL (Dev zone)
 }
 # Panel-cable slots, measured on the Waveshare ESP32-P4-WIFI6-Touch-LCD-7B (2026-10-20), back view, from its
 # bottom edge and its USB side:
@@ -93,7 +106,6 @@ BIG = {
 WS_W, WS_EDGE = 164.0, 1.58
 SLOTS_FRONT = [("LCD FPC slot", WS_W - 90.0, WS_W - 68.0, 41.0 + WS_EDGE, 3.0),
                ("Touch FPC slot", WS_W - 130.0, WS_W - 122.0, 48.0 + WS_EDGE, 3.0)]
-SOCKET_GAP = 7.0                       # slot centre -> socket centre, further in (towards the panel's middle)
 
 # Zone packer (floorplan.py zones): off now that PLACE lists every part. Set True to pack the key parts that are
 # still commented out in PLACE into their zones (handy to seed a new layout, then dump_placement.py --write).
@@ -101,7 +113,7 @@ AUTO_ZONES = False
 AUTO_PREFIX = ("U", "J", "SW", "Y", "BT")   # + LEDs
 SPACE = 1.25                         # mm kept clear round each courtyard (2.5 mm between parts: room for the iron)
 
-# One list per schematic page: ("REF", bx, by, rotation). Uncommented = placed, commented = parked.
+# One list per schematic page: ("REF", x, y, rot), same rule as above. Uncommented = placed, commented = parked.
 # Parts placed by EDGE_* / BIG and the corner holes are listed as comments for reference only.
 # >>> PLACE (rewritten by dump_placement.py --write; edit freely, keep the markers)
 PLACE = {
@@ -290,9 +302,9 @@ PLACE = {
     ],
     # ------------------------------------------------ page 8: Ethernet
     "Ethernet": [
-        ("U801", 176.48, 59.42, 180),        # LAN8720A
-        # ("FB801", -69.45, 4.43, 180),      # 600R@100MHz
-        ("Y801", 166.01, 62.90, 180),        # 25MHz
+        ("U801",  175.0, 70.0, 180),        # LAN8720A
+        ("FB801", 175.0, 64.0, 180),        # 600R@100MHz
+        ("Y801",  165.0, 70.0,  90),        # 25MHz
         # J801: placed by EDGE_RIGHT  (HR911105A)
         # ("R801", -74.78, 4.53, 180),       # 12.1k 1%
         # ("R802", -80.03, 4.53, 180),       # 10k
@@ -394,17 +406,19 @@ PLACE = {
     # ------------------------------------------------ page 12: GPS
     "GPS": [
         # U1201: placed by BIG  (MAX-M10S)
-        # ("D1201", -35.71, 26.13, 180),     # ESD7351XV2T1G
-        ("D1202", 36.86, 72.25, 180),        # PPS green
-        # ("L1201", -40.49, 26.28, 180),     # 47nH
+        ("D1202",   5.0, 105.0, 180),        # PPS green
+
+        ("D1201",  12.0, 115.0,  90),        # ESD7351XV2T1G
+        ("L1201",   7.5, 120.0,  90),        # 47nH
+        ("R1201",  12.0, 120.0, 270),        # 10R
+        ("C1204",   7.5, 127.0, 270),        # 10nF
+
         # J1201: placed by EDGE_LEFT  (SMA GNSS (active antenna))
         # SH1201: placed by BIG  (RF can frame (DNP))
-        # ("R1201", -45.82, 26.38, 180),     # 10R
         # ("R1202", -51.07, 26.38, 180),     # 1k
         # ("C1201", -14.50, 26.58, 180),     # 10uF
         # ("C1202", -20.41, 26.41, 180),     # 100nF
         # ("C1203", -25.72, 26.41, 180),     # 100nF
-        # ("C1204", -31.03, 26.41, 180),     # 10nF
         # ("TP1201", -55.72, 26.68, 180),    # GPS_EXTINT
         # ("TP1202", -59.77, 26.68, 180),    # GPS_SAFEBOOT
         # ("TP1203", -63.82, 26.68, 180),    # GPS_RESET_N
@@ -481,13 +495,13 @@ PLACE = {
     # ------------------------------------------------ page 14: M1421
     "M1421": [
         # U1401: placed by BIG  (ADSBee m1421)
-        ("U1402", 36.31, 3.09, 180),         # 74LVC1G97 (AND)
-        ("U1403", 28.83, 3.09, 180),         # 74LVC1G32
-        ("U1404", 21.33, 3.09, 180),         # 74LVC1G07
-        ("U1405", 14.46, 3.04, 180),         # SCN-2-11+
-        ("D1401", 36.86, 8.75, 180),         # RED 1090
-        ("D1402", 30.36, 8.75, 180),         # GREEN UAT
-        # ("D1403", -23.89, 40.68, 180),     # ESD7351XV2T1G
+        ("U1402", 55.0, 25.0, 180),         # 74LVC1G97 (AND)
+        ("U1403", 55.0, 32.0, 180),         # 74LVC1G32
+        ("U1404", 55.0, 39.0, 180),         # 74LVC1G07
+        ("U1405", 11.0, 32.0, 270),         # SCN-2-11+
+        ("D1401",  5.0, 20.0, 180),         # RED 1090
+        ("D1402",  5.0, 15.0, 180),         # GREEN UAT
+        ("D1403",  7.5, 32.0,  90),         # ESD7351XV2T1G
         # J1401: placed by BIG  (m1421 JTAG (J-Link))
         # J1402: placed by BIG  (ADSBee 1421 Dev Kit)
         # J1403: placed by EDGE_LEFT  (SMA 1090/978)
@@ -613,15 +627,15 @@ PLACE = {
     ],
     # ------------------------------------------------ page 18: Dev m1421 Programmer
     "Dev m1421 Programmer": [
-        ("U1801", 47.68, 62.82, 180),        # RP2040
-        ("U1802", 83.06, 65.19, 180),        # W25Q16JVSS
-        ("U1803", 66.83, 71.09, 180),        # 74LVC1G125
-        ("U1804", 49.83, 72.09, 180),        # 74LVC1G125
-        ("U1805", 83.83, 72.59, 180),        # 74LVC1G125
-        ("U1806", 66.83, 77.59, 180),        # 74LVC1G125
-        # ("D1801", -19.68, -45.78, 180),    # 1N4148W
-        ("D1802", 85.26, 56.04, 180),        # WS2812B
-        ("Y1801", 71.11, 64.40, 180),        # 12MHz
+        ("U1801", 50.0,  70.0,  90),        # RP2040
+        ("U1802", 50.0,  83.0,   0),        # W25Q16JVSS
+        ("U1803", 42.0,  60.0,   0),        # 74LVC1G125
+        ("U1804", 51.0,  60.0,   0),        # 74LVC1G125
+        ("U1805", 58.0,  60.0,   0),        # 74LVC1G125
+        ("U1806", 65.0,  60.0,   0),        # 74LVC1G125
+        ("D1801",  5.0,  70.0, 180),        # 1N4148W
+        ("D1802",  5.0,  60.0, 180),        # WS2812B
+        ("Y1801", 60.0,  75.0,  90),        # 12MHz
         # J1801: placed by BIG  (RP2040 GPIO (pins DNP))
         ("J1802", 73.94, 71.06, 180),        # RP2040 SWD
         # SW1801: placed by BIG  (BOOTSEL (programmer))
@@ -663,26 +677,9 @@ PLACE = {
 PANEL_BOTTOM = (H + PH) / 2            # bottom-view y of the panel's bottom edge
 # (name, bottom-view x centre, length, bottom-view y centre, height)
 SLOTS = [(n, W - (W - PW) / 2 - (a + b) / 2, b - a, PANEL_BOTTOM - (up + h / 2), h) for n, a, b, up, h in SLOTS_FRONT]
-for _r, (_n, _x, _l, _y, _h) in zip(("J1301", "J1302"), SLOTS):   # sockets just inside their slots, facing them
-    BIG[_r] = (_x, _y - SOCKET_GAP, BIG[_r][2])
-
-
-def edge_positions():
-    """Edge parts evenly spaced between the corner-hole keep-outs: ref -> (side, position along the edge)."""
-    out = {}
-    for side, items in (("L", EDGE_LEFT), ("R", EDGE_RIGHT)):
-        lo, hi = HOLE_IN + 4.0, H - HOLE_IN - 4.0
-        gap = (hi - lo - sum(a for _, a in items)) / (len(items) - 1)
-        y = lo
-        for ref, along in items:
-            out[ref] = (side, y + along / 2)
-            y += along + gap
-    for ref, bx in EDGE_TOP:
-        out[ref] = ("T", bx)
-    return out
-
-
-EDGE = edge_positions()
+# edge parts: ref -> (side, origin position along the edge)
+EDGE = {**{r: ("L", v) for r, v in EDGE_LEFT}, **{r: ("R", v) for r, v in EDGE_RIGHT},
+        **{r: ("T", v) for r, v in EDGE_TOP}}
 PLACED_BY_PAGE = {e[0]: tuple(e[1:]) for page in PLACE.values() for e in page}
 
 
@@ -789,32 +786,24 @@ def front_box(fp):
     return body_box(fp)
 
 
-def place_on_edge(fp, side, by):
-    """side 'L' = bottom-view left edge (RF; top-view right), 'R' = bottom-view right edge (digital), 'T' = top long edge
-    (by is then the bottom-view x)."""
+def place_on_edge(fp, side, along):
+    """Turn the part to face out of its edge, snap it to the edge ('PCB Edge' marker, edge-mount pads or body front)
+    and put its ORIGIN at `along`: y for 'L' (RF edge, x = 0) and 'R' (digital edge), x for 'T' (top edge)."""
     if side == "T":
         turn_to(fp, (0, -1))
         em = edge_marker(fp)
-        b = front_box(fp)
-        front = em[1] if em else b.GetTop()
-        fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x, fp.GetPosition().y + int(mm(OY) - front)))
-        b = body_box(fp)
-        fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x + int(top(by, 0).x - b.GetCenter().x), fp.GetPosition().y))
+        front = em[1] if em else front_box(fp).GetTop()
+        fp.SetPosition(pcbnew.VECTOR2I(top(along, 0).x, fp.GetPosition().y + int(mm(OY) - front)))
         return
-    want = (1, 0) if side == "L" else (-1, 0)
-    turn_to(fp, want)
+    turn_to(fp, (1, 0) if side == "L" else (-1, 0))
     target_x = mm(OX + W) if side == "L" else mm(OX)
     em = edge_marker(fp)
-    pos = fp.GetPosition()
-    if em:                                   # put the marker line on the board edge
-        fp.SetPosition(pcbnew.VECTOR2I(pos.x + int(target_x - em[0]), mm(OY + by)))
+    if em:                                   # the marker line on the board edge
+        front = em[0]
     else:                                    # body (or edge-mount pads) flush with the edge
         b = front_box(fp)
         front = b.GetRight() if side == "L" else b.GetLeft()
-        fp.SetPosition(pcbnew.VECTOR2I(pos.x + int(target_x - front), mm(OY + by)))
-    # recentre along the edge on the body, not the origin
-    b = body_box(fp)
-    fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x, fp.GetPosition().y + int(mm(OY + by) - b.GetCenter().y)))
+    fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x + int(target_x - front), mm(OY + along)))
 
 
 def outline(board):
@@ -1006,21 +995,10 @@ def main():
             side, by = EDGE[ref]
             place_on_edge(fp, side, by)
             placed.append(ref)
-        elif ref in BIG:
-            bx, by, mouth = BIG[ref]
-            if mouth == "rot90":
-                fp.SetOrientationDegrees(fp.GetOrientationDegrees() + 90)
-            elif mouth:
-                turn_to(fp, {"+y": (0, 1), "-y": (0, -1), "+x": (-1, 0), "-x": (1, 0)}[mouth])
-            fp.SetPosition(top(bx, by))
-            b = body_box(fp)                                             # centre the body on the target
-            fp.SetPosition(pcbnew.VECTOR2I(fp.GetPosition().x + int(top(bx, by).x - b.GetCenter().x),
-                                           fp.GetPosition().y + int(top(bx, by).y - b.GetCenter().y)))
-            placed.append(ref)
-        elif ref in PLACED_BY_PAGE:                                      # per-page PLACE arrays: origin + rotation
-            bx, by, rot = PLACED_BY_PAGE[ref]
+        elif ref in BIG or ref in PLACED_BY_PAGE:                        # BIG / PLACE: origin (x, y) + rotation
+            x, y, rot = BIG[ref] if ref in BIG else PLACED_BY_PAGE[ref]
             fp.SetOrientationDegrees(rot)
-            fp.SetPosition(top(bx, by))
+            fp.SetPosition(top(x, y))
             placed.append(ref)
         else:
             parked[c["sheet"]].append(fp)
