@@ -114,3 +114,5 @@ SW_SPDT,POWER (slide),,C&K,OS102011MA1QN1,DigiKey,CKN9559-ND,0.75,78k,,switches 
 Battery_Cell,CR1220 (optional),,Panasonic,CR-1220/VCN,DigiKey,,,,,DNP: CR1220 with PCB pins (any CR1220 tab cell)
 Micro_SD_Card_Det2,"microSD (push-pull, detect)",,Molex,1040310811,DigiKey,WM6357CT-ND,2.21,40k,,normally-open detect switch
 Conn_02x14_Odd_Even,RP2040 GPIO (pins DNP),,Sullins,PRPC040DAAN-RC,DigiKey,,1.50,,,"DNP: 2 x 40 breakaway header, cut to 2 x 14 if pins are wanted"
+Conn_02x10_Odd_Even,FT2232H ch A port (pins DNP),,Sullins,PRPC040DAAN-RC,DigiKey,,1.50,,,"DNP: 2 x 40 breakaway header, cut to 2 x 10 if pins are wanted"
+Conn_02x10_Odd_Even,FT2232H ch B port (pins DNP),,Sullins,PRPC040DAAN-RC,DigiKey,,1.50,,,"DNP: 2 x 40 breakaway header, cut to 2 x 10 if pins are wanted"

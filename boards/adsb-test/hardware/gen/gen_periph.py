@@ -650,8 +650,29 @@ s.connect(ft, "61", "FT_EEDATA")
 for p, n in {"16": "FT_A_TXD", "17": "FT_A_RXD", "18": "FT_A_RTS", "21": "FT_A_DTR",
              "38": "FT_B_TXD", "39": "FT_B_RXD", "40": "FT_B_RTS", "43": "FT_B_DTR"}.items():
     s.connect(ft, p, n)
-for p in ("19", "22", "23", "24", "26", "27", "28", "29", "30", "32", "33", "34", "36", "41", "44", "45", "46",
-          "48", "52", "53", "54", "55", "57", "58", "59", "60"):
+# The rest of both 16-bit ports (UART handshakes CTS/DSR/DCD/RI and the xCBUS GPIO) to one DNP 2x10 header per
+# channel: spare signals, or the whole channel for MPSSE (JTAG/SPI/I2C) if its console buffers are lifted.
+#   odd pins 1-15 = xDBUS0-7, even pins 2-16 = xCBUS0-7, 17 = 3V3_DEV, 18-20 = GND
+FT_PORTS = {"A": (("16", "17", "18", "19", "21", "22", "23", "24"), ("26", "27", "28", "29", "30", "32", "33", "34")),
+            "B": (("38", "39", "40", "41", "43", "44", "45", "46"), ("48", "52", "53", "54", "55", "57", "58", "59"))}
+DBUS_NAMES = ("TXD", "RXD", "RTS", "CTS", "DTR", "DSR", "DCD", "RI")
+for k, (ch, (dbus, cbus)) in enumerate(FT_PORTS.items()):
+    hdr = s.add("Connector_Generic:Conn_02x10_Odd_Even", f"J{1701 + k}", f"FT2232H ch {ch} port (pins DNP)",
+                (190.5, 57.15 + k * 76.2), dnp=True, footprint="Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Vertical",
+                props={"Pinout": f"odd 1-15 = {ch}DBUS0-7 ({'/'.join(DBUS_NAMES)}), even 2-16 = {ch}CBUS0-7, "
+                                 "17 = 3V3_DEV, 18-20 = GND",
+                       "Note": "Holes are test points; fit a 2x10 header only if needed"})
+    for i, (pd, pc) in enumerate(zip(dbus, cbus)):
+        dn, cn = f"FT_{ch}_{DBUS_NAMES[i]}", f"FT_{ch}CBUS{i}"
+        s.locals |= {dn, cn}
+        if DBUS_NAMES[i] not in ("TXD", "RXD", "RTS", "DTR"):     # the spare handshakes: only on the header
+            s.connect(ft, pd, dn)
+        s.connect(ft, pc, cn)
+        s.connect(hdr, str(1 + 2 * i), dn, kind="label")
+        s.connect(hdr, str(2 + 2 * i), cn, kind="label")
+    s.connect(hdr, "17", "3V3_DEV")
+    s.connect(hdr, ["18", "19", "20"], "GND")
+for p in ("36", "60"):                                         # ~SUSPEND, ~PWREN: not used
     s.nc(ft, p)
 y = s.add("Device:Crystal", "Y1701", "12MHz", (38.1, 38.1), footprint=XTAL5032)
 s.connect(y, "1", "FT_XI")
@@ -704,7 +725,8 @@ s.text("DEV PORT, page 2 of 3: FT2232HL on hub port DN3. Channel A = P4 UART0 (c
        "DTR/RTS -> MMBT3904 pairs = esptool auto-reset on P4_EN/BOOT (GPIO35) and C5_EN/C5_BOOT. C5_EN reaches the C5\n"
        "CHIP_PU through R606 (330R) onto module pad 82 (P4 GPIO54 net): P4 firmware drives GPIO54 open-drain.\n"
        "No back-powering: Dev->target TX through open-drain 74LVC1G07 (target pull-ups R1707/R1708),\n"
-       "target->Dev TX through 74LVC1G125 (Ioff inputs). 93LC56B: optional FTDI config EEPROM.",
+       "target->Dev TX through 74LVC1G125 (Ioff inputs). 93LC56B: optional FTDI config EEPROM.\n"
+       "J1701/J1702 (DNP 2x10): all 16 pins of channel A/B (xDBUS0-7 odd, xCBUS0-7 even, 3V3_DEV, GND).",
        (25.4, 266.7))
 done(s, "dev_uart.kicad_sch", "ADSB_Test - Dev UARTs")
 
