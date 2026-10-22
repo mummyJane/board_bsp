@@ -8,6 +8,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Fixed
+- ADSB_Test current shunts resized for the PAC1954's 100 mV range (~40-75 mV at each rail's expected peak; several light rails only gave 2-20 mV): RS301 battery and RS302 VSYS 10m -> 20m, RS401 3V3 total 10m -> 30m, RS402 5V_SDR 20m -> 50m, RS405 3V3_SD 100m -> 330m, RS406 3V3_ETH 100m -> 1R, RS408 m1421 1R -> 2.2R, RS409 3V3_PERIPH 100m -> 2.2R. Full-scale currents noted on the Power Monitor sheet; BOM lines updated (30m Panasonic ERJ-8BW 1 W, 330m / 2.2R Yageo).
+
 ### Added
 - ADSB_Test Dev UARTs: J1701/J1702 (2x10, not fitted) bring out all 16 pins of FT2232H channel A/B (xDBUS0-7 incl. the unused CTS/DSR/DCD/RI handshakes, xCBUS0-7 GPIO, 3V3_DEV, GND), for spare signals or MPSSE (JTAG/SPI/I2C) use of a channel. BOM lines (DNP), parked on the PCB (commented in `PLACE`).
 

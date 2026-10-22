@@ -255,8 +255,8 @@ cap(s, "C321", "1uF", (254.0, 241.3), "VBACKUP", "GND")
 testpoint(s, "TP305", "VBACKUP", (266.7, 226.06))
 s.pwr_flag("VBACKUP", (279.4, 226.06))
 
-shunt(s, "RS301", "10m", (254.0, 101.6), "VBAT_CHG", "BAT_PACK", "PM1_CH2_P", "PM1_CH2_N")
-shunt(s, "RS302", "10m", (304.8, 101.6), "VSYS_CHG", "VSYS", "PM1_CH3_P", "PM1_CH3_N")
+shunt(s, "RS301", "20m", (254.0, 101.6), "VBAT_CHG", "BAT_PACK", "PM1_CH2_P", "PM1_CH2_N")
+shunt(s, "RS302", "20m", (304.8, 101.6), "VSYS_CHG", "VSYS", "PM1_CH3_P", "PM1_CH3_N")
 testpoint(s, "TP302", "BAT_PACK", (241.3, 190.5))
 testpoint(s, "TP303", "VSYS", (254.0, 190.5))
 testpoint(s, "TP304", "VBUS_CHG", (266.7, 190.5))
@@ -336,16 +336,16 @@ def switch(s, ref, at, vin, vout, en):
 
 
 # 3V3 total (PM3 ch4), then the branches. Each shunt doubles as the staged bring-up link.
-shunt(s, "RS401", "10m", (152.4, 30.48), "3V3_BUCK", "3V3", "PM3_CH4_P", "PM3_CH4_N")
+shunt(s, "RS401", "30m", (152.4, 30.48), "3V3_BUCK", "3V3", "PM3_CH4_P", "PM3_CH4_N")
 rails = [  # ref, value, src, mid/load, pm channel, switch enable or None, final rail
-    ("RS402", "20m", "5V", "5V_SDR", "PM1_CH4", None, None),
+    ("RS402", "50m", "5V", "5V_SDR", "PM1_CH4", None, None),
     ("RS403", "50m", "5V", "5V_LCD_SH", "PM2_CH1", "EXP_EN_LCD", "5V_LCD"),
     ("RS404", "50m", "3V3", "3V3_MCU", "PM2_CH2", None, None),      # OSPTEK ESP32-P4C5 module (3.3 V, ~1 A)
-    ("RS405", "100m", "3V3", "3V3_SD", "PM2_CH3", None, None),      # microSD card supply
-    ("RS406", "100m", "3V3", "3V3_ETH_SH", "PM2_CH4", "EXP_EN_ETH", "3V3_ETH"),
+    ("RS405", "330m", "3V3", "3V3_SD", "PM2_CH3", None, None),      # microSD card supply
+    ("RS406", "1R", "3V3", "3V3_ETH_SH", "PM2_CH4", "EXP_EN_ETH", "3V3_ETH"),
     ("RS407", "1R", "3V3", "3V3_GPS_SH", "PM3_CH1", "EXP_EN_GPS", "3V3_GPS"),
-    ("RS408", "1R", "3V3", "3V3_M1421_SH", "PM3_CH2", "EXP_EN_M1421", "3V3_M1421"),
-    ("RS409", "100m", "3V3", "3V3_PERIPH", "PM3_CH3", None, None),
+    ("RS408", "2.2R", "3V3", "3V3_M1421_SH", "PM3_CH2", "EXP_EN_M1421", "3V3_M1421"),
+    ("RS409", "2.2R", "3V3", "3V3_PERIPH", "PM3_CH3", None, None),
 ]
 plain = [r for r in rails if not r[5]]
 switched = [r for r in rails if r[5]]
@@ -397,8 +397,9 @@ for n in ("1", "2", "3"):
     res(s, f"R50{n}", addr[n], (x + 25.4, y + 38.1), f"PM{n}_ADDR", "GND")
     cap(s, f"C50{n}", "100nF", (x, y - 50.8), "3V3_PERIPH", "GND")
 res(s, "R504", "10k", (304.8, 50.8), "3V3_PERIPH", "PM_ALERT")
-s.text("PM1: CH1 VBUS_USER, CH2 VBAT (bidirectional), CH3 VSYS, CH4 5V_SDR\n"
-       "PM2: CH1 5V_LCD, CH2 3V3_MCU (P4+C5 module), CH3 3V3_SD, CH4 3V3_ETH\n"
-       "PM3: CH1 3V3_GPS, CH2 3V3_M1421, CH3 3V3_PERIPH, CH4 3V3 total\n"
+s.text("PM1: CH1 VBUS_USER 20m (5 A FS), CH2 VBAT 20m (+-5 A, bidirectional), CH3 VSYS 20m (5 A), CH4 5V_SDR 50m (2 A)\n"
+       "PM2: CH1 5V_LCD 50m (2 A), CH2 3V3_MCU 50m (2 A), CH3 3V3_SD 330m (300 mA), CH4 3V3_ETH 1R (100 mA)\n"
+       "PM3: CH1 3V3_GPS 1R (100 mA), CH2 3V3_M1421 2.2R (45 mA), CH3 3V3_PERIPH 2.2R (45 mA), CH4 3V3 total 30m (3.3 A)\n"
+       "Full scale (FS) = 100 mV / shunt; each sized for ~40-75 mV at the rail's expected peak.\n"
        "Sense lines: Kelvin from each shunt (pins 2/3), routed as pairs.", (25.4, 190.5))
 finish(s, notes, "power_monitor.kicad_sch", "ADSB_Test - Power Monitor")
