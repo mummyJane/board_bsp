@@ -14,6 +14,9 @@ project uses [Semantic Versioning](https://semver.org/) (see
 - ADSB_Test current shunts resized for the PAC1954's 100 mV range (~40-75 mV at each rail's expected peak; several light rails only gave 2-20 mV): RS301 battery and RS302 VSYS 10m -> 20m, RS401 3V3 total 10m -> 30m, RS402 5V_SDR 20m -> 50m, RS405 3V3_SD 100m -> 330m, RS406 3V3_ETH 100m -> 1R, RS408 m1421 1R -> 2.2R, RS409 3V3_PERIPH 100m -> 2.2R. Full-scale currents noted on the Power Monitor sheet; BOM lines updated (30m Panasonic ERJ-8BW 1 W, 330m / 2.2R Yageo).
 
 ### Added
+- ADSB_Test copper set-up: In2.Cu solid ground plane (layer type power, so Freerouting leaves it alone), ground fills on B.Cu/In1.Cu/F.Cu (0.2 mm clearance = 50R CPWG gap, thermal spokes for hand soldering), 290 ground vias beside the small ground pads (`gen/copper.py`, group AUTO_GND_VIAS). All ground pads connected; DRC: no copper errors.
+- Net classes PWR_HI (0.8 mm: charger, VSYS, 5V, 3V3_BUCK, switch nodes; hand-routed), PWR (0.3 mm, autorouted) and GND (fills only); DRU rule allowing one thermal spoke on the boxed-in ground pads of J901/J1001/U1101/U1401.
+- `gen_pcb.py` keeps routing across a rebuild (tracks, vias, hand-drawn zones, by net name); `--keep-locked`, `--clear-routing`. Routing workflow in `hardware/gen/README.md`.
 - ADSB_Test Dev UARTs: J1701/J1702 (2x10, not fitted) bring out all 16 pins of FT2232H channel A/B (xDBUS0-7 incl. the unused CTS/DSR/DCD/RI handshakes, xCBUS0-7 GPIO, 3V3_DEV, GND), for spare signals or MPSSE (JTAG/SPI/I2C) use of a channel. BOM lines (DNP), parked on the PCB (commented in `PLACE`).
 
 ### Changed

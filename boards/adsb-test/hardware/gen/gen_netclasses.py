@@ -32,8 +32,21 @@ CLASSES = [
     nc("MIPI_100R", 0.18, 0.15, 0.18, 0.15, "rgb(170, 0, 170)", 2),    # MIPI-DSI, 100 ohm diff (W 0.18 / S 0.15)
     nc("ETH_100R", 0.18, 0.15, 0.18, 0.15, "rgb(210, 105, 0)", 3),     # Ethernet MDI, 100 ohm diff (W 0.18 / S 0.15)
     nc("RF_50R", 0.32, 0.20, colour="rgb(200, 0, 0)", prio=4),       # 50 ohm CPWG: W 0.32, gap 0.20 to ground pour
+    # Power. PWR_HI = charger / input / VSYS / buck outputs and every switch node: route BY HAND (short, wide,
+    # pours where it helps) and leave them out of Freerouting. 0.8 mm on 1 oz outer is ~2 A for a 10 C rise.
+    # PWR = the other rails, autorouted at 0.3 mm (still fits between 0.4 mm-pitch QFN pins); widen by hand where
+    # a branch carries more than ~0.5 A. GND = the plane/fills and the ground vias from gen_pcb.py: never routed.
+    nc("PWR_HI", 0.8, 0.2, colour="rgb(220, 0, 0)", prio=5),
+    nc("PWR", 0.3, 0.15, colour="rgb(230, 120, 0)", prio=6),
+    nc("GND", 0.3, 0.15, colour="rgb(0, 140, 0)", prio=7),
 ]
-PATTERNS = [
+PWR_HI = ["VBUS_USER_RAW", "VBUS_USER", "VBUS_CHG", "*CHG_PMID", "*CHG_SW1", "*CHG_SW2", "*VSYS_CHG", "*VBAT_CHG",
+          "BAT_PACK", "VSYS", "5V", "3V3_BUCK", "*B5V_SW", "*B3V3_SW", "*AVDD_SW", "*BL_SW"]
+PWR = ["3V3", "3V3_DEV", "3V3_ETH", "3V3_GPS", "3V3_M1421", "3V3_MCU", "3V3_PERIPH", "3V3_SD", "*/3V3_*_SH",
+       "5V_LCD", "5V_SDR", "*/5V_LCD_SH", "VBUS_DEV", "VBUS_HOST", "VBACKUP", "*VBACKUP_LDO",
+       "*ETH_AVDD", "*ETH_1V2", "*FT_1V8", "*VCC_1V8", "*/AVDD", "*/VGH", "*/VGL", "*/VCOM", "*SD_VDD",
+       "*CP_VBUS", "*LED_VDD"]
+PATTERNS = [("GND", "GND")] + [("PWR_HI", p) for p in PWR_HI] + [("PWR", p) for p in PWR] + [
     ("USB_90R", "*_D_P"), ("USB_90R", "*_D_N"),
     ("MIPI_100R", "*DSI_*"),
     ("ETH_100R", "*ETH_TX_?"), ("ETH_100R", "*ETH_RX_?"),
@@ -76,6 +89,17 @@ DRU = """(version 1)
 (rule "RF no vias"
   (condition "A.NetClass == 'RF_50R'")
   (constraint via_count (max 0)))
+
+# Power: no track narrower than the class width except where it has to neck down into a fine-pitch pad
+(rule "PWR_HI min width"
+  (condition "A.NetClass == 'PWR_HI'")
+  (constraint track_width (min 0.3mm) (opt 0.8mm)))
+
+# Ground pads boxed in by neighbours (USB-C end pins; plated holes in the exposed pads of U1101 / U1401): one
+# thermal spoke is enough, the pad is also tied to ground through the shell / its own exposed pad.
+(rule "Tight ground pads: one spoke"
+  (condition "A.memberOfFootprint('J901') || A.memberOfFootprint('J1001') || A.memberOfFootprint('U1101') || A.memberOfFootprint('U1401')")
+  (constraint min_resolved_spokes 1))
 
 # Edge-mount RP-SMA J602: Molex's pads run to the board edge; ours stop 0.25 mm short (PCBWay pull-back)
 (rule "J602 pads to the edge"

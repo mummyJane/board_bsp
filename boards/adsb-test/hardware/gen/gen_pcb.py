@@ -24,7 +24,9 @@ All placement data is in the arrays at the top of this file, all with ONE coordi
 dump_placement.py (KiCad's Python) reads the saved PCB and refreshes every number (PLACE, BIG, EDGE_*), so
 parts moved in KiCad are kept: `... python.exe boards/adsb-test/hardware/gen/dump_placement.py --write`.
 Re-running OVERWRITES ADSB_Test.kicad_pcb. Before re-running after moving parts in KiCad, run
-dump_placement.py --write so the moves are kept.
+dump_placement.py --write so the moves are kept. Tracks, vias and hand-drawn zones ARE kept (copied over by net
+name); options: --clear-routing (drop all routing), --keep-locked (keep only items locked in KiCad).
+Ground plane / fills / ground vias are regenerated every run (COPPER settings below; helpers in copper.py).
 """
 
 import collections
@@ -54,6 +56,19 @@ OX, OY = (PAPER[1] - W) / 2, (
     PAPER[2] - H
 ) / 2  # board top-left corner on the KiCad page
 HOLE_IN = 4.0  # corner hole centres, mm in from both edges
+
+# ================================================================ COPPER
+# Layers (parts on B.Cu): B.Cu = parts + critical routing, In2.Cu = SOLID GROUND (the reference plane right under
+# the component side: every 50/90/100 ohm trace runs on B.Cu over it; no tracks on it - it is a "power" layer, so
+# Freerouting leaves it alone), In1.Cu = power + slow signals, F.Cu = slow signals. Ground fill on the other three.
+PLANE = "In2.Cu"
+GND_FILLS = ("B.Cu", "In1.Cu", "F.Cu")
+ZONE_CLEARANCE = 0.2  # also the 50R CPWG gap to ground
+EDGE_PULLBACK = 0.5  # zones stop this far from the board edge
+GND_VIAS = True  # a via (0.6/0.3) beside every small SMD ground pad, joined by a 0.3 mm stub
+# Routing is KEPT across a rebuild: tracks, vias and hand-drawn zones in the old ADSB_Test.kicad_pcb are copied into
+# the new one by net name. Pass --clear-routing to drop them all, --keep-locked to keep only items locked in KiCad.
+# (The AUTO_* zones and the AUTO_GND_VIAS group are regenerated every run.)
 
 # ================================================================ PLACEMENT ARRAYS
 # ONE coordinate rule for every array below (and the PLACE lists):
@@ -1167,7 +1182,49 @@ def place_in_zones(board, fps_by_sheet, occupied):
     return left
 
 
+def board_keepouts():
+    """Slots and corner holes as (x0, y0, x1, y1) in page mm, for the ground-via search."""
+    out = []
+    for _, bx, length, by, height in SLOTS:
+        c = top(bx, by)
+        cx, cy = pcbnew.ToMM(c.x), pcbnew.ToMM(c.y)
+        out.append((cx - length / 2 - 0.5, cy - height / 2 - 0.5, cx + length / 2 + 0.5, cy + height / 2 + 0.5))
+    for hx, hy in ((HOLE_IN, HOLE_IN), (W - HOLE_IN, HOLE_IN), (HOLE_IN, H - HOLE_IN), (W - HOLE_IN, H - HOLE_IN)):
+        c = top(hx, hy)
+        cx, cy = pcbnew.ToMM(c.x), pcbnew.ToMM(c.y)
+        out.append((cx - 3.5, cy - 3.5, cx + 3.5, cy + 3.5))
+    return out
+
+
+def add_copper(board, nets, old, mode):
+    import copper
+
+    kept, dropped = copper.keep_routing(old, board, nets, mode)
+    board.SetLayerType(board.GetLayerID(PLANE), pcbnew.LT_POWER)
+    e = EDGE_PULLBACK
+    pts = [(OX + e, OY + e), (OX + W - e, OY + e), (OX + W - e, OY + H - e), (OX + e, OY + H - e)]
+    gnd = nets["GND"]
+    copper.add_zone(board, gnd, PLANE, "AUTO_GND_PLANE", pts, ZONE_CLEARANCE)
+    for layer in GND_FILLS:
+        copper.add_zone(board, gnd, layer, "AUTO_GND_" + layer.split(".")[0], pts, ZONE_CLEARANCE)
+    vias, no_room = 0, []
+    if GND_VIAS:
+        def inside(x, y):
+            return OX + 1.0 < x < OX + W - 1.0 and OY + 1.0 < y < OY + H - 1.0
+
+        vias, no_room = copper.gnd_vias(board, gnd, inside, board_keepouts())
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+    print(f"  copper: {kept} routing items kept ({mode}), {vias} ground vias, "
+          f"{len(no_room)} ground pads with no room for a via")
+    if no_room:
+        print("    no via room:", " ".join(no_room))
+    if dropped:
+        print("    routing dropped (net no longer exists):", " ".join(sorted(dropped)))
+
+
 def main():
+    mode = "none" if "--clear-routing" in sys.argv else "locked" if "--keep-locked" in sys.argv else "all"
+    old = pcbnew.LoadBoard(str(PCB)) if PCB.exists() and mode != "none" else None
     comps, pins = netlist()
     board = (
         pcbnew.CreateEmptyBoard()
@@ -1323,6 +1380,8 @@ def main():
         if y > PAPER[2] - 60 and col + 1 < len(columns):
             col += 1
             col_x, y = columns[col], 15.0
+
+    add_copper(board, nets, old, mode)
 
     # SaveBoard also rewrites ADSB_Test.kicad_pro from this fresh board, which has no net classes: keep the
     # project's net_settings (written by gen_netclasses.py) across the save

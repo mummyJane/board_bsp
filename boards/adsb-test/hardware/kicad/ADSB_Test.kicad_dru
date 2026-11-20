@@ -27,6 +27,17 @@
   (condition "A.NetClass == 'RF_50R'")
   (constraint via_count (max 0)))
 
+# Power: no track narrower than the class width except where it has to neck down into a fine-pitch pad
+(rule "PWR_HI min width"
+  (condition "A.NetClass == 'PWR_HI'")
+  (constraint track_width (min 0.3mm) (opt 0.8mm)))
+
+# Ground pads boxed in by neighbours (USB-C end pins; plated holes in the exposed pads of U1101 / U1401): one
+# thermal spoke is enough, the pad is also tied to ground through the shell / its own exposed pad.
+(rule "Tight ground pads: one spoke"
+  (condition "A.memberOfFootprint('J901') || A.memberOfFootprint('J1001') || A.memberOfFootprint('U1101') || A.memberOfFootprint('U1401')")
+  (constraint min_resolved_spokes 1))
+
 # Edge-mount RP-SMA J602: Molex's pads run to the board edge; ours stop 0.25 mm short (PCBWay pull-back)
 (rule "J602 pads to the edge"
   (condition "A.memberOfFootprint('J602') || B.memberOfFootprint('J602')")
