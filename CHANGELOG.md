@@ -10,6 +10,7 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ### Fixed
 - ADSB_Test placement (PLACE arrays in gen_pcb.py): 3 pad shorts and 4 courtyard overlaps removed (R1611/R1613, R1612/R1614, TP413/C1501, TP1203/SH1201, R433, R1001, R1807); 100 parts moved next to the pins they serve: buck/charger/boost input caps and inductors (most now 2-4 mm), crystals with XI facing the chip and their load caps round them, decoupling caps on their own supply pins (LAN8720A, USB2514B, RP2040, FT2232H, STUSB4500, CP2102N, eFuse, m1421, GPS, PAC1954s, buffers, module), m1421 test pads and other tight spots given room. DRC: no overlaps or shorts; schematic parity 0.
+- ADSB_Test placement, second pass round the switchers and crystals: 5 V buck L411 4 mm from SW (was 7.7), its input caps 2.2-3.5 mm, bootstrap cap 2.5-3.2 mm, output cap C416 2.7 mm from the inductor; charger 100 nF caps C308/C315 2.2-2.3 mm (were ~8), C309 REGN 2.2 mm, C318 SDRV 6.4 mm (was 17); crystal load caps 3.5 mm from their crystal pads. DRC: no overlaps or shorts; schematic parity 0.
 - ADSB_Test current shunts resized for the PAC1954's 100 mV range (~40-75 mV at each rail's expected peak; several light rails only gave 2-20 mV): RS301 battery and RS302 VSYS 10m -> 20m, RS401 3V3 total 10m -> 30m, RS402 5V_SDR 20m -> 50m, RS405 3V3_SD 100m -> 330m, RS406 3V3_ETH 100m -> 1R, RS408 m1421 1R -> 2.2R, RS409 3V3_PERIPH 100m -> 2.2R. Full-scale currents noted on the Power Monitor sheet; BOM lines updated (30m Panasonic ERJ-8BW 1 W, 330m / 2.2R Yageo).
 
 ### Added
