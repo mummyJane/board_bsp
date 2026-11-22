@@ -8,6 +8,11 @@ project uses [Semantic Versioning](https://semver.org/) (see
 
 ## [Unreleased]
 
+### Changed
+- ADSB_Test: POWER (SW401) and SLEEP/WAKE (SW603) moved from the top edge to the bottom edge (new `EDGE_BOTTOM` in gen_pcb.py, dump_placement.py knows it): next to BOOT/RESET and much closer to the bucks' PWR_EN and the module's GPIO12. BT301, D301, D303, R306, R701, C701, TP701 moved out of their way.
+- Y801 (25 MHz) turned 180 deg with C808/C809 re-placed: ETH_XI/XO now 16.7 mm of track (was 24.6). Y601 (32 kHz) left as it is: every other rotation and nearby spot routed longer (module pins 16/88 are 17 mm apart).
+- Router honours a pad's own clearance when it is larger than the net class's.
+
 ### Fixed
 - Fan-out vias: stubs narrower than the pad and tried straight along IC pins first (fits 0.4/0.5 mm pitch), longer escapes, a via in a boxed-in exposed pad, a short link to an already-grounded pad of the same part, hole-to-hole spacing between vias of any net, keep-out rule areas respected; DRC rules file had end-of-line comments (KiCad then ignored the whole file). PWR_HI clearance 0.2 -> 0.15 mm so power can neck into 0.4 mm-pitch pins.
 - ADSB_Test placement (PLACE arrays in gen_pcb.py): 3 pad shorts and 4 courtyard overlaps removed (R1611/R1613, R1612/R1614, TP413/C1501, TP1203/SH1201, R433, R1001, R1807); 100 parts moved next to the pins they serve: buck/charger/boost input caps and inductors (most now 2-4 mm), crystals with XI facing the chip and their load caps round them, decoupling caps on their own supply pins (LAN8720A, USB2514B, RP2040, FT2232H, STUSB4500, CP2102N, eFuse, m1421, GPS, PAC1954s, buffers, module), m1421 test pads and other tight spots given room. DRC: no overlaps or shorts; schematic parity 0.

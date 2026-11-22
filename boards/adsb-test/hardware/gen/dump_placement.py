@@ -61,7 +61,7 @@ def block():
         for ref in sorted(pages[sheet], key=ref_key):
             val = value_of.get(ref, "")
             if ref in g.EDGE:
-                lines.append(f"        # {ref}: placed by EDGE_{ {'L': 'LEFT', 'R': 'RIGHT', 'T': 'TOP'}[g.EDGE[ref][0]] }"
+                lines.append(f"        # {ref}: placed by EDGE_{ {'L': 'LEFT', 'R': 'RIGHT', 'T': 'TOP', 'B': 'BOTTOM'}[g.EDGE[ref][0]] }"
                              f"  ({val})")
                 continue
             if ref in g.BIG:
@@ -113,7 +113,7 @@ def update_big_and_edges(src, pos):
                 n += 1
     for ref, (side, _) in g.EDGE.items():
         if ref in pos and pos[ref][3]:
-            v = pos[ref][0] if side == "T" else pos[ref][1]
+            v = pos[ref][0] if side in ("T", "B") else pos[ref][1]
             m = re.search(rf'\("{ref}",\s*([-\d.]+)\)', src)
             if m and not same(m.group(1), (v,)):
                 src = src[:m.start()] + f'("{ref}", {fmt(v)})' + src[m.end():]

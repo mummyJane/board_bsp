@@ -53,7 +53,7 @@ def obstacles(board, layer, net_name, win, extra_keepouts, ignore=frozenset()):
             if p.GetNetname() == net_name and p.GetNetname() != "":
                 continue
             if p.GetAttribute() in (pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH) or pad_layer_ok(p):
-                out.append(("rect", pad_rect(p)))
+                out.append(("rect", pad_rect(p), TM(p.GetOwnClearance(layer))))   # pad's own clearance if larger
     for t in board.GetTracks():
         if t.GetNetname() == net_name or t.m_Uuid.AsString() in ignore:
             continue
@@ -70,10 +70,13 @@ def obstacles(board, layer, net_name, win, extra_keepouts, ignore=frozenset()):
     return out
 
 
-def blocked(win, obs, grow):
-    """Bool map [ny, nx]: cell centre closer than `grow` to any obstacle."""
+def blocked(win, obs, clear, hw):
+    """Bool map [ny, nx]: cell centre closer than clearance (the larger of `clear` and the item's own) + hw to
+    any obstacle."""
     m = np.zeros((win.ny, win.nx), dtype=bool)
-    for kind, g in obs:
+    for item in obs:
+        kind, g = item[0], item[1]
+        grow = max(clear, item[2] if len(item) > 2 else 0) + hw
         if kind == "rect":
             x0, y0, x1, y1 = g
             i0, i1, j0, j1 = win.sl(x0 - grow, y0 - grow, x1 + grow, y1 + grow)
@@ -187,7 +190,7 @@ def route_net(board, net_name, layer, width, clearance, keepouts, board_box, edg
 
     def grown(w, c=clearance):
         if (w, c) not in maps:
-            maps[(w, c)] = blocked(win, obs, c + w / 2) | board_edge_block(win, board_box, edge_clear + w / 2)
+            maps[(w, c)] = blocked(win, obs, c, w / 2) | board_edge_block(win, board_box, edge_clear + w / 2)
         return maps[(w, c)]
 
     pad_id = np.zeros((win.ny, win.nx), dtype=np.int32)

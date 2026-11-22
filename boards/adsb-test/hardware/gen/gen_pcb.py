@@ -15,7 +15,7 @@ Run with KiCad's own Python (it needs the pcbnew module):
 All placement data is in the arrays at the top of this file, all with ONE coordinate rule (see there):
 (x, y) = footprint origin in mm from the board's top-right corner as seen in KiCad's normal view
 (x grows to the left, y down), rot = the orientation KiCad shows.
-  EDGE_LEFT / EDGE_RIGHT / EDGE_TOP   edge connectors and switches: position along the edge only
+  EDGE_LEFT / EDGE_RIGHT / EDGE_TOP / EDGE_BOTTOM   edge parts: position along the edge only
                                       (snapped to the edge and turned to face out automatically)
   BIG                                 big parts (module, cans, sockets, headers): "REF": (x, y, rot)
   SLOTS_FRONT                         panel-cable slots (panel front-view coordinates, measured)
@@ -102,10 +102,12 @@ EDGE_RIGHT = [
     ("J801", 120.0), # Ethernet
 ]  # digital edge (x = 204.9)
 
-EDGE_TOP = [("J602", 108.0), 
-            ("SW401", 180.0), 
-            ("SW603", 160.0),
-]  # Wi-Fi RP-SMA, away from the RF-edge SMAs
+EDGE_TOP = [("J602", 108.0),  # Wi-Fi RP-SMA, away from the RF-edge SMAs
+]
+# Bottom edge (y = 140, the panel's cable end): the buttons, next to BOOT/RESET and close to what they drive
+EDGE_BOTTOM = [("SW603", 152.1),  # SLEEP/WAKE
+               ("SW401", 177.4),  # POWER slide switch, near the bucks' PWR_EN
+]
 
 # Big parts: "REF": (x, y, rot), same rule as PLACE. A part and its can (U1401/SH1401, U1201/SH1201) have
 # different origins: move both together.
@@ -207,11 +209,11 @@ PLACE = {
         ("D302",  140.0,  95.0, 180),  # BAT43W
         ("C321",  140.0,  91.0, 180),  # 1uF
 
-        ("D301",  147.0, 137.0, 180),  # CHG (amber)
-        ("R306",  147.0, 133.0, 180),  # 2.2k
+        ("D301", 150.27, 130.53, 0),  # CHG (amber)
+        ("R306", 126.21, 126.15, 90),  # 2.2k
 
-        ("BT301", 160.0, 135.0, 180),  # CR1220 (optional)
-        ("D303",  152.0, 135.0, 180),  # BAT43W
+        ("BT301", 163.35, 134.08, 0),  # CR1220 (optional)
+        ("D303", 152.08, 127.75, 0),  # BAT43W
 
         ("R301",  134.0, 102.0,  90),  # 8.2k 1%
         ("R302",  130.0, 102.0,  90),  # 10k
@@ -372,10 +374,10 @@ PLACE = {
     # ------------------------------------------------ page 7: RTC
     "RTC": [
         ("U701",  190.0, 135.0,  90),  # DS3231M
-        ("R701",  184.0, 135.0,  90),  # 10k
-        ("C701", 183.96, 138.47, 0),  # 100nF
+        ("R701", 195.04, 138.37, 0),  # 10k
+        ("C701", 182.63, 129.1, 0),  # 100nF
         ("C702", 194.18, 133.76, 270),  # 100nF
-        ("TP701", 172.0, 135.0, 180),  # RTC_INT
+        ("TP701", 200.82, 130.67, 0),  # RTC_INT
     ],
     # ------------------------------------------------ page 8: Ethernet
     "Ethernet": [
@@ -386,9 +388,9 @@ PLACE = {
         ("FB801", 180.0, 125.0,  90),       # 600R@100MHz
         ("R805",  176.0, 125.0,  90),       # 1.5k
         
-        ("Y801", 164.05, 115.88, 270),       # 25MHz
-        ("C808", 159.55, 113.28, 0),       # 27pF
-        ("C809", 159.55, 118.48, 0),       # 27pF
+        ("Y801", 164.05, 115.88, 90),       # 25MHz
+        ("C808", 159.45, 118.48, 0),       # 27pF
+        ("C809", 159.45, 113.28, 0),       # 27pF
         
         ("R801",  176.0, 121.0, 270),       # 12.1k 1%
 
@@ -855,6 +857,7 @@ EDGE = {
     **{r: ("L", v) for r, v in EDGE_LEFT},
     **{r: ("R", v) for r, v in EDGE_RIGHT},
     **{r: ("T", v) for r, v in EDGE_TOP},
+    **{r: ("B", v) for r, v in EDGE_BOTTOM},
 }
 PLACED_BY_PAGE = {e[0]: tuple(e[1:]) for page in PLACE.values() for e in page}
 
@@ -1016,8 +1019,16 @@ def front_box(fp):
 
 def place_on_edge(fp, side, along):
     """Turn the part to face out of its edge, snap it to the edge ('PCB Edge' marker, edge-mount pads or body front)
-    and put its ORIGIN at `along`: y for 'L' (RF edge, x = 0) and 'R' (digital edge), x for 'T' (top edge).
+    and put its ORIGIN at `along`: y for 'L' (RF edge, x = 0) and 'R' (digital edge), x for 'T' / 'B' (top / bottom).
     """
+    if side == "B":
+        turn_to(fp, (0, 1))
+        em = edge_marker(fp)
+        front = em[1] if em else front_box(fp).GetBottom()
+        fp.SetPosition(
+            pcbnew.VECTOR2I(top(along, 0).x, fp.GetPosition().y + int(mm(OY + H) - front))
+        )
+        return
     if side == "T":
         turn_to(fp, (0, -1))
         em = edge_marker(fp)
