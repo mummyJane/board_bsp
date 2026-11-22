@@ -36,7 +36,7 @@ CLASSES = [
     # pours where it helps) and leave them out of Freerouting. 0.8 mm on 1 oz outer is ~2 A for a 10 C rise.
     # PWR = the other rails, autorouted at 0.3 mm (still fits between 0.4 mm-pitch QFN pins); widen by hand where
     # a branch carries more than ~0.5 A. GND = the plane/fills and the ground vias from gen_pcb.py: never routed.
-    nc("PWR_HI", 0.8, 0.2, colour="rgb(220, 0, 0)", prio=5),
+    nc("PWR_HI", 0.8, 0.15, colour="rgb(220, 0, 0)", prio=5),   # 0.15: necks into 0.4 mm-pitch pins (< 25 V)
     nc("PWR", 0.3, 0.15, colour="rgb(230, 120, 0)", prio=6),
     nc("GND", 0.3, 0.15, colour="rgb(0, 140, 0)", prio=7),
 ]
@@ -90,15 +90,16 @@ DRU = """(version 1)
   (condition "A.NetClass == 'RF_50R'")
   (constraint via_count (max 0)))
 
-# Power: no track narrower than the class width except where it has to neck down into a fine-pitch pad
+# Power: 0.8 mm; necks down to 0.15 mm only into fine-pitch pins (route_critical.py does that within 3 mm)
 (rule "PWR_HI min width"
   (condition "A.NetClass == 'PWR_HI'")
-  (constraint track_width (min 0.3mm) (opt 0.8mm)))
+  (constraint track_width (min 0.15mm) (opt 0.8mm)))
 
-# Ground pads boxed in by neighbours (USB-C end pins; plated holes in the exposed pads of U1101 / U1401): one
+# Ground pads boxed in by neighbours (USB-C end pins; plated holes in the exposed pads of U1101 / U1401; U1003.11,
+# U201.22 between fan-out vias): one
 # thermal spoke is enough, the pad is also tied to ground through the shell / its own exposed pad.
 (rule "Tight ground pads: one spoke"
-  (condition "A.memberOfFootprint('J901') || A.memberOfFootprint('J1001') || A.memberOfFootprint('U1101') || A.memberOfFootprint('U1401')")
+  (condition "A.memberOfFootprint('J901') || A.memberOfFootprint('J1001') || A.memberOfFootprint('U1101') || A.memberOfFootprint('U1401') || A.memberOfFootprint('U1003') || A.memberOfFootprint('U201')")
   (constraint min_resolved_spokes 1))
 
 # Edge-mount RP-SMA J602: Molex's pads run to the board edge; ours stop 0.25 mm short (PCBWay pull-back)

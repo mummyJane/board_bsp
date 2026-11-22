@@ -66,6 +66,12 @@ GND_FILLS = ("B.Cu", "In1.Cu", "F.Cu")
 ZONE_CLEARANCE = 0.2  # also the 50R CPWG gap to ground
 EDGE_PULLBACK = 0.5  # zones stop this far from the board edge
 GND_VIAS = True  # a via (0.6/0.3) beside every small SMD ground pad, joined by a 0.3 mm stub
+# Power islands: (net, layer, ICs, radius mm). A copper island on `layer` round each IC, covering the net's pads
+# within `radius` of it, and a via beside each of those pads: tracks wide enough for power do not fit into the
+# 0.4/0.5 mm-pitch pins, a via per pin into an island does. The islands are joined to each other by ordinary tracks.
+POWER_ISLANDS = [
+    ("3V3_DEV", "In1.Cu", ("U1003", "U1701", "U1801"), 9.0),
+]
 # Routing is KEPT across a rebuild: tracks, vias and hand-drawn zones in the old ADSB_Test.kicad_pcb are copied into
 # the new one by net name. Pass --clear-routing to drop them all, --keep-locked to keep only items locked in KiCad.
 # (The AUTO_* zones and the AUTO_GND_VIAS group are regenerated every run.)
@@ -1207,11 +1213,29 @@ def add_copper(board, nets, old, mode):
     copper.add_zone(board, gnd, PLANE, "AUTO_GND_PLANE", pts, ZONE_CLEARANCE)
     for layer in GND_FILLS:
         copper.add_zone(board, gnd, layer, "AUTO_GND_" + layer.split(".")[0], pts, ZONE_CLEARANCE)
+    def inside(x, y):
+        return OX + 1.0 < x < OX + W - 1.0 and OY + 1.0 < y < OY + H - 1.0
+
+    fps = {f.GetReference(): f for f in board.GetFootprints()}
+    for net_name, layer, ics, radius in POWER_ISLANDS:
+        net = nets[net_name]
+        for ic in ics:
+            c = fps[ic].GetPosition()
+            pads = [p for f in board.GetFootprints() for p in f.Pads()
+                    if p.GetNetname() == net_name and (p.GetPosition() - c).EuclideanNorm() < pcbnew.FromMM(radius)]
+            pts = [(pcbnew.ToMM(p.GetPosition().x), pcbnew.ToMM(p.GetPosition().y)) for p in pads]
+            cy = fps[ic].GetCourtyard(pcbnew.B_CrtYd).BBox()
+            pts += [(pcbnew.ToMM(x), pcbnew.ToMM(y)) for x in (cy.GetLeft(), cy.GetRight())
+                    for y in (cy.GetTop(), cy.GetBottom())]
+            copper.add_zone(board, net, layer, f"AUTO_{net_name}_{ic}", copper.grow(copper.hull(pts), 3.0),
+                            ZONE_CLEARANCE, priority=1)
+            keys = {(p.GetParentFootprint().GetReference(), p.GetNumber()) for p in pads}
+            n_v, nr = copper.pad_vias(board, net, inside, board_keepouts(), f"AUTO_{net_name}_VIAS_{ic}",
+                                      only=lambda p, k=keys: (p.GetParentFootprint().GetReference(), p.GetNumber()) in k)
+            print(f"  island {net_name} round {ic} on {layer}: {len(pads)} pads, {n_v} vias"
+                  + (f", no via room: {' '.join(nr)}" if nr else ""))
     vias, no_room = 0, []
     if GND_VIAS:
-        def inside(x, y):
-            return OX + 1.0 < x < OX + W - 1.0 and OY + 1.0 < y < OY + H - 1.0
-
         vias, no_room = copper.gnd_vias(board, gnd, inside, board_keepouts())
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     print(f"  copper: {kept} routing items kept ({mode}), {vias} ground vias, "

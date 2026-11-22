@@ -55,9 +55,19 @@ Layers (all parts on B.Cu): **B.Cu** parts + critical routing, **In2.Cu** solid 
 reference plane right under the component side, never routed), **In1.Cu** power + slow signals, **F.Cu** slow
 signals. Ground fill on B/In1/F, a via beside every small ground pad. Net classes (`gen_netclasses.py`):
 `PWR_HI` 0.8 mm (charger, VSYS, 5V, 3V3_BUCK, switch nodes), `PWR` 0.3 mm, `GND` (fills only, never routed).
+3V3_DEV: copper islands on In1 round U1003 / U1701 / U1801 with a via at every supply pin (`POWER_ISLANDS`).
 
-1. Route by hand and **lock** (select, `L`): RF_50R feeds (B.Cu only, no vias), USB / DSI / Ethernet pairs
-   (diff-pair router, `6`), the PWR_HI nets with pours, crystal nets.
-2. Freerouting (KiCad plugin): ignore net classes `GND` and `PWR_HI`; it sees In2 as a plane and does not route on it.
-3. Import, run DRC. Rebuilding with gen_pcb.py keeps all of it (`--keep-locked` to throw away the autorouted part
-   and keep the hand routes).
+Order (each step keeps what the earlier ones made):
+
+1. `gen_pcb.py` - placement, zones, ground / island vias (keeps existing routing).
+2. [route_critical.py](route_critical.py) (KiCad's Python) - RF feeds (0.32 mm, B.Cu, no vias, ground-via fence),
+   crystal nets (0.2 mm) and the PWR_HI nets (0.8 mm, necking into fine-pitch pins), all LOCKED in the group
+   `ROUTED_BY_SCRIPT`. Re-running re-routes them (`route_critical.py NET ...` for just those nets). It lists what
+   did not fit: route those by hand. Then run `gen_pcb.py` again (puts back fan-out vias it had to move).
+3. By hand, then lock (`L`): the USB / DSI / Ethernet pairs (diff-pair router, `6`), the leftovers from step 2.
+4. Freerouting (KiCad plugin): ignore net class `GND`; it sees In2 as a plane and the 3V3_DEV islands as
+   connected. Import, press **B** (refill zones), run DRC.
+5. Rebuilding with `gen_pcb.py` keeps all of it; `--keep-locked` throws away the autorouted part only.
+
+Helpers: [router.py](router.py) (grid maze router used by step 2), [copper.py](copper.py) (zones, vias, keeping
+routing across a rebuild).
